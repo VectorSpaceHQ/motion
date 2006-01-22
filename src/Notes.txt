@@ -1,0 +1,6 @@
+conf.c uses constants VIDEO_DEVICE and DEFAULT_INPUT (originally from
+video.h) for it's default initialisation.  This needs to be enhanced
+for plugin usage.
+Temporarily put the constants into motion.h
+
+

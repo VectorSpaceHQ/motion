@@ -1,0 +1,4 @@
+netcam_url http://xpsaugerwebcam.engin.umich.edu/axis-cgi/mjpg/video.cgi?camera=&resolution=320x240
+webcam_port 8007
+webcam_localhost off
+use_plugin /usr/local/motion/src/ver4-motion/plugins/.libs/netcam_plugin.so

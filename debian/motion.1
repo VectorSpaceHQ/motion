@@ -1,4 +1,4 @@
-.TH MOTION 1 2005-12-13 "Motion" "Motion Options and Config Files"
+.TH MOTION 1 2005-08-13 "Motion" "Motion Options and Config Files"
 .SH NAME
 motion \-   Detect motion using a video4linux device
 .SH SYNOPSIS
@@ -265,17 +265,17 @@ Command to be executed when a motion frame is detected. You can use Conversion S
 .B on_movie_end string
 Values: Max 4095 characters / Default: Not defined
 .br
-Command to be executed when an ffmpeg movie is closed at the end of an event. You can use Conversion Specifiers and spaces as part of the command. Use %f for passing filename (with full path) to the command.
+Command to be executed when an ffmpeg movie is closed at the end of an event. The name of the movie will be given as argument. You can use Conversion Specifiers and spaces as part of the command.
 .TP
 .B on_movie_start string
 Values: Max 4095 characters / Default: Not defined
 .br
-Command to be executed when an mpeg movie is created. You can use Conversion Specifiers and spaces as part of the command. Use %f for passing filename (with full path) to the command.
+Command to be executed when an mpeg movie is created. The name of the movie will be given as argument. You can use Conversion Specifiers and spaces as part of the command.
 .TP
 .B on_picture_save string
 Values: Max 4095 characters / Default: Not defined
 .br
-Command to be executed when an image is saved. You can use Conversion Specifiers and spaces as part of the command. Use %f for passing filename (with full path) to the command.
+Command to be executed when an image is saved. The name of the image will be given as argument. You can use Conversion Specifiers and spaces as part of the command.
 .TP
 .B output_all boolean
 Values: on, off / Default: off
@@ -402,11 +402,6 @@ Values: on, off / Default: off
 .br
 Log to the database when creating timelapse mpeg file
 .TP
-.B sql_query string
-Values: Max 4095 characters / Default: insert into security(camera, filename, frame, file_type, time_stamp, text_event) values('%t', '%f', '%q', '%n', '%Y-%m-%d %T', '%C')
-.br
-SQL query string that is sent to the database. The values for each field are given by using convertion specifiers
-.TP
 .B switchfilter boolean
 Values: on, off / Default: off
 .br
@@ -427,20 +422,15 @@ Values: on, off / Default: off
 .br
 Draw characters at twice normal size on images.
 .TP
-.B text_event string
-Values: Max 4095 characters / Default: %Y%m%d%H%M%S
-.br
-This option defines the value of the speciel event conversion specifier %C. You can use any conversion specifier in this option except %C. Date and time values are from the timestamp of the first image in the current event.
-.TP
 .B text_left string
 Values: Max 4095 characters / Default: Not defined
 .br
-User defined text overlayed on each in the lower left corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # < > | , . : - + _ \n and conversion specifiers (codes starting by a %).
+User defined text overlayed on each in the lower left corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # < > ¦ , . : - + _ \n and conversion specifiers (codes starting by a %).
 .TP
 .B text_right string
 Values: Max 4095 characters / Default: %Y-%m-%d\n%T
 .br
-User defined text overlayed on each in the lower right corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # < > | , . : - + _ \n and conversion specifiers (codes starting by a %). Default: %Y-%m-%d\n%T = date in ISO format and time in 24 hour clock
+User defined text overlayed on each in the lower right corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # < > ¦ , . : - + _ \n and conversion specifiers (codes starting by a %). Default: %Y-%m-%d\n%T = date in ISO format and time in 24 hour clock
 .TP
 .B thread string
 Values: Max 4095 characters / Default: Not defined
@@ -462,11 +452,6 @@ Values: Max 4095 characters / Default: %v-%Y%m%d-timelapse
 .br
 File path for timelapse mpegs relative to target_dir (ffmpeg only).
 .TP
-.B track_auto boolean
-Values: on, off / Default: off
-.br
-Enable auto tracking
-.TP
 .B track_iomojo_id integer
 Values: 0 - 2147483647 / Default: 0
 .br
@@ -482,11 +467,6 @@ Values: -1 - 2147483647 / Default: -1
 .br
 The motor number that is used for controlling the x-axis.
 .TP
-.B track_move_wait integer
-Values: 0 - 2147483647 / Default: 10
-.br
-Delay during which tracking is disabled after auto tracking has moved the camera. Delay is defined as number of picture frames.
-.TP
 .B track_port string
 Values: Max 4095 characters / Default: Not defined
 .br
@@ -496,16 +476,6 @@ This is the device name of the serial port to which the stepper motor interface 
 Values: 0 - 255 / Default: 255
 .br
 Speed to set the motor to.
-.TP
-.B track_step_angle_x integer
-Values: 0-90 / Default: 10
-.br
-Angle in degrees the camera moves per step on the X-axis with auto tracking. Currently only used with pwc type cameras.
-.TP
-.B track_step_angle_y integer
-Values: 0-40 / Default: 10
-.br
-Angle in degrees the camera moves per step on the Y-axis with auto tracking. Currently only used with pwc type cameras.
 .TP
 .B track_stepsize integer
 Values: 0 - 255 / Default: 40
@@ -654,9 +624,6 @@ The full month name according to the current locale.
 .B %c
 The preferred date and time representation for the current locale.
 .TP
-.B %C
-Text defined by the text_event feature
-.TP
 .B %d
 The day of the month as a decimal number (range 01 to 31).
 .TP
@@ -665,9 +632,6 @@ Number of pixels detected as Motion. If labelling is enabled the number is the n
 .TP
 .B %E
 Modifier: use alternative format, see below.
-.TP
-.B %f
-File name - used in the on_picture_save, on_movie_start, on_movie_end, and sql_query features.
 .TP
 .B %F
 Equivalent to %Y-%m-%d (the ISO 8601 date format).
@@ -705,9 +669,6 @@ The month as a decimal number (range 01 to 12).
 .B %M
 The minute as a decimal number (range 00 to 59).
 .TP
-.B %n
-Filetype as used in the on_picture_save, on_movie_start, on_movie_end, and sql_query features.
-.TP
 .B %N
 Noise level.
 .TP
@@ -724,7 +685,7 @@ Like %p but in lowercase: `am' or `pm' or a corresponding string for the current
 Picture frame number within current second. For jpeg filenames this should always be included in the filename if you save more then 1 picture per second to ensure unique filenames. It is not needed in filenames for mpegs.
 .TP
 .B %Q
-Number of detected labels found by the despeckle feature
+Number of detected labels found by the despeckle feature.
 .TP
 .B %r
 The time in a.m. or p.m. notation.
@@ -737,9 +698,6 @@ The number of seconds since the Epoch, i.e., since 1970-01-01 00:00:00 UTC.
 .TP
 .B %S
 The second as a decimal number (range 00 to 61).
-.TP
-.B %t
-Thread number (camera number)
 .TP
 .B %T
 The time in 24-hour notation (%H:%M:%S).
@@ -779,14 +737,11 @@ The time-zone as hour offset from GMT.
 .TP
 .B %Z
 The time zone or name or abbreviation.
-
 .TP
 .B More information
 Motion homepage: http://motion.sourceforge.net/
 
-Motion Guide (user and installation guide):
-.br
-http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuide
+Motion Guide (user and installation guide): http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuide
 .SH AUTHORS
 Jeroen Vreeken (pe1rxq@amsat.org),
 Folkert van Heusden,

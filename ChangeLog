@@ -1,0 +1,187 @@
+Sat Jan 21 13:33:00 PST 2006 William Brack
+
+	* src/ Makefile.am, newconfig.c, motion.c: commented out areas
+	  requiring webhttpd until Version 4 conversion gets further.
+	* src/ dummymotion.h, fudge.h: removed from CVS
+	* src/newconfig.c: (temporarily) added a new runtime option to
+	  motion: -z {filename}.  If set, causes the (processed) config
+	  data to be dumped out to {filename}.  This is useful for
+	  testing the new configuration code.
+	* src/ motion.c, newconfig.c, newconfig.h and plugins/v4l_plugin.c,
+	  netcam_plugin.c, v4l_plugin.h, netcam_plugin.h, v4l_params.h,
+	  netcam_params.h, netcam_jpeg.c, netcam_wget.c: enhanced source
+	  formatting to please Lavr :-)
+	  
+Fri Jan 20 22:55:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* changed all occurences of "ctxt_ptr" to be "motion_ctxt_ptr"
+	  (many modules in both src and plugins)
+
+Fri Jan 20 11:25:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* src/newconfig.c: Added code to set the default plugin path
+	  if no path is specified on the "plugin" config param.
+
+Fri Jan 20 10:03:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* src/ motion.h, motion.c: re-located video_params out of
+	  context->video_ctxt (which was a pointer to static data),
+	  into context->video_vars (which was previously named
+	  video_plugin_ctxt).
+	* plugins/ v4l_plugin.c, netcam_plugin.c: updated for the
+	  above change.
+
+Thu Jan 19 18:05:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* CHANGELOG: removed from CVS
+	* motion_version.h.in: new file, contains #define for
+	  current version
+	* Makefile.am: added above file to EXTRA_DIST
+	* src/Makefile.am, plugins/Makefile.am: minor change for
+	  setting defines for SYSCONFIG and PLUGINDIR into AM_CFLAGS
+	* src/motion.h: added include of motion_version.h
+	* src/ newconfig.c, webcam.c, webhttpd.c: minor change to use
+	  the newly defined SYSCONFIG and MOTION_VERSION_STRING.  Note
+	  that PLUGINDIR will be used within newconfig.c for the
+	  default location for motion plugins (not yet done)
+
+Thu Jan 19 08:57:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* configure.in: changed VERSION to be 4.0-alpha
+	* plugins/netcam_plugin.c: updated for config file handling,
+	  now should be useable.
+	* plugins/Makefile.am: fixed problem with propagating
+	  VERSION to the compilation flags (AM_FLAGS)
+	* src/motion.c: fixed error in call to vid_dev_cleanup
+	* src/newconfig.[ch]: renamed "param" to be "config_file_param"
+	  in order to prevent name clash with mysql
+	* src/ alg.c, fudge.h, track.c, webhttpd.c: minor change to
+	  use 'newconfig.h' instead of 'config.h'
+	* src/conf.h: removed from CVS
+	
+Wed Jan 18 12:00:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* src/ alg.c, event.c, motion.c picture.c, rotate.c,
+	  webhttpd.c: changed all config variables to be the same
+	  name as the configuration parameter
+	* src/fudge.[ch]: dummy routines added temporarily to prevent
+	  errors in webhttpd.c.  These will be removed as soon as
+	  webhttpd.c is enhanced appropriately.
+	* src/motion.c: several changes for new configuration
+	  routines
+	* src/conf.c: replaced by newconfig.c
+	* src/conf.h: replaced by a link to newconfig.h
+	* src/ newconfig.c, newconfig.h: major further development
+	  and enhancement.  Now nearing a useable state :-)
+	* src/pluginterface.[ch]: removed (any needed code now in
+	  newconfig.c)
+	* plugins/v4l_plugin.c: added code for config file handling
+	  Should be almost useable, but needs more cleanup.
+	* plugins/netcam_plugin.c: started changes for config file
+	  handling, not yet in a useable state
+	* plugins/ v4l_params.h, netcam_params.h: new files which
+	  contain the config param description for the plugin.
+	* src/Makefile.am: modified to remove conf.c and put in
+	  newconfig.c
+	  
+Sun Jan  8 19:35:00 PST 2006 William Brack <wbrack@mmm.com.hk>
+
+	* src/newconfig.[ch]: Substantial addition to the logic, and
+	  addition of code for doing most of the required validation.
+	  Tested with "Default Config" from the Twiki - no crashes, and
+	  Valgrind still likes it.
+	* src/dummymotion.h: Added this file so that the standalone
+	  code can be tested without any other motion files needed.
+	  Should be deleted when newconfig is integrated with the motion
+	  mainline code.
+	* src/global_params.h: some additions and a few corrections.
+	
+Wed Dec 28 18:35:00 PST 2005 William Brack <wbrack@mmm.com.hk>
+
+	* src/global_params.h: minor fix to some typing errors
+
+Wed Dec 28 17:26:38 PST 2005 William Brack <wbrack@mmm.com.hk>
+
+	* src/newconfig.[ch]: further enhancement of the proposed new
+	  configuration code.  Synced with current Lavr sources for
+	  most params.  Elements for some validation added to config
+	  structure, and dump routines enhanced to show valid values.
+
+Mon Oct 17 19:31:03 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	Massive change, all camelCase identifiers changed to ugly
+	xx_yy form.  *.c, *.h files with capital letters changed
+	to _lowercase_letter form.  Seems to still compile ok.
+
+Tue Oct 11 15:01:11 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	* src/newconfig.[ch]: added more code and structures for
+	  config file validation.  Also added code to produce a
+	  "dump" of the config file after the configuration context
+	  has been read in, including supplying full comments and
+	  default value information.  Checked everything put in so
+	  far passes Valgrind testing.
+	* src/global_params.h: new include file which defines all
+	  the global parameters, together with the information needed
+	  to validate and dump them.  Currently only a few values
+	  (enough for testing) have been typed in.
+	  
+Mon Oct 10 01:50:37 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	* src/newconfig.[ch]: added include file facility, debugged
+	  and got Valgrind to approve.
+
+Sun Oct  9 14:02:22 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	* src/newconfig.[ch]: General cleanup.  Added some
+	  #defines for whitespace.  Wrote a new routine to
+	  parse lines with possible predicates, allowing for
+	  strings which are not "well-defined" (i.e. don't
+	  include " or ' delimiters).  Configure structure is
+	  now a global level plus at most one level of children.
+	  Cursory testing indicates that much is ok, so I
+	  will proceed to work on proper detection / loading
+	  of plugins, and then on to parameter validation.
+
+Sat Oct  8 23:45:30 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	Added in a new module for parsing the currently-proposed
+	configuration file
+	* src/newconfig.c, src/newconfig.h: new routines, currently
+	  including a 'main' program for standalone development and
+	  testing.
+
+Mon Oct  3 11:44:21 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	After the following, the system shutdown code now seems to be
+	working correctly:
+	* src/plugins.h: changed motionVideoInput structure to have two
+	  separate entries for videoDevCleanup (cleanup one particular
+	  device) and videoCleanup (cleanup all devices handled by the
+	  plugin).  This is because of the different requirements of
+	  netcam and v4l handlers.
+	* src/motion.h: fixed some problems in the end-of-run cleanup
+	  caused by the differences between v4l and netcam.
+	* plugins/v4lPlugin.c: added a NULL entry for videoDevCleanup
+	* plugins/netcamPlugin.c: added a new entry for videoDevCleanup,
+	  set videoCleanup to be NULL.
+	  Cleaned up some errors in handling of "global" variables
+	  (i.e. those which need to be accessed through the context
+	  structure, particularly threads_running).
+
+Sun Oct  2 18:06:17 HKT 2005 William Brack <wbrack@mmm.com.hk>
+
+	* configure.in: sync'ed with Lavr sources, including changes to
+	  LDFLAGS and jpeg-mmx
+	* src/*.[ch]: changed prototype param declarations from
+	  "motionCtxtPtr" to "ctxt_ptr ctxt" to avoid any battle over
+	  camelcase names (even though long-term they are coming ... :-)
+	* src/config.[ch]: added new config param "use_plugin" (but
+	  this is only for testing / development).  Long term we need
+	  to re-think / re-design the whole configuration parm system.
+	* src/motion.[ch]: added pointers to debug_level and global_lock
+	  into context structure so that plugins can easily access them
+	* plugins/netcamPlugin.c, netcam_wget.c, netcam_jpeg.c: changed
+	  references to globals like motion_log and global_lock into
+	  references through context structure.  Several other enhancements
+	  to make it suitable as a plugin.

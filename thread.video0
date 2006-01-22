@@ -1,0 +1,5 @@
+videodevice /dev/video3
+input 2
+webcam_port 8006
+webcam_localhost off
+use_plugin /usr/local/motion/src/ver4-motion/plugins/.libs/v4l_plugin.so

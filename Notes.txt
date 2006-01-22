@@ -1,0 +1,4 @@
+Should change the references in the struct context concerning global_lock and threads_running to be routines (in callbacks) for manipulating the thread information.
+
+Some plugins (like v4lPlugin) need to do an initialisation which is 'global' for all such devices (e.g. videoInit).  We need to have a mechanism to make sure this is done once (and only once) when the plugin has been specified (i.e. if it's specified in two threads, but not in the global description, it still needs to be one exactly once)
+

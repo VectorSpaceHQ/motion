@@ -1,0 +1,7 @@
+Still a little work to be done in the "global" device handling.  For
+v4lPlugin, we have a global structure (viddevs) which is set up on entry and
+cleaned up (devices closed and memory released) during shutdown.  For
+netcamPlugin, however, everything is on an individual device basis.  In
+particular, we must make certain that netcamCleanup is called to release the
+associated structures.
+

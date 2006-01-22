@@ -257,10 +257,8 @@ Use variable names that say what the variable is used for.
 Avoid x,t,vt type variable names.
 Use names like image, image_buffer, image_height, output_buffer
 Short names like i and j for loop index variable are a known good practice.
-Variable and function names are in lower case. Use '_' to separate words.
+Variable names are in lower case. Use '_' to separate words.
 MACROS are in uppercase.
-camelCase (mix of upper and lower case) is not allowed because it creates too
-many typos for many two finger typers.
 
 
 --------------------

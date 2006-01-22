@@ -1,0 +1,39 @@
+Following are the (intended) differences between current motion sources and
+the plugin working files:
+
+alg.c:
+Removed references to video.h and video_freebsd.h
+
+conf.[ch]:
+Removed references to video.h and video_freebsd.h
+Added an additional field "use_plugin" in the conf structure
+
+event.c:
+Removed references to video.h and video_freebsd.h
+Changed call to vid_putpipe to go through struct cnt->video_ctxt
+Changed references to VIDEO_PALETTE_GREY to be MOTION_GREYIMAGE
+
+picture.c:
+Changed references to VIDEO_PALETTE_GREY to be MOTION_GREYIMAGE and
+VIDEO_PALETTE_YUV420P to be MOTION_YUV420PIMAGE
+
+rotate.c:
+Changed references to VIDEO_PALETTE_GREY to be MOTION_GREYIMAGE and
+VIDEO_PALETTE_YUV420P to be MOTION_YUV420PIMAGE
+
+track.c:
+Removed references to video.h and video_freebsd.h
+
+webcam.c:
+Changed all references to the variable 'sin' to be 'sockin' (fix warning)
+
+webhttpd.c:
+Added base64_encode function
+
+webhttpd.h:
+added BASE64_LENGTH define and protype for base64_encode function
+
+Might be good to enhance plugins_loaded structure to include the name, so that
+the actual plugin text name could be more descriptive (e.g. "v4l Video
+Handler" instead of "v4l"
+

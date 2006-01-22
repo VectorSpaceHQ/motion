@@ -1,128 +1,223 @@
 dnl Process this file with autoconf to produce a configure script
+AC_INIT(motion.c)
 
-AC_INIT(src/motion.c)
-
-VERSION=4.0-alpha
+VERSION=3.2.4
 AC_SUBST(VERSION)
+THREAD_CFLAGS=""
+THREAD_CHECK="pthread.h"
 
-AM_INIT_AUTOMAKE(motion, $VERSION)
-AM_CONFIG_HEADER(config.h)
-dnl BB: I don't know what this one is for
-AM_MAINTAINER_MODE
-AM_PROG_LIBTOOL
 
 dnl Checks for programs.
-dnl Setting CFLAGS is a Bill hack to prevent automatic -O2
-dnl (which screws up debugging).  Ideally it should be controlled
-dnl by --with-developer-flags
-CFLAGS="-g"
 AC_PROG_CC
 
-TEMP_LIBS="-lm"
-TEMP_CFLAGS="${CFLAGS}"
-TEMP_LDFLAGS="${LDFLAGS}"
+LIBS="$LIBS -lm"
+
+dnl
+dnl Check for FreeBSD
+dnl
+
+FreeBSD="no"
+AC_MSG_CHECKING(for FreeBSD)
+FreeBSD=`uname -a | grep "FreeBSD"`
+
+if test "${FreeBSD}" = ""; then
+	AC_MSG_RESULT(no)
+	VIDEO="video.o"	
+else
+	FreeBSD="yes"
+	AC_MSG_RESULT($FreeBSD)
+	THREAD_CHECK="/usr/local/include/pthread/linuxthreads/pthread.h"
+	THREAD_LIB_CHECK="/usr/local/lib/liblthread.so"
+	CFLAGS="$CFLAGS -D__freebsd__"
+	VIDEO="video_freebsd.o"
+fi
+
+AC_SUBST(VIDEO)
 
 dnl
 dnl Check to Exclude V4L
 dnl
-V4L="yes"
-AC_ARG_WITH(v4l,
-[  --without-v4l           Exclude using v4l (video4linux) subsystem.
-                          Makes Motion so it only supports network cameras.
-                          ],
-V4L="$withval"
+BKTR="yes"
+AC_ARG_WITH(bktr,
+[  --without-bktr           Exclude to use bktr subsytem , that usually usefull
+                          for devices as network cameras.
+                          ]
+                          ,
+BKTR="$withval"
 )
-
-if test "${V4L}" = "no"; then
-	TEMP_CFLAGS="${TEMP_CFLAGS} -DWITHOUT_V4L"
+                                                                                                                             
+if test "${BKTR}" = "no"; then
+	CFLAGS="${CFLAGS} -DWITHOUT_V4L"
 fi
 
-dnl Checks for Library pthread ( no cross platform )
-AC_CHECK_LIB(pthread,pthread_create,[
-		TEMP_LIBS="$TEMP_LIBS -lpthread"
+AC_MSG_CHECKING(for threads)
+
+dnl
+dnl Check for thread header
+dnl
+if test -f "${THREAD_CHECK}"; then
+	HEADERS_THREAD_CFLAGS="-I/usr/local/include/pthread/linuxthreads"
+	THREADS="yes"
+else
+	THREADS="no"
+fi
+
+dnl
+dnl Check for thread lib
+dnl
+
+if test -f "${THREAD_LIB_CHECK}" ; then
+	THREADS="yes"
+	LIB_THREAD="-L/usr/local/lib -llthread -llgcc_r"
+else
+	THREADS="no"
+fi
+
+if test "${FreeBSD}" = "yes";then
+dnl Checks for Library linuxthreads for FreeBSD
+dnl
+dnl linuxthreads on freeBSD, ports collection
+dnl /usr/local/include/pthreads/linuxthreads/pthread.h
+dnl #include <linuxthreads/pthread.h>
+dnl /usr/local/lib/libpthread.so
+dnl
+	if test "${THREADS}" = "yes"; then
+		CFLAGS="${HEADERS_THREAD_CFLAGS} $CFLAGS -DWITH_LINUXTREADS"
+		LIBS="$LIBS ${LIB_THREAD}"
+		THREAD_CFLAGS="-D_THREAD_SAFE"
 		PTHREAD_SUPPORT="yes"
-	],[
+		AC_MSG_RESULT($THREADS)
+	else
+		PTHREAD_SUPPORT="no"
+		AC_MSG_RESULT($THREADS)	
 		echo
-		echo You do not have pthread installed
+		echo You do not have linuxthread installed
 		echo
-	]	
-)
+	fi
+fi
+
 
 dnl
 dnl Check for the special mmx accelerated jpeg library
 dnl
-JPEG_MMX="no"
-JPEG_MMX_OK="not_found"
-AC_ARG_WITH(jpeg-mmx,
-[  --with-jpeg-mmx[=DIR]     Specify the prefix for the install path for
-                          jpeg-mmx for optimized jpeg handling (optional).
-                          If this is not specified motion will try to find
-                          the library /usr/lib/libjpeg-mmx.a /usr/local/lib/libjpeg-mmx.a.
-                          ],
-JPEG_MMX="$withval"
-)
+#JPEG_MMX="yes"
+#JPEG_MMX_OK="not_found"
+#AC_ARG_WITH(jpeg-mmx,
+#[  --with-jpeg-mmx[=DIR]     Specify the prefix for the install path for
+#                          jpeg-mmx for optimized jpeg handling (optional).
+#                          If this is not specified motion will try to find
+#                          the library /usr/lib/libjpeg-mmx.so /usr/local/lib/libjpeg-mmx.so.
+#                          ],
+#JPEG_MMX="$withval"
+#)
 
 dnl
 dnl --without-jpeg-mmx or with-jpeg-mmx=no
 dnl
 
-if test "${JPEG_MMX}" = "no"; then
-        AC_MSG_CHECKING(for libjpeg-mmx)
-        AC_MSG_RESULT(skipping)
-elif test "${JPEG_MMX}" = "yes"; then
-	dnl AUTODETECT STATIC LIB
-	AC_MSG_CHECKING(for libjpeg-mmx autodetecting)
+#if test "${JPEG_MMX}" = "no"; then
+#        AC_MSG_CHECKING(for libjpeg-mmx)
+#        AC_MSG_RESULT(skipping)
+#elif test "${JPEG_MMX}" = "yes"; then
+        dnl AUTODETECT STATIC LIB
+#        AC_MSG_CHECKING(for libjpeg-mmx autodetecting)
+#	AC_MSG_RESULT(3 steps)
+#	AC_MSG_CHECKING(for libjpeg-mmx)
+#        if test -f /usr/lib/libjpeg-mmx.so ; then
+#                JPEG_MMX_OK="found"
+#                JPEG_MMX="/usr/lib"
+#        elif test -f /usr/local/lib/libjpeg-mmx.so ; then
+#                JPEG_MMX_OK="found"
+#                JPEG_MMX="/usr/local/lib"
+#        else
+#                AC_MSG_RESULT(not found)
+#        fi
+
+#	if test "${JPEG_MMX_OK}" = "found"; then
+#		AC_MSG_RESULT(found)	
+#		AC_MSG_CHECKING(for libjpeg-mmx headers)
+#		if test -f /usr/include/jpeg-mmx/jpeglib.h ; then
+#			JPEG_MMX_HEADER="-I/usr/include/jpeg-mmx";
+#			AC_MSG_RESULT(found)
+#		elif test -f /usr/local/include/jpeg-mmx/jpeglib.h ; then
+#			JPEG_MMX_HEADER="-I/usr/local/include/jpeg-mmx";
+#			AC_MSG_RESULT(found)
+#		else
+#			JPEG_MMX_OK="not_found"
+#			AC_MSG_RESULT(not found)
+#		fi
+#	fi
+#else
+#        AC_MSG_CHECKING(for libjpeg-mmx in -&gt; [${JPEG_MMX}] &lt;-)
+#       if test -f ${JPEG_MMX}/libjpeg-mmx.a ; then
+#                AC_MSG_RESULT(found)
+#                JPEG_MMX_OK="found"
+#        else
+#                AC_MSG_RESULT(not found)
+#        fi
+#fi
+
+#if test "${JPEG_MMX_OK}" = "found"; then
+#	OLDCFLAGS="$CFLAGS"
+#	OLDLIBS="$LIBS"
 	
-	if test -f /usr/lib/libjpeg-mmx.a ; then
-		AC_MSG_RESULT(found)
-		JPEG_MMX_OK="found"
-		JPEG_MMX="/usr/lib"
-	elif test -f /usr/local/lib/libjpeg-mmx.a ; then
-		AC_MSG_RESULT(found)
-		JPEG_MMX_OK="found"
-		JPEG_MMX="/usr/local/lib"
-	else
-		AC_MSG_RESULT(not found)
-	fi
-else	
-	AC_MSG_CHECKING(for libjpeg-mmx in -> [${JPEG_MMX}] <-)	
-	if test -f ${JPEG_MMX}/libjpeg-mmx.a ; then
-		AC_MSG_RESULT(found)
-		JPEG_MMX_OK="found"
-	else
-		AC_MSG_RESULT(not found)
-	fi
-fi
+#        AC_CHECK_LIB(jpeg-mmx, jpeg_start_compress,
+#                [ LIBS="$OLDLIBS -L${JPEG_MMX} -ljpeg-mmx"
+#                CFLAGS="$OLDCFLAGS $JPEG_MMX_HEADER"
+#                JPEG_SUPPORT="yes"],,)
+#	JPEG_SUPPORT_MMX="yes"
+#fi
 
-if test "${JPEG_MMX_OK}" = "found"; then
-	OLD_CFLAGS="$CFLAGS"
-	OLD_LIBS="$LIBS"
-	CFLAGS="$CFLAGS -I${JPEG_MMX}"
-	LIBS="$LIBS -L${JPEG_MMX}"
-	AC_CHECK_LIB(jpeg-mmx, jpeg_start_compress,
-		[ TEMP_LIBS="$TEMP_LIBS -ljpeg-mmx"
-		TEMP_CFLAGS="${TEMP_CFLAGS} -I${JPEG_MMX}"
-		JPEG_SUPPORT="yes"],,)
-	LIBS="$OLD_LIBS"
-	CFLAGS="$OLD_CFLAGS"
-	JPEG_SUPPORT_MMX="yes"
-fi
 
 dnl
-dnl Look for _a_ jpeg lib that will work.
+dnl check for jpeglib.h and libjpeg
 dnl
-if test x$JPEG_SUPPORT != xyes ; then
-  dnl Checks for libraries
-  AC_CHECK_LIB(jpeg, jpeg_set_defaults, [
-		TEMP_LIBS="$TEMP_LIBS -ljpeg"
-		JPEG_SUPPORT="yes"
-	], [
+#if test x$JPEG_SUPPORT != xyes ; then
+
+	AC_MSG_CHECKING(for jpeglib.h)	
+	if test -f /usr/include/jpeglib.h; then
+		HAVE_JPEG_HEADER="yes"
+		JPEG_HEADER_CFLAGS="-I/usr/include"
+	elif test -f /usr/local/include/jpeglib.h; then
+		HAVE_JPEG_HEADER="yes"
+		JPEG_HEADER_CFLAGS="-I/usr/local/include"
+	fi
+
+	if test x$HAVE_JPEG_HEADER != xyes ; then
+		AC_MSG_RESULT(not found)
 		echo
-		echo You do not have libjpeg installed
-		echo
-	]
-  )
-fi
+		echo	You do not have libjpeg headers installed
+		echo 	
+	else
+		AC_MSG_RESULT(found)
+	
+
+dnl
+dnl check for jpeglib
+dnl
+		AC_MSG_CHECKING(for libjpeg.so)
+		if test -f /usr/lib/libjpeg.so; then
+			HAVE_JPEG="yes"
+			JPEG_LIB="-ljpeg"
+		elif test -f /usr/local/lib/libjpeg.so; then
+			HAVE_JPEG="yes"
+			JPEG_LIB="-L/usr/local/lib -ljpeg"
+		fi
+		
+		if test "${HAVE_JPEG}" = "yes"; then
+			LIBS="$LIBS ${JPEG_LIB}"
+			CFLAGS="$CFLAGS ${JPEG_HEADER_CFLAGS}"
+			JPEG_SUPPORT="yes"
+			AC_MSG_RESULT(found)
+		else
+			AC_MSG_RESULT(not found)
+			echo
+			echo You do not have libjpeg installed
+			echo
+		fi
+	fi
+#fi
+
 
 dnl
 dnl Check for libavcodec and libavformat from ffmpeg
@@ -131,12 +226,10 @@ FFMPEG="yes"
 FFMPEG_OK="no_found"
 FFMPEG_OBJ=""
 AC_ARG_WITH(ffmpeg,
-[  --with-ffmpeg[=DIR]       Specify the prefix for the install path for
-                          libavcodec/libavformat (part of ffmpeg) be able to 
-                          encode mpeg movies realtime.
-                          If this is not specified motion will try to find
-                          the libraries in /usr and /usr/local.
-                          ],
+[  --with-ffmpeg[=DIR]     Specify the prefix for the install path for
+                           libavcodec/libavformat (part of ffmpeg)
+                           If this is not specified motion will try to find to 
+                           be able to encode mpeg movies realtime.],
 FFMPEG="$withval"
 )
 dnl
@@ -151,15 +244,6 @@ dnl
 else if test "${FFMPEG}" = "yes"; then
 	dnl AUTODETECT STATIC/SHARED LIB 
 	AC_MSG_CHECKING(for ffmpeg autodetecting)
-
-# weird hack to fix debian problem TO BE REMOVED
-
-	if test -f /usr/bin/ffmpeg-config; then
-		FFMPEG_LIBS_DEB="`ffmpeg-config --libs avformat`"
-		FFMPEG_DEB="`ffmpeg-config --cflags`"
-		FFMPEG_OK="found"
-	fi	
-	
 	if test -f /usr/lib64/libavcodec.a -o -f /usr/lib64/libavcodec.so && test -f /usr/lib64/libavformat.a -o -f /usr/lib64/libavformat.so ; then
 		AC_MSG_RESULT(found)
 		FFMPEG_OK="found"
@@ -213,13 +297,13 @@ fi
 
 if test "${FFMPEG_OK}" = "found"; then
 	if test -f ${FFMPEG}/include/avformat.h; then
-		TEMP_CFLAGS="-I${FFMPEG}/include ${TEMP_CFLAGS}"
+		CFLAGS="-I${FFMPEG}/include ${CFLAGS}"
 	elif test -f ${FFMPEG}/avformat.h; then
-		TEMP_CFLAGS="-I${FFMPEG} ${TEMP_CFLAGS}"
+		CFLAGS="-I${FFMPEG} ${CFLAGS}"
 	elif test -f `AS_DIRNAME([${FFMPEG}])`/include/avformat.h; then
-		TEMP_CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include ${TEMP_CFLAGS}"
+		CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include ${CFLAGS}"
 	elif test -f `AS_DIRNAME([${FFMPEG}])`/include/ffmpeg/avformat.h; then
-		TEMP_CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include/ffmpeg ${TEMP_CFLAGS}"
+		CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include/ffmpeg ${CFLAGS}"
 	else
 		AC_MSG_RESULT(not found)
 		echo "**********************************************"
@@ -231,30 +315,22 @@ if test "${FFMPEG_OK}" = "found"; then
 		echo "**********************************************"
 		echo ""
 	fi
-
-	
-	if test "${FFMPEG_LIBS_DEB}" != "" ; then
-		TEMP_LIBS="$TEMP_LIBS -L${FFMPEG} ${FFMPEG_LIBS_DEB}"	
-	else
-		TEMP_LIBS="$TEMP_LIBS -L${FFMPEG} -lavformat -lavcodec -lm -lz"
-		TEMP_LDFLAGS="${TEMP_LDFLAGS} -L${FFMPEG}"
-	fi	
-	TEMP_CFLAGS="${TEMP_CFLAGS} -DHAVE_FFMPEG"
+	CFLAGS="${CFLAGS} -DHAVE_FFMPEG"
+	LIBS="$LIBS -L${FFMPEG} -lavformat -lavcodec -lm"
 	FFMPEG_OBJ="ffmpeg.o"
 	AC_SUBST(FFMPEG_OBJ)
+	LDFLAGS="$LDFLAGS -L${FFMPEG}"
 fi	
 fi
-
 
 MYSQL="yes"
 
 AC_MSG_CHECKING(for MySQL)
 AC_ARG_WITH(mysql,
-[  --with-mysql[=DIR]        Normally, configure will scan all possible default
-                          installation paths for mysql. When its fail, use
-                          this command to tell configure where mysql
-                          installation root directory is.
-                          ],
+[  --with-mysql[=DIR]        normally, configure will scan all possible default
+                             installation paths for mysql. When its fail, use
+                             this command to tell configure where mysql
+                             installation root directory is.],
 MYSQL="$withval"
 dnl if not given argument, assume standard
 )
@@ -326,10 +402,10 @@ else
 		AC_MSG_RESULT(no)
 		echo Invalid MySQL directory - unable to find mysql.h.
 	else
-		TEMP_LIBS="$TEMP_LIBS -L$MYSQL_LIBDIR -lmysqlclient"
+		LIBS="$LIBS -L$MYSQL_LIBDIR -lmysqlclient"
 		#Add -lz for some mysql installs....
-		TEMP_LIBS="$TEMP_LIBS -lz"
-		TEMP_CFLAGS="$TEMP_CFLAGS -DHAVE_MYSQL -I $MYSQL_INCDIR"
+		LIBS="$LIBS -lz"
+		CFLAGS="$CFLAGS -DHAVE_MYSQL -I $MYSQL_INCDIR"
 		AC_MSG_RESULT(yes)
 		MYSQL_SUPPORT="yes"
 	fi
@@ -342,9 +418,9 @@ PGSQL="yes"
 AC_MSG_CHECKING(for PostgreSQL)
 AC_ARG_WITH(pgsql,
 [  --with-pgsql[=DIR]        Include PostgreSQL support.  DIR is the PostgreSQL
-                          base install directory. If not specified configure will
-                          search in /usr, /usr/local and /usr/local/pgsql.
-                          ],
+                             base install directory, defaults to /usr/local/pgsql.
+                             Set DIR to "shared" to build as a dl, or "shared,DIR" 
+                             to build as a dl and still specify DIR.],
 PGSQL="$withval"
 dnl if not given argument, assume standard
 )
@@ -367,15 +443,20 @@ if test "${PGSQL}" = "yes"; then
 		PGSQL_LIBDIR=$PGSQL_DIR/lib
 		AC_MSG_RESULT(yes)
 		test -d $PGSQL_DIR/lib/pgsql && PGSQL_LIBDIR=$PGSQL_DIR/lib/pgsql
-		LDFLAGS="$TEMP_LDFLAGS -L$PGSQL_LIBDIR"
+		old_LIBS="$LIBS"
+		old_LDFLAGS="$LDFLAGS"
+		LDFLAGS="$LDFLAGS -L$PGSQL_LIBDIR"
 		AC_CHECK_LIB(pq, PQcmdTuples,AC_DEFINE(HAVE_PQCMDTUPLES,1,[ ]))
 		AC_CHECK_LIB(pq, PQoidValue,AC_DEFINE(HAVE_PQOIDVALUE,1,[ ]))
 		AC_CHECK_LIB(pq, PQclientEncoding,AC_DEFINE(HAVE_PQCLIENTENCODING,1,[ ]))
 		AC_CHECK_LIB(pq, pg_encoding_to_char,AC_DEFINE(HAVE_PGSQL_WITH_MULTIBYTE_SUPPORT,1,[ ]))
-	 	LDFLAGS=""	
+		LIBS="$old_LIBS"
+		LDFLAGS="$old_LDFLAGS"
+
 		AC_DEFINE(HAVE_PGSQL,1,[ ])
-		TEMP_LIBS="$TEMP_LIBS -L$PGSQL_LIBDIR -lpq"
-		TEMP_CFLAGS="$TEMP_CFLAGS -DHAVE_PGSQL $PGSQL_INCLUDE"
+
+		LIBS="$LIBS -L$PGSQL_LIBDIR -lpq"
+		CFLAGS="$CFLAGS -DHAVE_PGSQL $PGSQL_INCLUDE"
 		PostgreSQL_SUPPORT="yes"
 	fi
 fi
@@ -388,48 +469,28 @@ AC_CHECK_HEADERS(stdio.h stdlib.h unistd.h fcntl.h time.h signal.h sys/ioctl.h s
 dnl Check sizes of integer types
 AC_CHECK_SIZEOF(short int)
 if test "$ac_cv_sizeof_short_int" = "4"; then
-	TEMP_CFLAGS="${TEMP_CFLAGS} -DTYPE_32BIT=\"short int\""
+	CFLAGS="${CFLAGS} -DTYPE_32BIT=\"short int\""
 else
 	AC_CHECK_SIZEOF(int)
 	if test "$ac_cv_sizeof_int" = "4"; then
-		TEMP_CFLAGS="${TEMP_CFLAGS} -DTYPE_32BIT=\"int\""
+		CFLAGS="${CFLAGS} -DTYPE_32BIT=\"int\""
 	else
 		AC_CHECK_SIZEOF(long int)
 		if test "$ac_cv_sizeof_long_int" = "4"; then
-			TEMP_CFLAGS="${TEMP_CFLAGS} -DTYPE_32BIT=\"long int\""
+			CFLAGS="${CFLAGS} -DTYPE_32BIT=\"long int\""
 		fi
 	fi
 fi
 
-
-OPTIMIZECPU="yes"
-
-AC_ARG_WITH(optimizecpu,
-[  --without-optimizecpu   Exclude autodetecting platform and cpu type.
-                          This will disable the compilation of gcc
-                          optimizing code by platform and cpu.
-			  ],
-OPTIMIZECPU="$withval"
-)
-
-DEVELOPER_FLAGS="no"
-
-AC_ARG_WITH(developer-flags,
-[  --with-developer-flags  Causes practically all of the possible gcc
-                          warning flags to be set.  This may produce
-                          a large amount of warnings.],
-DEVELOPER_FLAGS="$withval"
-)
-
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 
-if test "${OPTIMIZECPU}" = "yes"; then
+Procfs="/usr/compat/linux/proc/cpuinfo"
 
 dnl Try to autodetect cpu type
 CPU_NAME="unknown"
 CPU_TYPE="unknown"
-if test -e "/proc/cpuinfo" ; then
+if test -e ${Procfs} ; then
 	intel[[30]]="-march=i386"
 	intel[[32]]="-march=i386"
 	intel[[34]]="-march=i386"
@@ -471,13 +532,13 @@ if test -e "/proc/cpuinfo" ; then
 	amd[[67]]="-march=athlon"
 	amd[[68]]="-march=athlon"
 	amd[[155]]="-march=athlon64"
-	CPU_TYPE="known"
-	CPU_FAMILY=`cat /proc/cpuinfo | grep "cpu family" | head -n1`
-	CPU_MODEL=`cat /proc/cpuinfo | grep model[[^\ ]] | head -n1`
-	CPU_NAME=`cat /proc/cpuinfo | grep "model name" | head -n1`
-	CPU_FLAGS=`cat /proc/cpuinfo | grep "flags" | head -n1`
-	CPU_VENDOR=`cat /proc/cpuinfo | grep "vendor_id" | head -n1`
-	CPU_FAMILY=${CPU_FAMILY#*: }
+        CPU_TYPE="known"
+        CPU_FAMILY=`cat /usr/compat/linux/proc/cpuinfo | grep "cpu family" | head -n1`
+        CPU_MODEL=`cat /usr/compat/linux/proc/cpuinfo | grep model[[^\ ]] | head -n1`
+        CPU_NAME=`cat /usr/compat/linux/proc/cpuinfo | grep "model name" | head -n1`
+        CPU_FLAGS=`cat /usr/compat/linux/proc/cpuinfo | grep "flags" | head -n1`
+        CPU_VENDOR=`cat /usr/compat/linux/proc/cpuinfo | grep "vendor_id" | head -n1`
+        CPU_FAMILY=${CPU_FAMILY#*: }
 	CPU_MODEL=${CPU_MODEL#*: }
 	CPU_NAME=${CPU_NAME#*: }
 	CPU_FLAGS=${CPU_FLAGS#*: }
@@ -596,8 +657,6 @@ EOF
 TMP="$?"
 rm -f $TMPO
 rm -f $TMPC
-
-
 if test "x${TMP}" = "x1" ; then
 	CPU_OPTIONS=""
 	echo "No CPU optimizations will be added"
@@ -605,10 +664,7 @@ else
 	echo "CPU optimization: $CPU_OPTIONS"
 fi
 
-else
-	CPU_OPTIONS=""
-fi
-
+CFLAGS="${CFLAGS} $UNAME_DEFS  $CPU_OPTIONS"
 
 AC_MSG_CHECKING(for bswap instruction)
 AC_LINK_IFELSE([
@@ -618,22 +674,25 @@ AC_LINK_IFELSE([
 		__asm("bswap %0" : "=r" (__v) : "0" (__x));])
 	],
 	[
-		TEMP_CFLAGS="${TEMP_CFLAGS} -DHAVE_BSWAP"
+		CFLAGS="${CFLAGS} -DHAVE_BSWAP"
 		AC_MSG_RESULT(yes)
 	],
 	[ 
 		AC_MSG_RESULT(no)
 	])
 
+DEVELOPER_FLAGS="no"
+
+AC_ARG_WITH(developer-flags,
+[  --with-developer-flags  Causes practically all of the possible gcc
+                          warning flags to be set.  This may produce
+                          a large amount of warnings.],
+DEVELOPER_FLAGS="$withval"
+)
 
 if test "${DEVELOPER_FLAGS}" = "yes"; then
-	TEMP_CFLAGS="${TEMP_CFLAGS} -W -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline -Wredundant-decls -Wno-long-long"
+        CFLAGS="${CFLAGS} -ggdb -gdwarf-2 -W -Wshadow -Wpointer-arith -Wcast-align -Wwrite-strings -Waggregate-return -Wstrict-prototypes -Wmissing-prototypes -Wnested-externs -Winline -Wredundant-decls -Wno-long-long"
 fi
-
-CFLAGS="${TEMP_CFLAGS} $UNAME_DEFS  $CPU_OPTIONS"
-
-LIBS="${TEMP_LIBS}"
-LDFLAGS="${TEMP_LDFLAGS}"
 
 dnl
 dnl Add the right exec path for rc scripts
@@ -661,9 +720,6 @@ motion.init-Debian
 motion.init-RH
 motion.spec
 Makefile
-src/Makefile
-plugins/Makefile
-motion_version.h
 )
 
 echo ""
@@ -671,25 +727,31 @@ echo "   ************************"
 echo "   *   Configure status   *"
 echo "   ************************"
 echo ""
-
 if test "${PTHREAD_SUPPORT}" = "yes"; then
 	echo "pthread Support:     Yes"
 else
-	echo "pthread Support:     No" 
+	echo "pthread Support:     No"
+	echo "**********************************************";
+        echo "** Error Fatal YOU MUST HAVE pthread Support *";
+        echo "**********************************************"; 
 fi
 
-if test "${JPEG_SUPPORT_MMX}" = "yes"; then
-	echo "jpeg-mmx Support:    Yes"
-elif test "${JPEG_SUPPORT}" = "yes"; then
-	echo "jpeg Support:        Yes"
+
+if test "${JPEG_SUPPORT}" = "yes"; then
+        echo "jpeg Support:        Yes"
 else
-	echo "jpeg Support:        No"
+        echo "jpeg Support:        No"
+	echo "**********************************************";
+        echo "** Error Fatal YOU MUST HAVE jpeg Support  ***";
+        echo "**********************************************";
+
 fi
 
-if test "${V4L}" = "yes"; then
-	echo "V4L included:        Yes"
+
+if test "${BKTR}" = "yes"; then
+        echo "BKTR included:       Yes"
 else
-	echo "V4L included:        No"
+        echo "BKTR included:       No"
 fi
 
 if test "${FFMPEG_OK}" = "found"; then
@@ -718,4 +780,3 @@ echo "LDFLAGS: $LDFLAGS"
 echo
 echo  "Install prefix:       $prefix"
 echo
-

@@ -23,9 +23,7 @@ This topic consists of the following subtopics:
 </li>
 <li> <a href="#What_features_does_Motion_have">What features does Motion have?</a>
 </li>
-<li> <a href="#FreeBSD">!FreeBSD</a>
-</li>
-<li> <a href="#MacOSX">!MacOSX</a>
+<li> <a href="#Linux_vs_FreeBSD">Linux vs. FreeBSD</a>
 </li>
 <li> <a href="#Documentation">Documentation</a>
 </li>
@@ -215,8 +213,6 @@ This topic consists of the following subtopics:
 </li>
 <li> <a href="#text_double">text_double</a>
 </li>
-<li> <a href="#text_event">text_event</a>
-</li>
 <li> <a href="#text_left">text_left</a>
 </li>
 <li> <a href="#text_right">text_right</a>
@@ -301,23 +297,15 @@ This topic consists of the following subtopics:
 <ul>
 <li> <a href="#Tracking_Feature_with_Logitech_Q">Tracking Feature with Logitech Quickcam Sphere/Orbit</a>
 </li>
-<li> <a href="#track_auto">track_auto</a>
-</li>
 <li> <a href="#track_iomojo_id">track_iomojo_id</a>
 </li>
 <li> <a href="#track_maxx">track_maxx</a>
 </li>
 <li> <a href="#track_motorx">track_motorx</a>
 </li>
-<li> <a href="#track_move_wait">track_move_wait</a>
-</li>
 <li> <a href="#track_port">track_port</a>
 </li>
 <li> <a href="#track_speed">track_speed</a>
-</li>
-<li> <a href="#track_step_angle_x">track_step_angle_x</a>
-</li>
-<li> <a href="#track_step_angle_y">track_step_angle_y</a>
 </li>
 <li> <a href="#track_stepsize">track_stepsize</a>
 </li>
@@ -334,8 +322,6 @@ This topic consists of the following subtopics:
 <li> <a href="#sql_log_snapshot">sql_log_snapshot</a>
 </li>
 <li> <a href="#sql_log_timelapse">sql_log_timelapse</a>
-</li>
-<li> <a href="#sql_query">sql_query</a>
 </li>
 </ul>
 </li>
@@ -401,14 +387,14 @@ The output from motion can be:
 </ul>
 <p />
 <h3><a name="How_do_I_get_Motion_and_what_doe"> </a> How do I get Motion and what does it cost? </h3>
-Motion is an open source type of project. It does not cost anything. Motion is published under the <a href="http://www.gnu.org/licenses/gpl.html" rel="nofollow" target="_top">GNU GENERAL PUBLIC LICENSE</a> (GPL) version 2 or later. It may be a bit difficult to understand all the details of the license text (especially if your first language is not English). It means that you can get the program, install it and use it freely. You do not have to pay anything and you do not have to register anywhere or ask the author or publisher for permission. The GPL gives you both rights and some very reasonable duties when it comes to copying, distribution and modification of the program. So in very general terms you do not have to worry about licensing as a normal hobby user. If you want to use Motion in a commercial product, if you want to distribute either modified or original versions of Motion - for free or for a fee, you should read the license carefully. For more information about free software and the GPL, I encourage you to study the very interesting documents about the subject available the of the Free Software Foundation pages about the <a href="http://www.gnu.org/philosophy/philosophy.html" rel="nofollow" target="_top">Philosophy of the GNU Project</a>.
+Motion is an open source type of project. It does not cost anything. Motion is published under the <a href="http://www.gnu.org/licenses/gpl.html" target="_top">GNU GENERAL PUBLIC LICENSE</a> (GPL) version 2 or later. It may be a bit difficult to understand all the details of the license text (especially if your first language is not English). It means that you can get the program, install it and use it freely. You do not have to pay anything and you do not have to register anywhere or ask the author or publisher for permission. The GPL gives you both rights and some very reasonable duties when it comes to copying, distribution and modification of the program. So in very general terms you do not have to worry about licensing as a normal hobby user. If you want to use Motion in a commercial product, if you want to distribute either modified or original versions of Motion - for free or for a fee, you should read the license carefully. For more information about free software and the GPL, I encourage you to study the very interesting documents about the subject available the of the Free Software Foundation pages about the <a href="http://www.gnu.org/philosophy/philosophy.html" target="_top">Philosophy of the GNU Project</a>.
 <p />
 <h3><a name="Maintenance_and_Support"> </a> Maintenance and Support </h3>
-Both Motion and the Motion Guide are written by people that do all this as a hobby and without asking for any payments or donations. We have a life other than developing Motion and its documentation. This means that bugfixes and updates to this guide are done as our time and families allow it. You are however encouraged to participate and contribute in a very active <a href="http://motion.sourceforge.net/mailinglist.php" rel="nofollow" target="_top">mailing list</a>. It is a list with a very "positive attitude" and with many contributors that propose features, post patches, discuss problems and patiently answer newbie questions with a very positive spirit. Expect 1-10 emails per day.
+Both Motion and the Motion Guide are written by people that do all this as a hobby and without asking for any payments or donations. We have a life other than developing Motion and its documentation. This means that bugfixes and updates to this guide are done as our time and families allow it. You are however encouraged to participate and contribute in a very active <a href="http://motion.sourceforge.net/mailinglist.php" target="_top">mailing list</a>. It is a list with a very "positive attitude" and with many contributors that propose features, post patches, discuss problems and patiently answer newbie questions with a very positive spirit. Expect 1-10 emails per day.
 <p />
-To get motion direct your browser to the <a href="http://motion.sourceforge.net/" rel="nofollow" target="_top">Motion Homepage</a>.
+To get motion direct your browser to the <a href="http://motion.sourceforge.net/" target="_top">Motion Homepage</a>.
 <p />
-Under the <a href="http://motion.sourceforge.net/download/" rel="nofollow" target="_top">download page</a> you will find a series of stable versions and a series of development versions.
+Under the <a href="http://motion.sourceforge.net/download/" target="_top">download page</a> you will find a series of stable versions and a series of development versions.
 <p />
 Motion was originally written by Jeroen Vreeken who still actively participates in the development of Motion and later Folkert van Heusden continued as a lead programmer with Kenneth Lavrsen responsible for Motion Guide, website and releases on Sourceforge.
 <p />
@@ -421,7 +407,10 @@ Versions 3.2.X are the current version. There is at the moment no development br
 <p />
 Since 3.1.13 quite many options have been renamed to make setting up Motion easier. From 3.1.17-18 some unfinished features have been removed. The Berkeley mpeg feature is now removed because the ffmpeg feature is now mature and much better working. At version 3.1.18 a new network camera feature was introduced replacing the old cURL based netcam code and introducing support of mjpeg streaming cameras. However this new code was quite difficult to get stable. During the development of 3.2.2 the network camera code was totally rewritten again learning from our experience and now finally it seems to be stable. 
 <p />
-Since 3.2.3 Debian users can find binary packages on the Motion Sourceforge file download page. You can find Debian versions of Motion in different Debian repositories but they are all out of date and hardly ever get updated.
+Since 3.2.3 Debian users can find binary packages on the Motion Sourceforge file download page.
+Some selected versions and very old and buggy versions can be downloaded from here: <a href="http://packages.debian.org/unstable/graphics/motion" target="_top">http://packages.debian.org/unstable/graphics/motion</a>
+<p />
+Debian releases that supports ffmpeg can be downloaded from <a href="http://sentinel.dk/debian/" target="_top">http://sentinel.dk/debian/</a>
 <p />
 <h3><a name="What_features_does_Motion_have"> </a><a name="What_features_does_Motion_have_"> </a> What features does Motion have? </h3>
 See more description at the <a href="http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome" target="_top">Motion Homepage</a>.
@@ -476,13 +465,8 @@ See more description at the <a href="http://www.lavrsen.dk/twiki/bin/view/Motion
 <p />
 You can find more information and links at the <a href="http://www.lavrsen.dk/twiki/bin/view/Motion/WebHome" target="_top">Motion Homepage</a>.
 <p />
-<h3><a name="FreeBSD"> </a> FreeBSD </h3>
-<p />
-Motion is originally developed for Linux and it is still mainly developed and supported for this platform. From version 3.1.15 an experimental port has been made by Angel Carpintero. Not all features of Motion are supported at this time and it still needs a lot of test time on different hardware. Angel is very interested in feedback. Join the Motion Mailing List and give your feedback there. Patches for bugfixes and for enabling the missing features are very welcome. The rest of this guide is still mainly targeted for Linux users. Follow this topic to <a href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD" target="_top">Install FreeBSD</a>.
-<p />
-<h3><a name="MacOSX"> </a> MacOSX </h3>
-<p />
-From Motion version 3.2.4 it is now also possible to build and install Motion under <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/MacOSX">MacOSX</a>. Feature set it the same as for FreeBSD. See the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/MacOSX">MacOSX</a> topic for specific help how to install Motion and its dependencies on <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/MacOSX">MacOSX</a>. Again this port has been contributed by Angel Carpintero.
+<h3><a name="Linux_vs_FreeBSD"> </a> Linux vs. FreeBSD </h3>
+Motion is originally developed for Linux and it is still mainly developed and supported for this platform. From version 3.1.15 an experimental port has been made by Angel Carpintero. Not all features of Motion are supported at this time and it still needs a lot of test time on different hardware. Angel is very interested in feedback. Join the Motion Mailing List and give your feedback there. Patches for bugfixes and for enabling the missing features are very welcome. The rest of this guide is still mainly targeted for Linux users.
 <p />
 <h3><a name="Documentation"> </a> Documentation </h3>
 You have the following sources of information:
@@ -507,20 +491,20 @@ Motion supports video input from two kinds of sources.
 <p />
 Standard video4linux devices (e.g. /dev/video0). Motion has no drivers for cameras. Installing the camera itself is outside the scope of this document. But here are some nice links.
 <ul>
-<li> <a href="http://www.saillard.org/pwc/" rel="nofollow" target="_top">Driver for USB Philips cameras (and more)</a> This driver is a fork of the old pcw(x) driver which got kicked out of the kernel. (see: <a href="http://www.smcc.demon.nl/webcam/" rel="nofollow" target="_top">http://www.smcc.demon.nl/webcam/</a>). See also the new <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/PWC/WebHome">PWC Documentation Site</a> which is hosted in this wiki.
+<li> <a href="http://www.saillard.org/pwc/" target="_top">Driver for USB Philips cameras (and more)</a> This driver is a fork of the old pcw(x) driver which got kicked out of the kernel. (see: <a href="http://www.smcc.demon.nl/webcam/" target="_top">http://www.smcc.demon.nl/webcam/</a>). See also the new <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/PWC/WebHome">PWC Documentation Site</a> which is hosted in this wiki.
 </li>
-<li> <a href="http://bytesex.org/bttv/index.html" rel="nofollow" target="_top">BTTV Driver</a> (capture cards). Part of many distributions now.
+<li> <a href="http://bytesex.org/bttv/index.html" target="_top">BTTV Driver</a> (capture cards). Part of many distributions now.
 </li>
-<li> <a href="http://alpha.dyndns.org/ov511/" rel="nofollow" target="_top">OV511</a> based USB cameras are supported as standard by newer Kernels.
+<li> <a href="http://alpha.dyndns.org/ov511/" target="_top">OV511</a> based USB cameras are supported as standard by newer Kernels.
 </li>
-<li> <a href="http://spca50x.sourceforge.net/spca50x.php" rel="nofollow" target="_top">kernel driver for USB cameras based on Sunplus spca50</a>
+<li> <a href="http://spca50x.sourceforge.net/spca50x.php" target="_top">kernel driver for USB cameras based on Sunplus spca50</a>
 </li>
-<li> <a href="http://rivatv.sourceforge.net/" rel="nofollow" target="_top">rivatv.sourceforge.net</a> Driver for tv/composite/svideo input with most Nvidia based video cards.
+<li> <a href="http://rivatv.sourceforge.net/" target="_top">rivatv.sourceforge.net</a> Driver for tv/composite/svideo input with most Nvidia based video cards.
 </li>
 </ul>
 Network cameras (which are actually cameras with a built in web server that can be connected directory to your network).
 <ul>
-<li> <a href="http://www.axis.com/" rel="nofollow" target="_top">Axis Communications</a>
+<li> <a href="http://www.axis.com/" target="_top">Axis Communications</a>
 </li>
 </ul>
 <p />
@@ -528,7 +512,7 @@ Network cameras (which are actually cameras with a built in web server that can 
 <h2><a name="Known_Problems"> </a><a name="_Known_Problems_"> </a> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/KnownProblems">Known Problems</a> </h2>
 See also the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FrequentlyAskedQuestions">Frequently Asked Questions</a> and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/BugReports">Bug Reports</a> for known open bugs.
 <p />
-<strong>Kernel 2.6 and pwc.</strong> Note that for kernel 2.6 there is a new release of the Philips WebCam (pwc) drivers 10.0.X. It is recommended to install this. At the time of this being written the 2.6.12+ kernels have a version of pwc built-in but it is a cripled version which can only support very small picture size. You can however download the latest source code of the pwc driver (at this time 10.0.9) and build it without having to rebuild your kernel. But you will need to have either the kernel sources or a special kernel-header package installed to compile it. See <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/PWC/InstallationOfPWC">Installation of PWC</a> page which is also hosted in this wiki.
+<strong>Kernel 2.6 and pwc.</strong> Note that for kernel 2.6 there is a new release of the Philips WebCam (pwc) drivers 10.0.X. It is recommended to install this. At the time of this being written the 2.6.12+ kernels have a version of pwc built-in but it is a cripled version which can only support very small picture size. You can however download the latest source code of the pwc driver (at this time 10.0.7a) and build it without having to rebuild your kernel. But you will need to have either the kernel sources or a special kernel-header package installed to compile it. See <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/PWC/InstallationOfPWC">Installation of PWC</a> page which is also hosted in this wiki.
 <p />
 If you use use a <strong>Logitech Quickcam Orbit or Sphere</strong> using the driver pwc/pwcx and kernel 2.6.X you should replace the file in the Motion sources called pwc-ioctl.h with the one that comes with the your pwc version. Motion is shipped with 3 versions of pwc-ioctl.h-VERSION. Rename the one that fits your major pwc version number best to pwc-ioctl.h (after renaming the current to something else). There has been some small adjustments in the API that requires that you have the right header file.
 <p />
@@ -635,7 +619,7 @@ This is a list of shared libraries used by Motion and the RPM packages that prov
 <p />
 Motion will always need these libraries to be built and work 
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=1&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=1&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=1&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=1&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=1&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=1&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> libm, libresolv, libdl, libpthread, libc, ld-linux, libcrypt, and libnsl </td><td bgcolor="#FFFFFF"> glibc and glibc-devel </td><td bgcolor="#FFFFFF"> libc6 , libc6-dev ,libglib1.2 </td></tr>
 <tr><td class="twikiFirstCol" bgcolor="#F0F0F0"> libjpeg </td><td bgcolor="#F0F0F0"> libjpeg and libjpeg-devel </td><td bgcolor="#F0F0F0"> libjpeg62 and libjpeg62-dev ( optional libjpeg-mmx-dev ) </td></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> libz </td><td bgcolor="#FFFFFF"> zlib and zlib-devel </td><td bgcolor="#FFFFFF"> zlib1g and zlib1g-dev </td></tr>
@@ -646,7 +630,7 @@ For generating mpeg films with <strong>ffmpeg</strong> you need this library:<br
 <em>Motion must be installed with revision 0.4.8 or 0.4.9pre1 of ffmpeg. Motion will also work with later CVS snapshots of ffmpeg but the API of the ffmpeg libraries changes all the time and without warning. If you have problems compiling Motion or with running an RPM of Motion you may try with an older CVS snapshot of ffmpeg. The Motion developers will like to know when ffmpeg changes and breaks Motion so we can fix it. Please file a bug report then with the exact date of the ffmpeg CVS version you have trouble with.</em>
 <p />
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=2&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=2&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=2&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=2&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=2&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=2&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> libavcodec, libavframe </td><td bgcolor="#FFFFFF"> ffmpeg and ffmpeg-devel or install from source </td><td bgcolor="#FFFFFF"> ffmpeg ,libavcodec1,libavcodec1-dev (*) </td></tr>
 </table>
 <p />
@@ -663,13 +647,13 @@ apt-get update ; apt-get -y install ffmpeg libavcodec1 libavcodec1-dev
 <p />
 For logging in <strong>MySQL</strong> you need this library:
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=3&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=3&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=3&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=3&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=3&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=3&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> libmysqlclient </td><td bgcolor="#FFFFFF"> mysql and mysql-devel </td><td bgcolor="#FFFFFF"> libmysqlclient10 and libmysqlclient10-dev </td></tr>
 </table>
 <p />
 For logging in <strong>PostgreSQL</strong> you need this library:
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=4&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=4&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=4&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=4&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Library</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=4&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> RPM Packages</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=4&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Debian Packages</a> </th></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> libpq </td><td bgcolor="#FFFFFF"> postgresql-libs and postgresql-devel </td><td bgcolor="#FFFFFF"> postgresql-dev and libpgsql2 </td></tr>
 </table>
 <p />
@@ -717,7 +701,7 @@ This is walk through of the options.
 <tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> --infodir=DIR </td><td valign="top" bgcolor="#FFFFFF"> info documentation [PREFIX/info] </td><td valign="top" bgcolor="#FFFFFF"> Not used by motion. Ignore it. </td></tr>
 <tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> --mandir=DIR </td><td valign="top" bgcolor="#F0F0F0"> man documentation [PREFIX/man] </td><td valign="top" bgcolor="#F0F0F0"> Editor recommends the default. </td></tr>
 <tr><th width="160" align="left" valign="top" class="twikiFirstCol" bgcolor="#E0E0E8"> <strong>Optional Packages:</strong> </th><th align="left" valign="top" bgcolor="#E0E0E8"> <strong>&nbsp;</strong> </th><th align="left" valign="top" bgcolor="#E0E0E8"> <strong>&nbsp;</strong> </th></tr>
-<tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> --with-ffmpeg=DIR </td><td valign="top" bgcolor="#FFFFFF"> Specify the path for the directory prefix in which the library and headers are installed.<br />If not specified configure will search in /usr/ and /usr/local/ </td><td valign="top" bgcolor="#FFFFFF"> DIR is the directory PREFIX in which the ffmpeg shared libraries and their headers are installed.<br />If you install ffmpeg from sources and use the default directories or if ffmpeg is installed as a binary package (RPM or deb) you do not need to specify the directory prefix. Configure will find the libraries automatically. If you installed ffmpeg from sources and specified a different --prefix when building ffmpeg you must use the same value for the DIR ( --with-ffmpeg=DIR).<br />For more information on FFmpeg see the <a href="http://ffmpeg.sourceforge.net/" rel="nofollow" target="_top">FFmpeg project home page</a>.<br />FFmpeg is a package that enables streamed video mpeg signal from your web camera to a browser.<br />Editor recommends installing ffmpeg from source and in the directory /usr/local/ffmpeg and build ffmpeg with ./configure --enable-shared.<br />This places libraries in /usr/local/lib and headers in /usr/local/include. </td></tr>
+<tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> --with-ffmpeg=DIR </td><td valign="top" bgcolor="#FFFFFF"> Specify the path for the directory prefix in which the library and headers are installed.<br />If not specified configure will search in /usr/ and /usr/local/ </td><td valign="top" bgcolor="#FFFFFF"> DIR is the directory PREFIX in which the ffmpeg shared libraries and their headers are installed.<br />If you install ffmpeg from sources and use the default directories or if ffmpeg is installed as a binary package (RPM or deb) you do not need to specify the directory prefix. Configure will find the libraries automatically. If you installed ffmpeg from sources and specified a different --prefix when building ffmpeg you must use the same value for the DIR ( --with-ffmpeg=DIR).<br />For more information on FFmpeg see the <a href="http://ffmpeg.sourceforge.net/" target="_top">FFmpeg project home page</a>.<br />FFmpeg is a package that enables streamed video mpeg signal from your web camera to a browser.<br />Editor recommends installing ffmpeg from source and in the directory /usr/local/ffmpeg and build ffmpeg with ./configure --enable-shared.<br />This places libraries in /usr/local/lib and headers in /usr/local/include. </td></tr>
 <tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> --without-ffmpeg </td><td valign="top" bgcolor="#F0F0F0"> Do not compile with ffmpeg </td><td valign="top" bgcolor="#F0F0F0"> Use this if you do not want to compile with ffmpeg. If ffmpeg is not installed you do not need to specify that Motion must build without ffmpeg. </td></tr>
 <tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> --with-mysql=DIR </td><td valign="top" bgcolor="#FFFFFF"> normally, configure will scan all possible default installation paths for mysql. When its fail, use this command to tell configure where mysql installation root directory is. </td><td valign="top" bgcolor="#FFFFFF"> DIR is the installation directory of mysql. E.g. /usr/local/mysql<br />Default is that make searches in the normal installation directories of most distributions. </td></tr>
 <tr><td width="160" valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> --without-mysql </td><td valign="top" bgcolor="#F0F0F0"> Do not compile with MySQL support </td><td valign="top" bgcolor="#F0F0F0"> Use this if you do not want to include MySQL support in the package.<br />This can also be useful if you get compilation errors related to MySQL and you actually do not need the feature anyway. </td></tr>
@@ -746,7 +730,7 @@ First time you build motion run <code>./configure</code>, <code>make</code>, <co
 <h3><a name="Make_Install"> </a> Make Install </h3>
 <code>make install</code> simply copies all the nice files that were generated during the compilation/linking that make did.
 <p />
-Makes the directories (if they do not already exist)(path shown are the defaults): /usr/local/bin, usr/local/man/man1, /usr/local/etc, /usr/local/share/doc/motion-3.2.X, and /usr/local/share/doc/examples/motion-3.2.X.
+Makes the directories (if they do not already exist): /usr/local/bin, usr/local/man/man1, /usr/local/etc, /usr/local/doc/motion-3.2.X, /usr/local/doc/motion-3.2.X, and /usr/local/examples/motion-3.2.X.
 <p />
 Copies the following files from the base motion directory (assuming the default PREFIX /usr/local was used when running configure - otherwise adjust to the actuals you chose)
 <ul>
@@ -754,9 +738,9 @@ Copies the following files from the base motion directory (assuming the default 
 </li>
 <li> Manual page "motion.1" to /usr/local/man/man1
 </li>
-<li> Document files "CHANGELOG, COPYING, CREDITS, INSTALL, and README to /usr/local/share/doc/motion-3.2.X
+<li> Document files "CHANGELOG, COPYING, CREDITS, INSTALL, and README to /usr/local/doc/motion-3.2.X
 </li>
-<li> Example configuration files "*.conf" to /usr/local/share/doc/examples/motion-3.2.X
+<li> Example configuration files "*.conf" to /usr/local/examples/motion-3.2.X
 </li>
 <li> Configuration file "motion-dist.conf" to /usr/local/etc
 </li>
@@ -772,7 +756,7 @@ And delete the base installation directory in /usr/local and any link pointing t
 The make command can be run with several options. <code>make</code>, <code>make install</code> and <code>make uninstall</code> has already been described above.
 <p />
 <dl>
-<dt> <strong>make clean</strong> </dt><dd> deletes all the binary files (object files) and the motion binary generated by make. It also deletes temporary files and any jpg files that motion has saved in the motion source directory. It is very important to always run <code>make clean</code> before you run <code>make</code> if you change the configuration (like adding features such as ffmpeg) and rebuild motion.
+<dt> <strong>make clean</strong> </dt><dd> deletes all the binary files (object files) and the motion binary generated by make. It also deletes temporary files and any jpg files that motion has saved in the motion source directory. It is very important to always run <code>make clean</code> before you run <code>make</code> if you change the configuration (like adding features such as XMLRPC or ffmpeg) and rebuild motion.
 </dd>
 </dl>
 <p />
@@ -836,16 +820,6 @@ You should also note these major differences.
 </li>
 <li> New setup mode makes setting all the detection options much easier.
 </li>
-<li> netcam now also supports proxies (3.2.2) and ftp (3.2.4)
-</li>
-<li> text on the pictures can be set to double size (3.2.2)
-</li>
-<li> Tracking with Logitech Sphere/Orbit improved (3.2.4)
-</li>
-<li> SQL database feature is now fully configurable so you can control which fields you have in the database.
-</li>
-<li> Many new conversion specifiers have been added which can be used both in filenames, commands, text, and SQL database features (3.2.2-3.2.4)
-</li>
 </ul>
 <p />
 The table below shows the new options in the left column, and obsolete options in the right column. If the there are options on both sides in a row it means that the options in the left column replaced the options in the right column.
@@ -855,7 +829,7 @@ The table below shows the new options in the left column, and obsolete options i
 <input type="hidden" name="ettablenr" value="1" />
 <input type="hidden" name="etedit" value="on" />
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th width="50%" class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=6&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> New Options</a> </th><th width="50%" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=6&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Obsolete Options</a> </th></tr>
+<tr><th width="50%" class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=6&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> New Options</a> </th><th width="50%" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=6&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Obsolete Options</a> </th></tr>
 <tr><td width="50%" class="twikiFirstCol" bgcolor="#FFFFFF"> text_left (3.1.13)<br />text_right (3.1.13)<br />text_changes (3.1.13) </td><td width="50%" bgcolor="#FFFFFF"> drawtext_user (3.1.13)<br />drawtext_shots (3.1.13)<br />drawtext_changes (3.1.13) </td></tr>
 <tr><td width="50%" class="twikiFirstCol" bgcolor="#F0F0F0"> jpeg_filename (3.1.13)<br />ffmpeg_filename (3.1.13)<br />snapshot_filename (3.1.13)<br />timelapse_filename (3.1.13)<br />predict_filename (3.1.13)<br />(predict_filename removed in 3.1.18)<br /> </td><td width="50%" bgcolor="#F0F0F0"> oldlayout (3.1.13)<br />snapshots_overwrite (3.1.13) </td></tr>
 <tr><td width="50%" class="twikiFirstCol" bgcolor="#FFFFFF"> snapshot_interval (3.1.13) </td><td width="50%" bgcolor="#FFFFFF"> snapshots (3.1.13) </td></tr>
@@ -885,12 +859,8 @@ The table below shows the new options in the left column, and obsolete options i
 <tr><td width="50%" class="twikiFirstCol" bgcolor="#FFFFFF"> netcam_proxy (3.2.2) </td><td width="50%" bgcolor="#FFFFFF"> &nbsp; </td></tr>
 <tr><td width="50%" class="twikiFirstCol" bgcolor="#F0F0F0"> text_double (3.2.2) </td><td width="50%" bgcolor="#F0F0F0"> &nbsp; </td></tr>
 <tr><td width="50%" class="twikiFirstCol" bgcolor="#FFFFFF"> webcam_motion<br />Feature has been heavily improved so it is actually usefull now (3.2.2). </td><td width="50%" bgcolor="#FFFFFF"> &nbsp; </td></tr>
-<tr><td width="50%" class="twikiFirstCol" bgcolor="#F0F0F0"> netcam_url<br />Now also supports fetching single frame jpeg pictures via ftp using ftp:// syntax (3.2.4) </td><td width="50%" bgcolor="#F0F0F0"> &nbsp; </td></tr>
-<tr><td width="50%" class="twikiFirstCol" bgcolor="#FFFFFF"> track_step_angle_x (3.2.4)<br />track_step_angle_y (3.2.4)<br />Add better configuration of auto tracking with a Logitech Sphere/Orbit camera.<br /> </td><td width="50%" bgcolor="#FFFFFF"> &nbsp; </td></tr>
-<tr><td width="50%" class="twikiFirstCol" bgcolor="#F0F0F0"> track_move_wait (3.2.4)<br />track_auto (3.2.4)<br />Adds better configuration of auto tracking feature </td><td width="50%" bgcolor="#F0F0F0"> &nbsp; </td></tr>
-<tr><td width="50%" class="twikiFirstCol" bgcolor="#FFFFFF"> sql_query (3.2.4)<br />Adds full flexibility of defining fields when using the SQL database features. </td><td width="50%" bgcolor="#FFFFFF"> &nbsp; </td></tr>
 </table>
-<input type="hidden" name="etrows"   value="34" />
+<input type="hidden" name="etrows"   value="30" />
 <input type="image" src="http://www.lavrsen.dk/twiki/pub/TWiki/EditTablePlugin/edittable.gif" alt="Edit this table" /></form>
 <p />
 <p />
@@ -961,7 +931,7 @@ Nearly all config options can be unique for a specific camera and placed in a th
 <p />
 If motion is built without specific features such as ffmpeg, mysql etc it will ignore the options that belongs to these features. You do not have to remove them or comment them out.
 <p />
-If you run the http control command <a href="http://host:port/0/config/writeyes" rel="nofollow" target="_top">http://host:port/0/config/writeyes</a>, motion will overwrite motion.conf and all the thread.conf files by autogenerated config files neatly formatted and only with the features included that Motion was built with. If you later re-build Motion with more features or upgrade to a new version, you can use your old config files, run the motion.conf.write command, and you will have new config files with the new options included all set to their default values. This makes upgrading very easy to do.
+If you run the http control command <a href="http://host:port/0/config/writeyes" target="_top">http://host:port/0/config/writeyes</a>, motion will overwrite motion.conf and all the thread.conf files by autogenerated config files neatly formatted and only with the features included that Motion was built with. If you later re-build Motion with more features or upgrade to a new version, you can use your old config files, run the motion.conf.write command, and you will have new config files with the new options included all set to their default values. This makes upgrading very easy to do.
 <p />
 <p />
 <h2><a name="Command_Line_Options"> </a><a name="_Command_Line_Options_"> </a> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/CommandLineOptions">Command Line Options</a> </h2>
@@ -978,12 +948,12 @@ motion [ -hns ] [ -c config file path]
 <input type="hidden" name="ettablenr" value="1" />
 <input type="hidden" name="etedit" value="on" />
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th width="150" align="left" valign="top" class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=7&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Option</a> </th><th width="250" align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=7&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Description</a> </th><th align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=7&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Editors comment</a> </th></tr>
+<tr><th width="150" align="left" valign="top" class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=7&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Option</a> </th><th width="250" align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=7&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Description</a> </th><th align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=7&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Editors comment</a> </th></tr>
 <tr><td width="150" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> -n </td><td width="250" valign="top" bgcolor="#FFFFFF"> Run in non-daemon mode. </td><td valign="top" bgcolor="#FFFFFF"> Instead of running Motion in the background Motion runs in the terminal window writing messages when things happen. If you have problems getting Motion to start or work, run Motion in this mode to get more messages that can help you solve the problem. </td></tr>
 <tr><td width="150" valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> -s </td><td width="250" valign="top" bgcolor="#F0F0F0"> Run in setup mode. </td><td valign="top" bgcolor="#F0F0F0"> Also forces non-daemon mode </td></tr>
 <tr><td width="150" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> -c config file path </td><td width="250" valign="top" bgcolor="#FFFFFF"> Full path and filename of config file. </td><td valign="top" bgcolor="#FFFFFF"> E.g. /home/kurt/motion.conf. Default is /usr/local/etc unless specified differently when building Motion. Many RPMs and debian packages will most likely use /etc or /etc/motion as default </td></tr>
 <tr><td width="150" valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> -h </td><td width="250" valign="top" bgcolor="#F0F0F0"> Show help screen. </td><td valign="top" bgcolor="#F0F0F0"> &nbsp; </td></tr>
-<tr><td width="150" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> -d level </td><td width="250" valign="top" bgcolor="#FFFFFF"> Debugging mode </td><td valign="top" bgcolor="#FFFFFF"> This mode is used for developers to enable debug messages. Normal users will not need to use this mode unless a developer request to get additional information in the attempt to resolve a bug. Mainly the netcam code has debugging features. The level defines how much debugging info you get. A high number displays all debugging. </td></tr>
+<tr><td width="150" valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> -d </td><td width="250" valign="top" bgcolor="#FFFFFF"> Debugging mode </td><td valign="top" bgcolor="#FFFFFF"> This mode is used for developers to enable debug messages. Normal users will not need to use this mode unless a developer request to get additional information in the attempt to resolve a bug. </td></tr>
 </table>
 <input type="hidden" name="etrows"   value="6" />
 <input type="image" src="http://www.lavrsen.dk/twiki/pub/TWiki/EditTablePlugin/edittable.gif" alt="Edit this table" /></form>
@@ -1018,7 +988,7 @@ FFMPEG (libavcodec)
 <p />
 The table below lists all the Motion options in alphabetical order. Click on the option name to see a longer description of each.
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th align="left" valign="top" class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=8&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Option</a> </th><th align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=8&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Range/Values<br />Default</a> </th><th align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=8&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Description</a> </th></tr>
+<tr><th align="left" valign="top" class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=8&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Option</a> </th><th align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=8&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Range/Values<br />Default</a> </th><th align="left" valign="top" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=8&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Description</a> </th></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionAutoBrightness">auto_brightness</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Let motion regulate the brightness of a video device. Only recommended for cameras without auto brightness </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionBrightness">brightness</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: 0 - 255<br />Default: 0 (disabled) </td><td valign="top" bgcolor="#F0F0F0"> The brightness level for the video device. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionContrast">contrast</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0 - 255<br />Default: 0 (disabled) </td><td valign="top" bgcolor="#FFFFFF"> The contrast level for the video device. </td></tr>
@@ -1055,7 +1025,7 @@ The table below lists all the Motion options in alphabetical order. Click on the
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionMysqlHost">mysql_host</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> IP address or domain name for the MySQL server. Use "localhost" if motion and MySQL runs on the same server. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionMysqlPassword">mysql_password</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> The MySQL password. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionMysqlUser">mysql_user</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> The MySQL user name. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionNetcamProxy">netcam_proxy</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> URL to use for a netcam proxy server, if required. The syntax is <a href="http://myproxy:portnumber" rel="nofollow" target="_top">http://myproxy:portnumber</a> </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionNetcamProxy">netcam_proxy</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> URL to use for a netcam proxy server, if required. The syntax is <a href="http://myproxy:portnumber" target="_top">http://myproxy:portnumber</a> </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionNetcamUrl">netcam_url</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> Specify an url to a downloadable jpeg file or raw mjpeg stream to use as input device. Such as an AXIS 2100 network camera. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionNetcamUserpass">netcam_userpass</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> For network cameras protected by username and password, use this option for HTTP 1.1 Basic authentication. The string is specified as <code>username:password</code>. Do not specify this option for no authentication. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionNightCompensate">night_compensate</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> When this option is set the noise threshold will be lowered if the picture is dark. This will improve the sensitivity in dark places. However it might also increase the number of false alarms since most cameras also compensate for this with their AGC which will increase noise. </td></tr>
@@ -1065,9 +1035,9 @@ The table below lists all the Motion options in alphabetical order. Click on the
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnEventEnd">on_event_end</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> Command to be executed when an event ends after a period of no motion. The period of no motion is defined by option gap. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnEventStart">on_event_start</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> Command to be executed when an event starts. An event starts at first motion detected after a period of no motion defined by gap. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">ConversionSpecifiers</a> and spaces as part of the command. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMotionDetected">on_motion_detected</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> Command to be executed when a motion frame is detected. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieEnd">on_movie_end</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> Command to be executed when an ffmpeg movie is closed at the end of an event. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. Use %f for passing filename (with full path) to the command. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieStart">on_movie_start</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> Command to be executed when an mpeg movie is created. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. Use %f for passing filename (with full path) to the command. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnPictureSave">on_picture_save</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> Command to be executed when an image is saved. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. Use %f for passing filename (with full path) to the command. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieEnd">on_movie_end</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> Command to be executed when an ffmpeg movie is closed at the end of an event. The name of the movie will be given as argument. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieStart">on_movie_start</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> Command to be executed when an mpeg movie is created. The name of the movie will be given as argument. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnPictureSave">on_picture_save</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> Command to be executed when an image is saved. The name of the image will be given as argument. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> and spaces as part of the command. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOutputAll">output_all</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> Picture are saved continuously as if motion was detected all the time. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOutputMotion">output_motion</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Output pictures with only the moving object. This feature generates the special motion type movies where you only see the pixels that changes as a graytone image. If labelling is enabled you see the largest area in blue. Smartmask is shown in red. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOutputNormal">output_normal</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off, first, best<br />Default: on </td><td valign="top" bgcolor="#F0F0F0"> Normal image is an image that is stored when motion is detected. It is the same image that was taken by the camera. I.e. not a motion image like defined by output_motion. Default is that normal images are stored. </td></tr>
@@ -1093,27 +1063,21 @@ The table below lists all the Motion options in alphabetical order. Click on the
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlLogMpeg">sql_log_mpeg</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> Log to the database when creating motion triggered mpeg file. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlLogSnapshot">sql_log_snapshot</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: on </td><td valign="top" bgcolor="#FFFFFF"> Log to the database when creating a snapshot image file. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlLogTimelapse">sql_log_timelapse</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> Log to the database when creating timelapse mpeg file </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">sql_query</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: insert into security(camera, filename, frame, file_type, time_stamp, text_event) values('%t', '%f', '%q', '%n', '%Y-%m-%d %T', '%C') </td><td valign="top" bgcolor="#FFFFFF"> SQL query string that is sent to the database. The values for each field are given by using <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">convertion specifiers</a> </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSwitchfilter">switchfilter</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> Turns the switch filter on or off. The filter can distinguish between most switching noise and real motion. With this you can even set roundrobin_skip to 1 without generating much false detection. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTargetDir">target_dir</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined = current working directory </td><td valign="top" bgcolor="#FFFFFF"> Target directory for picture and movie files. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextChanges">text_changes</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> Turns the text showing changed pixels on/off. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextDouble">text_double</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Draw characters at twice normal size on images. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextEvent">text_event</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: %Y%m%d%H%M%S </td><td valign="top" bgcolor="#F0F0F0"> This option defines the value of the speciel event conversion specifier %C. You can use any conversion specifier in this option except %C. Date and time values are from the timestamp of the first image in the current event. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSwitchfilter">switchfilter</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Turns the switch filter on or off. The filter can distinguish between most switching noise and real motion. With this you can even set roundrobin_skip to 1 without generating much false detection. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTargetDir">target_dir</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined = current working directory </td><td valign="top" bgcolor="#F0F0F0"> Target directory for picture and movie files. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextChanges">text_changes</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Turns the text showing changed pixels on/off. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextDouble">text_double</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#F0F0F0"> Draw characters at twice normal size on images. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextLeft">text_left</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> User defined text overlayed on each in the lower left corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # &lt; &gt; &brvbar; , . : - + _ \n and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> (codes starting by a %). </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextRight">text_right</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: %Y-%m-%d\n%T </td><td valign="top" bgcolor="#F0F0F0"> User defined text overlayed on each in the lower right corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # &lt; &gt; &brvbar; , . : - + _ \n and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> (codes starting by a %). Default: %Y-%m-%d\n%T = date in ISO format and time in 24 hour clock </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionThread">thread</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#FFFFFF"> Specifies full path and filename for a thread config file. Each camera needs a thread config file containing the options that are unique to the camera. If you only have <em>one</em> camera you do not need thread config files. If you have two or more cameras you need one thread config file for each camera in addition to motion.conf. This option must be placed in motion.conf and not in a thread config file. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionThreshold">threshold</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: 1 - 2147483647<br />Default: 1500 </td><td valign="top" bgcolor="#F0F0F0"> Threshold for declaring motion. The threshold is the number of changed pixels counted after noise filtering, masking, despeckle, and labelling. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionThresholdTune">threshold_tune</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Activates the automatic tuning of threshold level. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTimelapseFilename">timelapse_filename</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: %v-%Y%m%d-timelapse </td><td valign="top" bgcolor="#F0F0F0"> File path for timelapse mpegs relative to target_dir (ffmpeg only). </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackAuto">track_auto</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: on, off<br />Default: off </td><td valign="top" bgcolor="#FFFFFF"> Enable auto tracking </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackIomojoId">track_iomojo_id</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: 0 - 2147483647<br />Default: 0 </td><td valign="top" bgcolor="#F0F0F0"> Use this option if you have an iomojo smilecam connected to the serial port instead of a general stepper motor controller. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackMaxx">track_maxx</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0 - 2147483647<br />Default: 0 </td><td valign="top" bgcolor="#FFFFFF"> The maximum position for servo x. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackMotorx">track_motorx</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: -1 - 2147483647<br />Default: -1 </td><td valign="top" bgcolor="#F0F0F0"> The motor number that is used for controlling the x-axis. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackMoveWait">track_move_wait</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0 - 2147483647<br />Default: 10 </td><td valign="top" bgcolor="#FFFFFF"> Delay during which tracking is disabled after auto tracking has moved the camera. Delay is defined as number of picture frames. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackIomojoId">track_iomojo_id</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0 - 2147483647<br />Default: 0 </td><td valign="top" bgcolor="#FFFFFF"> Use this option if you have an iomojo smilecam connected to the serial port instead of a general stepper motor controller. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackMaxx">track_maxx</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: 0 - 2147483647<br />Default: 0 </td><td valign="top" bgcolor="#F0F0F0"> The maximum position for servo x. </td></tr>
+<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackMotorx">track_motorx</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: -1 - 2147483647<br />Default: -1 </td><td valign="top" bgcolor="#FFFFFF"> The motor number that is used for controlling the x-axis. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackPort">track_port</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: Not defined </td><td valign="top" bgcolor="#F0F0F0"> This is the device name of the serial port to which the stepper motor interface is connected. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackSpeed">track_speed</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0 - 255<br />Default: 255 </td><td valign="top" bgcolor="#FFFFFF"> Speed to set the motor to. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackStepAngleX">track_step_angle_x</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: 0-90<br />Default: 10 </td><td valign="top" bgcolor="#F0F0F0"> Angle in degrees the camera moves per step on the X-axis with auto tracking. Currently only used with pwc type cameras. </td></tr>
-<tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackStepAngleY">track_step_angle_y</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0-40<br />Default: 10 </td><td valign="top" bgcolor="#FFFFFF"> Angle in degrees the camera moves per step on the Y-axis with auto tracking. Currently only used with pwc type cameras. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackStepsize">track_stepsize</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: 0 - 255<br />Default: 40 </td><td valign="top" bgcolor="#F0F0F0"> Number of steps to make. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#FFFFFF"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackType">track_type</a> </td><td valign="top" bgcolor="#FFFFFF"> Values: 0 (none), 1 (stepper), 2 (iomojo), 3 (pwc), 4 (generic)<br />Default: 0 (None) </td><td valign="top" bgcolor="#FFFFFF"> Type of tracker. </td></tr>
 <tr><td valign="top" class="twikiFirstCol" bgcolor="#F0F0F0"> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTunerdevice">tunerdevice</a> </td><td valign="top" bgcolor="#F0F0F0"> Values: Max 4095 characters<br />Default: /dev/tuner0 </td><td valign="top" bgcolor="#F0F0F0"> The tuner device used for controlling the tuner in a tuner card. This option is only used when Motion is compiled for <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD">FreeBSD</a>. </td></tr>
@@ -1136,7 +1100,7 @@ A signal can be sent from the command line by typing e.g. <code>kill -s SIGHUP p
 Motion responds to the following signals:
 <p />
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=9&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Signal</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=9&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Description</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=9&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Editors comment</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=9&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Signal</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=9&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Description</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=9&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Editors comment</a> </th></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> SIGHUP </td><td bgcolor="#FFFFFF"> The config file will be reread. </td><td bgcolor="#FFFFFF"> This is a very useful signal when you experiment with settings in the config file. </td></tr>
 <tr><td class="twikiFirstCol" bgcolor="#F0F0F0"> SIGTERM </td><td bgcolor="#F0F0F0"> If needed motion will create an mpeg file of the last event and exit </td><td bgcolor="#F0F0F0"> &nbsp; </td></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> SIGUSR1 </td><td bgcolor="#FFFFFF"> Motion will create an mpeg file of the current event. </td><td bgcolor="#FFFFFF"> &nbsp; </td></tr>
@@ -1382,7 +1346,7 @@ Many TV tuner cards have the input channels: TV Tuner = 0, Standard composite vi
 <p />
 Select the norm of the video device. Values: 0 (PAL), 1 (NTSC), 2 (SECAM), 3 (PAL NC no colour). Default: 0 (PAL)
 <p />
-This value is only used for capture cards using the <a href="http://bytesex.org/bttv/index.html" rel="nofollow" target="_top">BTTV driver</a>.
+This value is only used for capture cards using the <a href="http://bytesex.org/bttv/index.html" target="_top">BTTV driver</a>.
 <p />
 <p />
 <p />
@@ -1442,7 +1406,7 @@ The colour saturation level for the video device.
 </li>
 </ul>
 <p />
-The tuner device used for controlling the tuner in a tuner card. This option is only used when Motion is compiled for <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD&CGISESSID=853e2d1c3b69bb74167a0a317937331f">FreeBSD</a>.
+The tuner device used for controlling the tuner in a tuner card. This option is only used when Motion is compiled for <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">FreeBSD</a>.
 <p />
 Make sure to remove or comment out this option when running Motion under Linux.
 <p />
@@ -1456,13 +1420,13 @@ Make sure to remove or comment out this option when running Motion under Linux.
 </li>
 <li> Range / Valid values: Max 4095 characters
 </li>
-<li> Default: /dev/video0 (<a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD&CGISESSID=853e2d1c3b69bb74167a0a317937331f">FreeBSD</a>: /dev/bktr0)
+<li> Default: /dev/video0 (<a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">FreeBSD</a>: /dev/bktr0)
 </li>
 <li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionVideodevice">Option Topic</a>
 </li>
 </ul>
 <p />
-The video device to be used for capturing. Default for Linux is /dev/video0. for <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD&CGISESSID=853e2d1c3b69bb74167a0a317937331f">FreeBSD</a> the default is /dev/bktr0.
+The video device to be used for capturing. Default for Linux is /dev/video0. for <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/FreeBSD&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">FreeBSD</a> the default is /dev/bktr0.
 <p />
 This is the video4linux device name. Ignore this for net cameras.
 <p />
@@ -1522,11 +1486,9 @@ Note that Motion requires that dimensions of camera image must have both height 
 </li>
 <li> Default: Not defined
 </li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionNetcamProxy">Option Topic</a>
-</li>
 </ul>
 <p />
-URL to use for a netcam proxy server, if required. The syntax is <a href="http://myproxy:portnumber" rel="nofollow" target="_top">http://myproxy:portnumber</a>
+URL to use for a netcam proxy server, if required. The syntax is <a href="http://myproxy:portnumber" target="_top">http://myproxy:portnumber</a>
 <p />
 Use this if you need to connect to a network camera through a proxy server. 
 <p />
@@ -1562,8 +1524,6 @@ Also watch out that you do not use a URL that create an HTML page with an embedd
 <p />
 When the netcam_url is defined all the video4linux options are ignored!!
 <p />
-Motion can also fetch jpeg pictures via ftp. You then use the ftp:// syntax instead.
-<p />
 <p />
 <p />
 <p />
@@ -1589,11 +1549,7 @@ To use no authentication simply remove this option from the config file comment 
 <p />
 <a name="RoundRobin"></a>
 <h2><a name="Round_Robin_feature"> </a> Round Robin feature </h2>
-This feature is automatically activated where multiple threads are sharing the same video device (for example /dev/video0). Each thread can then set different input channels to change camera with the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionInput">input</a> option or by tuning the tuner with <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionFrequency">frequency</a> option.
-<p />
-<img src="http://www.lavrsen.dk/twiki/pub/TWiki/TWikiDocGraphics/warning.gif" border="0" alt="ALERT!" width="16" height="16" /> Round Robin is not relevant for Network cameras or standard USB web cameras. The Round Robin feature is used with video capture cards which have multiple inputs per video chip.
-<p />
-<img src="http://www.lavrsen.dk/twiki/pub/TWiki/TWikiDocGraphics/warning.gif" border="0" alt="ALERT!" width="16" height="16" /> Note that round robin is not the ideal way to run multiple cameras. When the capture card changes input it takes a little while before the decoder chip has syncronized to the new camera. You can improve this if you have expensive cameras with a syncronize input. Only one camera can be decoded at a time so if you have 4 cameras connected 3 of the camera threads will need to wait for their turn. The fact that cameras have to take turns and the fact that you have to skip a few frames after each turn dramatically lowers the possible framerate. You can get a high framerate by viewing each camera for a long time. But then you may miss the action on one of the inactive cameras. If you can affort it avoid Round Robin and buy the more expensive type of capture cards that has one decoder chip per input. If you only need 2 or 3 cameras you can also simply put 2 or 3 cheap TV cards in the computer. Linux has no problem working with multiple TV cards.
+This feature is automatically activated where multiple threads are sharing the same video device. Each thread can then set different input channels or frequencies to change camera.
 <p />
 <ul>
 <li> If multiple threads use the same video device, they each can capture roundrobin_frames number of frames before having to share the device with the other threads.
@@ -1669,8 +1625,6 @@ Turns the switch filter on or off. The filter can distinguish between most switc
 <p />
 This is a round robin related feature used when you have a capture card with multiple inputs (controlled by the 'input' option) on the same videodevice.
 <p />
-<img src="http://www.lavrsen.dk/twiki/pub/TWiki/TWikiDocGraphics/warning.gif" border="0" alt="ALERT!" width="16" height="16" /> This feature was seriously broken until Motion 3.2.4
-<p />
 <p />
 <p />
 <p />
@@ -1706,7 +1660,7 @@ After the despeckle feature is done you can let the labeling feature search for 
 The value EedDl is a good starting point. The possible combinations are endless and it requires many experiments to find the best combination. Just remember that the labeling feature only works as intended if it runs after the despeckle feature. Ie. the letter 'l' must be the last letter and only one 'l'.
 <p />
 If you have very few problems with false detections leave this option either blank or at EedD which will remove most of the single pixel noise.
-A very detailed technical explanation of the despeckle part can be found at the webpage of the author of this feature <a href="http://emit.demon.co.uk/motion/" rel="nofollow" target="_top">Ian McConnell's Webcam: Motion Web Page</a>
+A very detailed technical explanation of the despeckle part can be found at the webpage of the author of this feature <a href="http://emit.demon.co.uk/motion/" target="_top">Ian McConnell's Webcam: Motion Web Page</a>
 <p />
 <p />
 <p />
@@ -2274,9 +2228,9 @@ Here is a suggestion how to initially setup Motion.
 </li>
 <li> Start Motion in setup mode
 </li>
-<li> View the webcam stream. Either with Cambozola or with Firefox. <a href="http://localhost:8081/" rel="nofollow" target="_top">http://localhost:8081/</a> Firefox often needs to reload the page before it works. Bug in Firefox. Internet Explorer cannot show the stream unless you make a webpage on your Apache with Cambozola applet.
+<li> View the webcam stream. Either with Cambozola or with Firefox. <a href="http://localhost:8081/" target="_top">http://localhost:8081/</a> Firefox often needs to reload the page before it works. Bug in Firefox. Internet Explorer cannot show the stream unless you make a webpage on your Apache with Cambozola applet.
 </li>
-<li> Open new browser window and connect to the http interface. <a href="http://localhost:8080/" rel="nofollow" target="_top">http://localhost:8080/</a> . You can now control and change almost anything while Motion is running. You cannot resize the image. That was too hard to code. To disable a feature enter a space.
+<li> Open new browser window and connect to the http interface. <a href="http://localhost:8080/" target="_top">http://localhost:8080/</a> . You can now control and change almost anything while Motion is running. You cannot resize the image. That was too hard to code. To disable a feature enter a space.
 </li>
 <li> Start by experimenting with noise level. Do this both during daylight and during darkness. You will be surprised to see how much noise a camera makes during night. Try using the automatic noise feature. It should work for most.
 </li>
@@ -2320,32 +2274,25 @@ Some people on the Motion mailing list have had trouble building the ffmpeg pack
 <p />
 ffmpeg exists as binary packages for most distributions including RPMs and debian packages.
 <p />
-Ffmpeg is a strange project. The developers never release anything. The official releases are totally out of date now. They want you to take your chance and checkout a version from their CVS server and hope you are lucky and getting a version that works. See <a href="http://ffmpeg.sourceforge.net" rel="nofollow" target="_top">ffmpeg project page</a>. Sad that such an important project is being run by a bunch of spoiled kids (oppinion of <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Main/KennethLavrsen">KennethLavrsen</a> and many frustrated OSS project managers).
-<p />
-In order to help people finding a version of ffmpeg that works we have started testing the Motion package with a selection of binaries and a CVS snapshot. The CVS source snapshot of ffmpeg which is certified with Motion is available on the <a href="http://sourceforge.net/project/showfiles.php?group_id=13468&amp;package_id=116390" rel="nofollow" target="_top">Related projects file area on the Motion Sourceforge project</a> 
+You can download and compile from <a href="http://sourceforge.net/project/showfiles.php?group_id=16082" target="_top">sources</a> as well.
 <p />
 Motion works with the following versions of ffmpeg:
 <ul>
-<li> ffmpeg-0.4.8. With this release Motion supports mpeg1, mpeg4 and msmpeg4. Lately newer distributions have problems building this 2003 release of ffmpeg so many of you no longer have this option.
+<li> ffmpeg-0.4.8. With this release Motion supports mpeg1, mpeg4 and msmpeg4.
 </li>
-<li> ffmpeg-0.4.9pre1. Is supported starting from Motion version 3.1.18. With this release Motion supports mpeg4 and msmpeg4 but not mpeg1. The reason is that the ffmpeg team has decided no longer to support non-standard framerates in their mpeg1 encoder library. Also ffmpeg-0.4.9pre1 gives people problems on newer distributions.
+<li> ffmpeg-0.4.9pre1. Is supported starting from Motion version 3.1.18. With this release Motion supports mpeg4 and msmpeg4 but not mpeg1. The reason is that the ffmpeg team has decided no longer to support non-standard framerates in their mpeg1 encoder library.
 </li>
 <li> ffmpeg from CVS. This may work. We cannot continuously monitor and try every time a new source file is checked into ffmpeg. You will have to try.
 </li>
-<li> ffmpeg RPMs. Currently each Motion release is tested with the current Livna ffmpeg rpm package for Fedora. See the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/DownloadFiles">Download Files</a> page for direct links to the version which has been certified with the latest Motion release.
-</li>
-<li> ffmpeg debian binaries. Latest versions from the debian repository for Debian Sarge works fine with Motion.
-</li>
-<li> Certified ffmpeg CVS snapshot for latest Motion release is available from the <a href="http://sourceforge.net/project/showfiles.php?group_id=13468&amp;package_id=116390" rel="nofollow" target="_top">Motion Sourceforge Related Projects file area</a>
+<li> ffmpeg-0.4.9 RPMs with date code 20041110 has been confirmed to work fine with Motion.
 </li>
 </ul>
 <p />
-The timelapse feature always runs mpeg1 with both ffmpeg 0.4.8 and 0.4.9 and newer. Motion simply creates the timelapse film with a standard mpeg1 framerate. <font color="#ff0000"> Note : maximum size for timelapse files is 2GB. </font>
+The timelapse feature always runs mpeg1 with both ffmpeg 0.4.8 and 0.4.9. Motion simply creates the timelapse film with a standard mpeg1 framerate.
 <p />
 In principle Motion can be made to support many other formats. It requires additional coding in Motion. You are welcome to submit <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionPatches">patches</a>. All ffmpeg related code is in the source file ffmpeg.c. It is not trivial to do because the ffmpeg libraries not documented at all. All you have is a couple of code examples.
 <p />
 To build ffpmeg from source follow these steps:
-<p />
 Download the ffmpeg and untar it to /usr/local/ffmpeg. Then it should be a simple matter of entering the ffmpeg directory and run the commands
 <p />
 <pre>
@@ -2376,8 +2323,6 @@ There are various RPMs available from different repositories. Some need addition
 Motion then need to be built by running <code>./configure</code>, <code>make</code> and <code>make install</code>.
 (Note that with earlier versions of motion you had to specify the location of libavcodec. Now configure searches for the shared library in <code>/usr/lib</code> and <code>/usr/local/lib</code> by default.)
 <p />
-Note that if you install ffmpeg from source and already have ffmpeg installed from an RPM, the Motion configure may very well find the binary library from the rpm instead of the sources. Make sure to uninstall any old ffmpeg RPMs before you install ffmpeg from sources. 
-<p />
 <strong>These are the config file options related to ffmpeg.</strong>
 <p />
 <p />
@@ -2397,7 +2342,7 @@ Note that if you install ffmpeg from source and already have ffmpeg installed fr
 <p />
 Bitrate of mpegs produced by ffmpeg. Bitrate is bits per second. Default: 400000 (400kbps). Higher value mans better quality and larger files. Option requires that ffmpeg libraries are installed.
 <p />
-To use this feature you need to install the <a href="http://ffmpeg.sourceforge.net/" rel="nofollow" target="_top">FFmpeg Streaming Multimedia System</a>.
+To use this feature you need to install the <a href="http://ffmpeg.sourceforge.net/" target="_top">FFmpeg Streaming Multimedia System</a>.
 <p />
 Experiment to get the desired quality. The better quality the bigger files. This option is ignored if ffmpeg_variable_bitrate is not 0 (disabled).
 <p />
@@ -2445,7 +2390,7 @@ Use ffmpeg libraries to encode mpeg movies in realtime.
 <p />
 Generates a new film at the beginning of each new event and appends to the film for each motion detected within the same event. The current event ends when the time defined by the 'gap' option has passed with no motion detected. At the next detection of motion a new mpeg film is started.
 <p />
-To use this feature you need to install the <a href="http://ffmpeg.sourceforge.net/" rel="nofollow" target="_top">FFmpeg Streaming Multimedia System</a>
+To use this feature you need to install the <a href="http://ffmpeg.sourceforge.net/" target="_top">FFmpeg Streaming Multimedia System</a>
 <p />
 Must not be included in config file without having ffmpeg installed.
 <p />
@@ -2473,7 +2418,7 @@ The feature gives your viewer the chance to watch the day pass by. It makes a ni
 <p />
 Note that the timelapse format is always mpeg1 independent of ffmpeg_video_codec. This is because mpeg1 allows the timelapse to stop and the file to be reopened and more film appended.
 <p />
-To use this feature you need to install the <a href="http://ffmpeg.sourceforge.net/" rel="nofollow" target="_top">FFmpeg Streaming Multimedia System</a>.
+To use this feature you need to install the <a href="http://ffmpeg.sourceforge.net/" target="_top">FFmpeg Streaming Multimedia System</a>.
 <p />
 (renamed from ffmpeg_timelaps to ffmpeg_timelapse in 3.1.14)
 <p />
@@ -2551,7 +2496,7 @@ This option does not affect the timelapse feature. Timelapse is always recorded 
 <p />
 See also the section <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/AdvancedFilenames">Advanced Filenames</a> where the two additional options <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionFfmpegFilename">ffmpeg_filename</a> and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTimelapseFilename">timelapse_filename</a> are defined.
 <p />
-If you want to use this feature you can read about the <a href="http://ffmpeg.sourceforge.net/" rel="nofollow" target="_top">FFmpeg Streaming Multimedia System</a>
+If you want to use this feature you can read about the <a href="http://ffmpeg.sourceforge.net/" target="_top">FFmpeg Streaming Multimedia System</a>
 <p />
 <p />
 <h2><a name="SnapshotsWebCam_Snapshots_The_Tr"> </a><a name="_SnapshotsWebCam_Snapshots_The_T"> </a> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/SnapshotsWebCam">Snapshots - The Traditional Periodic Web Camera</a> </h2>
@@ -2617,8 +2562,6 @@ You are allowed to put the text in quotation marks. This allows you to use leadi
 <p />
 Below are the options that controls the display of text. The 'locate' option is not a text feature but described here because it is related to information overlayed on the output images.
 <p />
-The <code>text_event</code> feature is special in that it defines the conversion specifier %C which can be used both for text display and for filenames.
-<p />
 <p />
 <p />
 <h3><a name="locate"> </a> locate </h3>
@@ -2683,28 +2626,6 @@ Add Additional Description Below
 <p />
 <p />
 <p />
-<h3><a name="text_event"> </a> text_event </h3>
-<p />
-<ul>
-<li> Type: String
-</li>
-<li> Range / Valid values: Max 4095 characters
-</li>
-<li> Default: %Y%m%d%H%M%S
-</li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextEvent">Option Topic</a>
-</li>
-</ul>
-<p />
-This option defines the value of the speciel event conversion specifier %C. You can use any conversion specifier in this option except %C. Date and time values are from the timestamp of the first image in the current event.
-<p />
-The idea is that %C can be used filenames and text_left/right for creating a unique identifier for each event. 
-<p />
-Option text_event defines the value %C which then can be used in filenames and text_right/text_left. The text_event/%C uses the time stamp for the first image detected in a new event. %C is an empty string when no event is in progress (gap period expired). Pre_captured and minimum_motion_frames images are time stamped before the event happens so %C in text_left/right does not have any effect on those images.
-<p />
-<p />
-<p />
-<p />
 <h3><a name="text_left"> </a> text_left </h3>
 <p />
 <ul>
@@ -2718,7 +2639,7 @@ Option text_event defines the value %C which then can be used in filenames and t
 </li>
 </ul>
 <p />
-User defined text overlayed on each in the lower left corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # &lt; &gt; &brvbar; , . : - + _ \n and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">conversion specifiers</a> (codes starting by a %).
+User defined text overlayed on each in the lower left corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # &lt; &gt; &brvbar; , . : - + _ \n and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">conversion specifiers</a> (codes starting by a %).
 <p />
 text_left is displayed in the lower left corner of the pictures. If the option is not defined no text is displayed at this position.
 <p />
@@ -2744,27 +2665,11 @@ A conversion specifier is a code that starts by % (except newline which is \n). 
 </li>
 </ul>
 <p />
-These are unique to motion 
+Two are unique to motion 
 <ul>
 <li> %v = event
 </li>
 <li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i = width of motion area
-</li>
-<li> %J = height of motion area
-</li>
-<li> %K = X coordinate of motion center
-</li>
-<li> %L = Y coordinate of motion center
-</li>
-<li> %C = value defined by text_event 
 </li>
 </ul>
 <p />
@@ -2789,7 +2694,7 @@ For a full list of conversion specifiers see the section <a class="twikiLink" hr
 </li>
 </ul>
 <p />
-User defined text overlayed on each in the lower right corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # &lt; &gt; &brvbar; , . : - + _ \n and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">conversion specifiers</a> (codes starting by a %). Default: %Y-%m-%d\n%T = date in ISO format and time in 24 hour clock
+User defined text overlayed on each in the lower right corner. Use A-Z, a-z, 0-9, " / ( ) @ ~ # &lt; &gt; &brvbar; , . : - + _ \n and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">conversion specifiers</a> (codes starting by a %). Default: %Y-%m-%d\n%T = date in ISO format and time in 24 hour clock
 <p />
 text_right is displayed in the lower right corner of the pictures. If the option is not defined no text is displayed at this position.
 <p />
@@ -2817,27 +2722,11 @@ A conversion specifier is a code that starts by % (except newline which is \n). 
 </li>
 </ul>
 <p />
-These are unique to motion 
+Two are unique to motion 
 <ul>
 <li> %v = event
 </li>
 <li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i = width of motion area
-</li>
-<li> %J = height of motion area
-</li>
-<li> %K = X coordinate of motion center
-</li>
-<li> %L = Y coordinate of motion center
-</li>
-<li> %C = value defined by text_event 
 </li>
 </ul>
 <p />
@@ -2852,25 +2741,11 @@ For a full list of conversion specifiers see the section <a class="twikiLink" hr
 <h2><a name="Advanced_Filenames"> </a><a name="_Advanced_Filenames_"> </a> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/AdvancedFilenames">Advanced Filenames</a> </h2>
 Motion has a very advanced and flexible automated filenaming feature.
 <p />
-By using <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> (codes that consist of a '%' followed by a letter) you can build up the filenames including sub directories for pictures and movies using any combination of letters, numbers and conversion specifiers which are codes that represents time, date, event number and frame numbers.
+By using <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> you can build up the filenames including sub directories for pictures and movies using any combination of letters, numbers and conversion specifiers which are codes that represents time, date, event number and frame numbers.
 <p />
-The option <code>target_dir</code> is the target directory for all snapshots, motion images and normal images. The default is the current working directory (current working directory of the terminal from which motion was started). You will normally always want to specify this parameter.
+The option <code>target_dir</code> is the target directory for all snapshots, motion images and normal images. The default is the current working directory (current working directory of the terminal from which motion was started). You will normally always want to specify this parameter either as a command line option or in the config file.
 <p />
-Note that the options <code>snapshot_filename</code>, <code>jpeg_filename</code>, <code>ffmpeg_filename</code>, and <code>timelapse_filename</code> all allow specifying directories by using '/' in the filename. These will all be relative to <code>target_dir</code>. This means in principle that you can specify <code>target_dir</code> as '/' and be 100% flexible. It also means that Motion can write files all over your harddisk if you make a mistake. It is recommended to specify the <code>target_dir</code> as deep or detailed as possible for this reason. And note that <code>targer_dir</code> does not allow conversion specifiers.
-<p />
-The conversion specifier %C which is defined by the option <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextEvent">text_event</a> is interesting in connection with filenames because it can be used to create files and directories for each event in a very flexible way.
-<p />
-The convertion specifier %t (thread/camera number) is also very useful. Here is an example of filename definitions in motion.conf:
-<p />
-<pre>
-target_dir /usr/local/webcam
-snapshot_filename cam%t/%v-%Y%m%d%H%M%S-snapshot
-jpeg_filename cam%t/%v-%Y%m%d%H%M%S-%q
-ffmpeg_filename cam%t/%v-%Y%m%d%H%M%S
-timelapse_filename cam%t/%Y%m%d%H-timelapse
-</pre>
-<p />
-The smart thing is that this defines the filename of all your camera threads in motion.conf so you do not need to specify target dir and filenames in the thread config files. In the above example an mpegfile for camera thread 3 will be saved as a filename similar to <code>/usr/local/webcam/cam3/28-20051128130840.avi</code>
+Note that the options <code>snapshot_filename</code>, <code>jpeg_filename</code>, <code>ffmpeg_filename</code>, and <code>timelapse_filename</code> all allow specifying directories. These will all be relative to <code>target_dir</code>. This means in principle that you can specify <code>target_dir</code> as '/' and be 100% flexible. It also means that Motion can write files all over your harddisk if you make a mistake. It is recommended to specify the <code>target_dir</code> as deep or detailed as possible for this reason.
 <p />
 NOTE: Unless you use the <code>minimum_gap</code> option to limit the number of shots to less then one per second - you must use the frame modifier %q as part of the <code>jpeg_filename</code>. Otherwise the pictures saved within the same second will overwrite each other. The %q in <code>jpeg_filename</code> ensures that each jpeg (or ppm) picture saved gets a unique filename.
 <p />
@@ -2908,47 +2783,7 @@ For Motion 3.0 compatible mode (directories based on date and time) choose: %Y/%
 <p />
 File extension .mpg or .avi is automatically added so do not include this.
 <p />
-This option uses <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are:
-<ul>
-<li> %Y = year
-</li>
-<li> %m = month as two digits
-</li>
-<li> %d = date
-</li>
-<li> %H = hour
-</li>
-<li> %M = minute
-</li>
-<li> %S = second
-</li>
-<li> %T = HH:MM:SS
-</li>
-</ul>
-<p />
-These are unique to motion 
-<ul>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i = width of motion area
-</li>
-<li> %J = height of motion area
-</li>
-<li> %K = X coordinate of motion center
-</li>
-<li> %L = Y coordinate of motion center
-</li>
-<li> %C = value defined by text_event 
-</li>
-</ul>
+This option uses conversion specifiers which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are: %Y = year, %m = month as two digits, %d = date, %H = hour, %M = minute, %S = second. Two are unique to motion %v = event, %q = frame number. With a combination of text and conversion specifiers you have full flexibility to define your directory- and filenames. For a full list of conversion specifiers see the section 'Conversion Specifiers for Advanced Filename and Text Feature'.
 <p />
 If you are happy with the directory structures the way they were in earlier versions of motion use %v-%Y%m%d%H%M%S for 'oldlayout on' and %Y/%m/%d/%H%M%S for 'oldlayout off'.
 <p />
@@ -2972,47 +2807,8 @@ File path for motion triggered images (jpeg or ppm) relative to target_dir. Valu
 <p />
 Default value is equivalent to legacy 'oldlayout' option. For Motion 3.0 compatible mode (directories based on date and time) choose: %Y/%m/%d/%H/%M/%S-%q
 <p />
-This option uses <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are:
-<ul>
-<li> %Y = year
-</li>
-<li> %m = month as two digits
-</li>
-<li> %d = date
-</li>
-<li> %H = hour
-</li>
-<li> %M = minute
-</li>
-<li> %S = second
-</li>
-<li> %T = HH:MM:SS
-</li>
-</ul>
-<p />
-These are unique to motion 
-<ul>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i = width of motion area
-</li>
-<li> %J = height of motion area
-</li>
-<li> %K = X coordinate of motion center
-</li>
-<li> %L = Y coordinate of motion center
-</li>
-<li> %C = value defined by text_event 
-</li>
-</ul>
+File extension .jpg or .ppm is automatically added so do not include this
+This option uses conversion specifiers which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are: %Y = year, %m = month as two digits, %d = date, %H = hour, %M = minute, %S = second. Two are unique to motion %v = event, %q = frame number. With a combination of text and conversion specifiers you have full flexibility to define your directory- and filenames. For a full list of conversion specifiers see the section 'Conversion Specifiers for Advanced Filename and Text Feature'.
 <p />
 If you are happy with the directory structures the way they were in earlier versions of motion use %v-%Y%m%d%H%M%S-%q for 'oldlayout on' and %Y/%m/%d/%H/%M/%S-%q for 'oldlayout off'.
 <p />
@@ -3041,47 +2837,7 @@ Default value is equivalent to legacy 'oldlayout' option. For Motion 3.0 compati
 File extension .jpg or .ppm is automatically added so do not include this
 A symbolic link called lastsnap.jpg (or lastsnap.ppm) created in the target_dir will always point to the latest snapshot, unless snapshot_filename is exactly 'lastsnap'
 <p />
-This option uses <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are:
-<ul>
-<li> %Y = year
-</li>
-<li> %m = month as two digits
-</li>
-<li> %d = date
-</li>
-<li> %H = hour
-</li>
-<li> %M = minute
-</li>
-<li> %S = second
-</li>
-<li> %T = HH:MM:SS
-</li>
-</ul>
-<p />
-These are unique to motion 
-<ul>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i = width of motion area
-</li>
-<li> %J = height of motion area
-</li>
-<li> %K = X coordinate of motion center
-</li>
-<li> %L = Y coordinate of motion center
-</li>
-<li> %C = value defined by text_event 
-</li>
-</ul>
+This option uses conversion specifiers which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are: %Y = year, %m = month as two digits, %d = date, %H = hour, %M = minute, %S = second. Two are unique to motion %v = event, %q = frame number. With a combination of text and conversion specifiers you have full flexibility to define your directory- and filenames. For a full list of conversion specifiers see the section <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> for Advanced Filename and Text Feature.
 <p />
 If you are happy with the directory structures the way they were in earlier versions of motion use %v-%Y%m%d%H%M%S-snapshot for 'oldlayout on' and %Y/%m/%d/%H/%M/%S-snapshot for 'oldlayout off'.
 <p />
@@ -3133,70 +2889,30 @@ For Motion 3.0 compatible mode (directories based on date and time) choose: %Y/%
 <p />
 File extension .mpg is automatically added so do not include this.
 <p />
-This option uses <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are:
-<ul>
-<li> %Y = year
-</li>
-<li> %m = month as two digits
-</li>
-<li> %d = date
-</li>
-<li> %H = hour
-</li>
-<li> %M = minute
-</li>
-<li> %S = second
-</li>
-<li> %T = HH:MM:SS
-</li>
-</ul>
-<p />
-These are unique to motion 
-<ul>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i = width of motion area
-</li>
-<li> %J = height of motion area
-</li>
-<li> %K = X coordinate of motion center
-</li>
-<li> %L = Y coordinate of motion center
-</li>
-<li> %C = value defined by text_event 
-</li>
-</ul>
+This option uses conversion specifiers which are codes that start by % and then a letter. The conversion specifiers used has the same function as for the C function strftime (3). The most commonly used are: %Y = year, %m = month as two digits, %d = date, %H = hour, %M = minute, %S = second. Two are unique to motion %v = event, %q = frame number. With a combination of text and conversion specifiers you have full flexibility to define your directory- and filenames. For a full list of conversion specifiers see the section <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers</a> for Advanced Filename and Text Feature.
 <p />
 If you are happy with the directory structures the way they were in earlier versions of motion use %v-%Y%m%d-timelapse for 'oldlayout on' and %Y/%m/%d-timelapse for 'oldlayout off'.
 <p />
 <p />
 <p />
 <p />
+<p />
+<p />
 <h2><a name="ConversionSpecifiers_Conversion"> </a><a name="_ConversionSpecifiers_Conversion"> </a> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">Conversion Specifiers for Advanced Filename and Text Features</a> </h2>
-The table below shows all the supported Conversion Specifiers you can use in the options <code>text_event</code>, <code>text_left</code>, <code>text_right</code>, <code>sql_query</code>, <code>snapshot_filename</code>, <code>jpeg_filename</code>, <code>ffmpeg_filename</code>, <code>timelapse_filename</code>, <code>on_event_start</code>, <code>on_event_end</code>, <code>on_picture_save</code>, <code>on_movie_start</code>, <code>on_movie_end</code>, and <code>on_motion_detected</code>.
+The table below shows all the supported Conversion Specifiers you can use in the options <code>text_left</code>, <code>text_right</code>, <code>snapshot_filename</code>, <code>jpeg_filename</code>, <code>ffmpeg_filename</code>, <code>timelapse_filename</code>, <code>on_event_start</code>, <code>on_event_end</code>, <code>on_picture_save</code>, <code>on_movie_start</code>, <code>on_movie_end</code>, and <code>on_motion_detected</code>.
 <p />
 In <code>text_left</code> and <code>text_right</code> you can additionally use '\n' for new line.
 <p />
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=11&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Conversion Specifier</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=11&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Description</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=11&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Conversion Specifier</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=11&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Description</a> </th></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %a </td><td align="left" bgcolor="#FFFFFF"> The abbreviated weekday name according to the current locale. </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %A </td><td align="left" bgcolor="#F0F0F0"> The full weekday name according to the current locale. </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %b </td><td align="left" bgcolor="#FFFFFF"> The abbreviated month name according to the current locale. </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %B </td><td align="left" bgcolor="#F0F0F0"> The full month name according to the current locale. </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %c </td><td align="left" bgcolor="#FFFFFF"> The preferred date and time representation for the current locale. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %C </td><td align="left" bgcolor="#F0F0F0"> Text defined by the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTextEvent">text_event</a> feature </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %d </td><td align="left" bgcolor="#FFFFFF"> The day of the month as a decimal number (range 01 to 31). </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %D </td><td align="left" bgcolor="#F0F0F0"> Number of pixels detected as Motion. If labelling is enabled the number is the number of pixels in the largest labelled motion area. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %E </td><td align="left" bgcolor="#FFFFFF"> Modifier: use alternative format, see below. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %f </td><td align="left" bgcolor="#F0F0F0"> File name - used in the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnPictureSave">on_picture_save</a>, <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieStart">on_movie_start</a>, <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieEnd">on_movie_end</a>, and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">sql_query</a> features. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %d </td><td align="left" bgcolor="#F0F0F0"> The day of the month as a decimal number (range 01 to 31). </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %D </td><td align="left" bgcolor="#FFFFFF"> Number of pixels detected as Motion. If labelling is enabled the number is the number of pixels in the largest labelled motion area. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %E </td><td align="left" bgcolor="#F0F0F0"> Modifier: use alternative format, see below. </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %F </td><td align="left" bgcolor="#FFFFFF"> Equivalent to %Y-%m-%d (the ISO 8601 date format). </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %H </td><td align="left" bgcolor="#F0F0F0"> The hour as a decimal number using a 24-hour clock (range 00 to 23). </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %i </td><td align="left" bgcolor="#FFFFFF"> Width of the rectangle containing the motion pixels (the rectangle that is shown on the image when <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionLocate">locate</a> is on). </td></tr>
@@ -3209,18 +2925,16 @@ In <code>text_left</code> and <code>text_right</code> you can additionally use '
 <tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %L </td><td align="left" bgcolor="#F0F0F0"> Y coordinate in pixels of the center point of motion. Origin is upper left corner and number is positive moving downwards (I may change this soon). </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %m </td><td align="left" bgcolor="#FFFFFF"> The month as a decimal number (range 01 to 12). </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %M </td><td align="left" bgcolor="#F0F0F0"> The minute as a decimal number (range 00 to 59). </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %n </td><td align="left" bgcolor="#FFFFFF"> Filetype as used in the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnPictureSave">on_picture_save</a>, <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieStart">on_movie_start</a>, <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieEnd">on_movie_end</a>, and <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">sql_query</a> features. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %N </td><td align="left" bgcolor="#F0F0F0"> Noise level. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %o </td><td align="left" bgcolor="#FFFFFF"> Threshold. The number of detected pixels required to trigger motion. When <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionThresholdTune">threshold_tune</a> is 'on' this can be used to show the current tuned value of threshold. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %p </td><td align="left" bgcolor="#F0F0F0"> Either 'AM' or 'PM' according to the given time value, or the corresponding strings for the current locale. Noon is treated as `pm' and midnight as `am'. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %P </td><td align="left" bgcolor="#FFFFFF"> Like %p but in lowercase: `am' or `pm' or a corresponding string for the current locale. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %q </td><td align="left" bgcolor="#F0F0F0"> Picture frame number within current second. For jpeg filenames this should always be included in the filename if you save more then 1 picture per second to ensure unique filenames. It is not needed in filenames for mpegs. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %Q </td><td align="left" bgcolor="#FFFFFF"> Number of detected labels found by the despeckle feature </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %r </td><td align="left" bgcolor="#F0F0F0"> The time in a.m. or p.m. notation. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %R </td><td align="left" bgcolor="#FFFFFF"> The time in 24-hour notation (%H:%M). </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %s </td><td align="left" bgcolor="#F0F0F0"> The number of seconds since the Epoch, i.e., since 1970-01-01 00:00:00 UTC. </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %S </td><td align="left" bgcolor="#FFFFFF"> The second as a decimal number (range 00 to 61). </td></tr>
-<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %t </td><td align="left" bgcolor="#F0F0F0"> Thread number (camera number) </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %N </td><td align="left" bgcolor="#FFFFFF"> Noise level. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %o </td><td align="left" bgcolor="#F0F0F0"> Threshold. The number of detected pixels required to trigger motion. When <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionThresholdTune">threshold_tune</a> is 'on' this can be used to show the current tuned value of threshold. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %p </td><td align="left" bgcolor="#FFFFFF"> Either 'AM' or 'PM' according to the given time value, or the corresponding strings for the current locale. Noon is treated as `pm' and midnight as `am'. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %P </td><td align="left" bgcolor="#F0F0F0"> Like %p but in lowercase: `am' or `pm' or a corresponding string for the current locale. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %q </td><td align="left" bgcolor="#FFFFFF"> Picture frame number within current second. For jpeg filenames this should always be included in the filename if you save more then 1 picture per second to ensure unique filenames. It is not needed in filenames for mpegs. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %Q </td><td align="left" bgcolor="#F0F0F0"> Number of detected labels found by the despeckle feature </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %r </td><td align="left" bgcolor="#FFFFFF"> The time in a.m. or p.m. notation. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %R </td><td align="left" bgcolor="#F0F0F0"> The time in 24-hour notation (%H:%M). </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %s </td><td align="left" bgcolor="#FFFFFF"> The number of seconds since the Epoch, i.e., since 1970-01-01 00:00:00 UTC. </td></tr>
+<tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %S </td><td align="left" bgcolor="#F0F0F0"> The second as a decimal number (range 00 to 61). </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %T </td><td align="left" bgcolor="#FFFFFF"> The time in 24-hour notation (%H:%M:%S). </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#F0F0F0"> %u </td><td align="left" bgcolor="#F0F0F0"> The day of the week as a decimal, range 1 to 7, Monday being 1. See also %w. </td></tr>
 <tr><td align="center" class="twikiFirstCol" bgcolor="#FFFFFF"> %U </td><td align="left" bgcolor="#FFFFFF"> The week number of the current year as a decimal number, range 00 to 53, starting with the first Sunday as the first day of week 01. See also %V and %W. </td></tr>
@@ -3250,7 +2964,7 @@ The <code>webcam_limit</code> option prevents people from loading your Network c
 <p />
 The option <code>webcam_localhost</code> is a security feature. When enabled you can only access the webserver on the same machine as Motion is running on. If you want to present a live webcam on your web site this feature must be disabled.
 <p />
-The webserver generates a stream in "multipart jpeg" format (mjpeg). You cannot watch the stream with most browsers. Only certain versions of Netscape works. Mozilla and Firefox brosers can view the mjpeg stream but you often have to refresh the page once to get the streaming going. Internet Explorer cannot show the mjpeg stream. For public viewing this is not very useful. There exists a java applet called <a href="http://www.charliemouse.com/code/cambozola/" rel="nofollow" target="_top">Cambozola</a> which enabled any Java capable browser to show the stream. To enable the feature to a broad audience you should use this applet or similar.
+The webserver generates a stream in "multipart jpeg" format (mjpeg). You cannot watch the stream with most browsers. Only certain versions of Netscape works. Mozilla and Firefox brosers can view the mjpeg stream but you often have to refresh the page once to get the streaming going. Internet Explorer cannot show the mjpeg stream. For public viewing this is not very useful. There exists a java applet called <a href="http://www.charliemouse.com/code/cambozola/" target="_top">Cambozola</a> which enabled any Java capable browser to show the stream. To enable the feature to a broad audience you should use this applet or similar.
 <p />
 To use the webcam feature with Cambozola is actually very simple.
 <p />
@@ -3404,13 +3118,13 @@ The mjpeg stream consists of a header followed by jpeg frames separated by conte
 <p />
 Motion can be remote controlled via a simple http interface. http is the language a normal web browser talks when it requests a web page. The web server answers back with some simple http headers followed by a webpage coded in HTML.
 <p />
-Most Motion config options can be changed while Motion is running except options related to the size of the captured images and mask files which are loaded only when Motion starts. So only your fantasy sets the limit to what you can change combining cron and the remote control interface for Motion.
+Most Motion config options can be changed while Motion is running except options related to the size of the captured images. So only your fantasy sets the limit to what you can change combining cron and the remote control interface for Motion.
 <p />
 So the most obvious tool to use to remote control Motion is any web browser. All commands are sent using the http GET method which simply means that the information is sent via the URL and maybe a query string. You can use any browser (Firefox, Mozilla, Internet Explorer, Konquerer, Opera etc). You can also use the text based browser lynx to control Motion from a console. It navigates fine through the very simple and minimalistic http control interface of Motion.
 <p />
 The details about how to control Motion via the URL is described in detail in the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionHttpAPI">Motion http API</a> topic.
 <p />
-But it is probably simpler to connect to the control port with a browser, navigate to the function you want, and copy the URL from the browser URL entry line. If your <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionControlPort">control_port</a> is 8080 and you browse from the same machine on which Motion runs simply look up <a href="http://localhost:8080/" rel="nofollow" target="_top">http://localhost:8080/</a> and navigate around. Connecting from a remote machine is done by using a domain name (example <a href="http://mydomain.com:8080/" rel="nofollow" target="_top">http://mydomain.com:8080/</a>) or the IP address of the machine (example <a href="http://192.168.1.4:8080/" rel="nofollow" target="_top">http://192.168.1.4:8080/</a>). The option <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionControlLocalhost">control_localhost</a> must be off to allow connection from a remote machine.
+But it is probably simpler to connect to the control port with a browser, navigate to the function you want, and copy the URL from the browser URL entry line. If your <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionControlPort">control_port</a> is 8080 and you browse from the same machine on which Motion runs simply look up <a href="http://localhost:8080/" target="_top">http://localhost:8080/</a> and navigate around. Connecting from a remote machine is done by using a domain name (example <a href="http://mydomain.com:8080/" target="_top">http://mydomain.com:8080/</a>) or the IP address of the machine (example <a href="http://192.168.1.4:8080/" target="_top">http://192.168.1.4:8080/</a>). The option <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionControlLocalhost">control_localhost</a> must be off to allow connection from a remote machine.
 <p />
 If you want to use a script or cron to automatically change Motion settings while Motion runs you use a program that can fetch a webpage. We simply just throw away the html page that Motion returns. Programs commonly available on Linux machines are wget and lwp-request. Here is an example of how to start and stop motion detection via cron. These two lines are added to /etc/crontab.
 <p />
@@ -3542,7 +3256,7 @@ A redesign of the external commands was due. They were not very easy to understa
 This is how the new script commands look like:
 <p />
 <table border="1" cellspacing="1" cellpadding="0">
-<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=12&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Function</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=12&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Old Option</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=12&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> New Option</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=3&amp;table=12&amp;up=0&CGISESSID=853e2d1c3b69bb74167a0a317937331f#sorted_table" title="Sort by this column"> Argument Appended</a> </th></tr>
+<tr><th class="twikiFirstCol" bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=0&amp;table=12&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Function</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=1&amp;table=12&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Old Option</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=2&amp;table=12&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> New Option</a> </th><th bgcolor="#E0E0E8"><a href="http://www.lavrsen.dk/twiki/bin/view/Motion/MotionGuideOneLargeDocument?skin=text&amp;sortcol=3&amp;table=12&amp;up=0&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0#sorted_table" title="Sort by this column"> Argument Appended</a> </th></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> Start of event (first motion) </td><td bgcolor="#FFFFFF"> execute </td><td bgcolor="#FFFFFF"> on_event_start </td><td bgcolor="#FFFFFF"> None </td></tr>
 <tr><td class="twikiFirstCol" bgcolor="#F0F0F0"> End of event (no motion for gap seconds) </td><td bgcolor="#F0F0F0"> <em>New!</em> </td><td bgcolor="#F0F0F0"> on_event_end </td><td bgcolor="#F0F0F0"> None </td></tr>
 <tr><td class="twikiFirstCol" bgcolor="#FFFFFF"> Picture saved (jpg or ppm) </td><td bgcolor="#FFFFFF"> onsave </td><td bgcolor="#FFFFFF"> on_picture_save </td><td bgcolor="#FFFFFF"> Filename of picture </td></tr>
@@ -3581,7 +3295,7 @@ Mail and sms has been removed because they were not configurable. If you want to
 </li>
 </ul>
 <p />
-Command to be executed when an event ends after a period of no motion. The period of no motion is defined by option gap. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">Conversion Specifiers</a> and spaces as part of the command.
+Command to be executed when an event ends after a period of no motion. The period of no motion is defined by option gap. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">Conversion Specifiers</a> and spaces as part of the command.
 <p />
 Full path name of the program/script.
 <p />
@@ -3605,7 +3319,7 @@ The command is run when an event is over. I.e. the number of seconds defined by 
 </li>
 </ul>
 <p />
-Command to be executed when an event starts. An event starts at first motion detected after a period of no motion defined by gap. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">ConversionSpecifiers</a> and spaces as part of the command.
+Command to be executed when an event starts. An event starts at first motion detected after a period of no motion defined by gap. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">ConversionSpecifiers</a> and spaces as part of the command.
 <p />
 Full path name of the program/script.
 <p />
@@ -3631,7 +3345,7 @@ This option replaces the former options 'mail', 'sms' and 'execute'.
 </li>
 </ul>
 <p />
-Command to be executed when a motion frame is detected. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">Conversion Specifiers</a> and spaces as part of the command.
+Command to be executed when a motion frame is detected. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">Conversion Specifiers</a> and spaces as part of the command.
 <p />
 Do not write "none" if you do not want to execute commands. Simply do not include the option in the file or comment it out by placing a "#" or ";" as the first character on the line before the execute command.
 <p />
@@ -3650,7 +3364,7 @@ Do not write "none" if you do not want to execute commands. Simply do not includ
 </li>
 </ul>
 <p />
-Command to be executed when an ffmpeg movie is closed at the end of an event. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">Conversion Specifiers</a> and spaces as part of the command. Use %f for passing filename (with full path) to the command.
+Command to be executed when an ffmpeg movie is closed at the end of an event. The name of the movie will be given as argument. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">Conversion Specifiers</a> and spaces as part of the command.
 <p />
 Full path name of the program/script.
 <p />
@@ -3659,38 +3373,6 @@ This can be any type of program or script. Remember to set the execution bit in 
 The command is run when an event is over. I.e. the number of seconds defined by the time 'gap' has passed since the last detection of motion and motion closes the mpeg file.
 <p />
 This option was previously called onffmpegclose.
-<p />
-Note that from Motion 3.2.4 the path name of the picture file is no longer appended to the command. Instead you can use the conversion specifier %f to insert the picture filename (full path) anywhere in the command.
-<p />
-Most common <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> 
-<p />
-<ul>
-<li> %Y = year, %m = month, %d = date
-</li>
-<li> %H = hour, %M = minute, %S = second
-</li>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i and %J = width and height of motion area
-</li>
-<li> %K and %L = X and Y coordinates of motion center
-</li>
-<li> %C = value defined by text_event
-</li>
-<li> %f = filename with full path
-</li>
-<li> %n = number indicating filetype 
-</li>
-</ul>
-<p />
 <p />
 <p />
 <p />
@@ -3708,45 +3390,13 @@ Most common <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Moti
 </li>
 </ul>
 <p />
-Command to be executed when an mpeg movie is created. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">Conversion Specifiers</a> and spaces as part of the command. Use %f for passing filename (with full path) to the command.
+Command to be executed when an mpeg movie is created. The name of the movie will be given as argument. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">Conversion Specifiers</a> and spaces as part of the command.
 <p />
 Full path name of the program/script.
 <p />
 This can be any type of program or script. Remember to set the execution bit in the ACL and if it is a script type program such as perl or bash also remember the shebang line (e.g. #!/user/bin/perl) as the first line of the script. When you use ffmpeg the film is generated on the fly and on_movie_start then runs when the new mpeg file is created. Often you will want to use the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionOnMovieEnd">on_movie_end</a> option which runs when the mpeg file is closed and the event is over.
 <p />
 This option was previously called onmpeg.
-<p />
-Note that from Motion 3.2.4 the path name of the picture file is no longer appended to the command. Instead you can use the conversion specifier %f to insert the picture filename (full path) anywhere in the command.
-<p />
-Most common <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> 
-<p />
-<ul>
-<li> %Y = year, %m = month, %d = date
-</li>
-<li> %H = hour, %M = minute, %S = second
-</li>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i and %J = width and height of motion area
-</li>
-<li> %K and %L = X and Y coordinates of motion center
-</li>
-<li> %C = value defined by text_event
-</li>
-<li> %f = filename with full path
-</li>
-<li> %n = number indicating filetype 
-</li>
-</ul>
-<p />
 <p />
 <p />
 <p />
@@ -3764,43 +3414,11 @@ Most common <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Moti
 </li>
 </ul>
 <p />
-Command to be executed when an image is saved. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">Conversion Specifiers</a> and spaces as part of the command. Use %f for passing filename (with full path) to the command.
+Command to be executed when an image is saved. The name of the image will be given as argument. You can use <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=c60e5e83d7b45f01e953869ec85dfed0">Conversion Specifiers</a> and spaces as part of the command.
 <p />
 Full path name of the program/script.
 <p />
-This can be any type of program or script. Remember to set the execution bit in the file access control list (chmod) and if it is a script type program such as perl or bash also remember the shebang line (e.g. #!/usr/bin/perl) as the first line of the script.
-<p />
-Note that from Motion 3.2.4 the path name of the picture file is no longer appended to the command. Instead you can use the conversion specifier %f to insert the picture filename (full path) anywhere in the command.
-<p />
-Most common <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> 
-<p />
-<ul>
-<li> %Y = year, %m = month, %d = date
-</li>
-<li> %H = hour, %M = minute, %S = second
-</li>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i and %J = width and height of motion area
-</li>
-<li> %K and %L = X and Y coordinates of motion center
-</li>
-<li> %C = value defined by text_event
-</li>
-<li> %f = filename with full path
-</li>
-<li> %n = number indicating filetype 
-</li>
-</ul>
-<p />
+This can be any type of program or script. Remember to set the execution bit in the ACL and if it is a script type program such as perl or bash also remember the shebang line (e.g. #!/user/bin/perl) as the first line of the script.
 <p />
 <p />
 <p />
@@ -3897,26 +3515,6 @@ For a detailed description of http remote control see the section <a class="twik
 <strong>List of tracking options</strong>
 <p />
 <p />
-<h3><a name="track_auto"> </a> track_auto </h3>
-<p />
-<ul>
-<li> Type: Boolean
-</li>
-<li> Range / Valid values: on, off
-</li>
-<li> Default: off
-</li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackAuto">Option Topic</a>
-</li>
-</ul>
-<p />
-Enable auto tracking
-<p />
-Requires a tracking camera type supported by Motion.
-<p />
-<p />
-<p />
-<p />
 <h3><a name="track_iomojo_id"> </a> track_iomojo_id </h3>
 <p />
 <ul>
@@ -3977,26 +3575,6 @@ Only used for stepper motor tracking.
 <p />
 <p />
 <p />
-<h3><a name="track_move_wait"> </a> track_move_wait </h3>
-<p />
-<ul>
-<li> Type: Integer
-</li>
-<li> Range / Valid values: 0 - 2147483647
-</li>
-<li> Default: 10
-</li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackMoveWait">Option Topic</a>
-</li>
-</ul>
-<p />
-Delay during which tracking is disabled after auto tracking has moved the camera. Delay is defined as number of picture frames.
-<p />
-The actual delay is depending on the chosen framerate. If you want the camera to move maximum once every 2 seconds and the framerate is 10 then you need to set the track_move_wait value to 2 * 10 = 20.
-<p />
-<p />
-<p />
-<p />
 <h3><a name="track_port"> </a> track_port </h3>
 <p />
 <ul>
@@ -4033,50 +3611,6 @@ Only used for stepper motor tracking.
 Speed to set the motor to.
 <p />
 Only used for stepper motor tracking.
-<p />
-<p />
-<p />
-<p />
-<h3><a name="track_step_angle_x"> </a> track_step_angle_x </h3>
-<p />
-<ul>
-<li> Type: Integer
-</li>
-<li> Range / Valid values: 0-90
-</li>
-<li> Default: 10
-</li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackStepAngleX">Option Topic</a>
-</li>
-</ul>
-<p />
-Angle in degrees the camera moves per step on the X-axis with auto tracking. Currently only used with pwc type cameras.
-<p />
-Requires a tracking camera type pwc.
-<p />
-<p />
-<p />
-<p />
-<h3><a name="track_step_angle_y"> </a> track_step_angle_y </h3>
-<p />
-<ul>
-<li> Type: Integer
-</li>
-<li> Range / Valid values: 0-40
-</li>
-<li> Default: 10
-</li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionTrackStepAngleY">Option Topic</a>
-</li>
-</ul>
-<p />
-Angle in degrees the camera moves per step on the Y-axis with auto tracking. Currently only used with pwc type cameras.
-<p />
-Requires a tracking camera type pwc.
-<p />
-<!--
-Add Additional Description Below 
--->
 <p />
 <p />
 <p />
@@ -4134,7 +3668,7 @@ Value 4 is the generic track type. Currently it has no other function than enabl
 <p />
 <p />
 <h2><a name="Using_Databases"> </a><a name="_Using_Databases_"> </a> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/UsingDatabases">Using Databases</a> </h2>
-Motion can be compiled with both MySQL and PostgreSQL database support. When enabled Motion adds a record to a table in the database as specified by the <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">sql_query</a>. The query contains the fields that are used and the value are given by using <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> for dynamic data like filename, time, number of detected pixels etc. Motion does not place any binary images in the database and it cannot remove old records.
+Motion can be compiled with both MySQL and PostgreSQL database support. When enabled Motion adds a record to a table in the database with fields for filename and time. it also write a field called type. Motion does not place any binary images in the database and it cannot remove old records.
 <p />
 Motion only adds records to the database when files are created. The database contains records of saved files which means to get a record in the database the feature that enables for example motion detection, timelapse, snapshots etc must be enabled. The sql_log options defines which types of files are logged in the database.
 <p />
@@ -4221,61 +3755,12 @@ Configuration option common to MySQL and PostgreSQL. Motion must be built with M
 <p />
 <p />
 <p />
-<p />
-<h3><a name="sql_query"> </a> sql_query </h3>
-<p />
-<ul>
-<li> Type: String
-</li>
-<li> Range / Valid values: Max 4095 characters
-</li>
-<li> Default: insert into security(camera, filename, frame, file_type, time_stamp, text_event) values('%t', '%f', '%q', '%n', '%Y-%m-%d %T', '%C') 
-</li>
-<li> <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">Option Topic</a>
-</li>
-</ul>
-<p />
-SQL query string that is sent to the database. The values for each field are given by using <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers&CGISESSID=853e2d1c3b69bb74167a0a317937331f">convertion specifiers</a>
-<p />
-Most common <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConversionSpecifiers">conversion specifiers</a> 
-<p />
-<ul>
-<li> %Y = year, %m = month, %d = date
-</li>
-<li> %H = hour, %M = minute, %S = second
-</li>
-<li> %v = event
-</li>
-<li> %q = frame number
-</li>
-<li> %t = thread (camera) number
-</li>
-<li> %D = changed pixels
-</li>
-<li> %N = noise level
-</li>
-<li> %i and %J = width and height of motion area
-</li>
-<li> %K and %L = X and Y coordinates of motion center
-</li>
-<li> %C = value defined by text_event
-</li>
-<li> %f = filename with full path
-</li>
-<li> %n = number indicating filetype 
-</li>
-</ul>
-<p />
-<p />
-<p />
 See the "MySQL" section for detailed information about the database itself.
 <p />
 <h2><a name="MySQL"> </a> MySQL </h2>
 You can use the MySQL database to register each file that is stored by motion.
 <p />
-You need to generate a new database with a name of your own choice. You must enter this name in the config file (mysql_db option). The default value for the option <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">sql_query</a> requires that you create a new database in MySQL with a new table called "security" with the following fields:
-<p />
-insert into security(camera, filename, frame, file_type, time_stamp, text_event) values('%t', '%f', '%q', '%n', '%Y-%m-%d %T', '%C')
+You need to generate a new database with a name of your own choice. You must enter this name in the config file (mysql_db option). Select the new database in MySQL and create a new table "security" with the following fields:
 <p />
 <ul>
 <li> camera (int) - camera (thread) number 
@@ -4284,15 +3769,15 @@ insert into security(camera, filename, frame, file_type, time_stamp, text_event)
 </li>
 <li> frame (int) - the number of the picture frame 
 </li>
-<li> file_type (int) - file type as a number - see table below.
+<li> file_type (int) - file type as a number - see table below.. 
+</li>
+<li> text_left (char30) - The text from the text_left option 
 </li>
 <li> time_stamp (timestamp) - timestamp for the picture in native database format 
 </li>
-<li> text_event (timestamp) - The text from the text_event option which by default is compatible with timestamps in SQL.
-</li>
 </ul>
 <p />
-Note from version 3.2.4 the introduction of <a class="twikiLink" href="http://www.lavrsen.dk/twiki/bin/view/Motion/ConfigOptionSqlQuery">sql_query</a> completely redefines the way you setup the SQL feature. It is not 100% flexible and can easily be made compatible with your existing Motion database from earlier versions of Motion.
+Note from version 3.1.15 the fields have changed a lot. The fields 'camera', 'frame', 'time_stamp' and 'text_left' were added in version 3.1.15. 'type' was renamed to 'file_type' and the fields 'second', 'minute', 'hour', 'day', 'month', and 'year' have been removed (replaced by the much smarter 'time_stamp' field which allows much better queries using native SQL time functions).
 <p />
 These are the file type descriptions and the file type numbers stored in the database.
 <p />
@@ -4307,22 +3792,17 @@ These are the file type descriptions and the file type numbers stored in the dat
 <p />
 You can create the table using the following SQL statement.
 <p />
-<code>CREATE TABLE security (camera int, filename char(80) not null, frame int, file_type int, time_stamp timestamp(14), text_event timestamp(14));</code>
-<p />
-If you choose to use text_event for a non-timestamp value you can instead define something like.
-<p />
-<code>CREATE TABLE security (camera int, filename char(80) not null, frame int, file_type int, time_stamp timestamp(14), text_event char(40));</code>
-<p />
+<code>CREATE TABLE security (camera int, filename char(60) not null, frame int, file_type int, text_left char(30), time_stamp timestamp(14));</code>
 <p />
 Remember to update grant table to give access to the mysql username you choose for motion.
 <p />
 It would be too much to go into detail about how to setup and use MySQL. After all this is a guide about Motion. However here are some hints and links.
 <p />
-<a href="http://www.linuxplanet.com/linuxplanet/tutorials/1046/1/" rel="nofollow" target="_top">Setting Up a MySQL Based Website</a> - A beginners guide from Linux Planet.
+<a href="http://www.linuxplanet.com/linuxplanet/tutorials/1046/1/" target="_top">Setting Up a MySQL Based Website</a> - A beginners guide from Linux Planet.
 <p />
-<a href="http://hotwired.lycos.com/webmonkey/99/21/index2a.html" rel="nofollow" target="_top">Webmonkey PHP/!MySQL tutorial</a> - Entertaining and easy to read.
+<a href="http://hotwired.lycos.com/webmonkey/99/21/index2a.html" target="_top">Webmonkey PHP/!MySQL tutorial</a> - Entertaining and easy to read.
 <p />
-The <a href="http://www.phpmyadmin.net/" rel="nofollow" target="_top">phpMyAdmin homepage</a>. The best and simplest tool to use MySQL (editors opinion). Requires Apache/PHP.
+The <a href="http://www.phpmyadmin.net/" target="_top">phpMyAdmin homepage</a>. The best and simplest tool to use MySQL (editors opinion). Requires Apache/PHP.
 <p />
 <strong>The options for MySQL</strong>
 <p />
@@ -4555,7 +4035,7 @@ You may need to set the ownership and permissions (chown and chmod) to be the sa
 <p />
 Now you need to install the video loopback device.
 <p />
-Download the latest <a href="http://motion.sourceforge.net/vloopback/index.html" rel="nofollow" target="_top">video4linux loopback device</a> (version 0.91 at the time of this document - distributed as tar'ed and compressed files). Place the file in a place of your own choice. 
+Download the latest <a href="http://motion.sourceforge.net/vloopback/index.html" target="_top">video4linux loopback device</a> (version 0.91 at the time of this document - distributed as tar'ed and compressed files). Place the file in a place of your own choice. 
 <p />
 Untar and uncompress the file to the place you want the program installed. Editor recommends /usr/local/vloopback.
 <p />
@@ -4629,7 +4109,7 @@ De-activating should be done with this command
 <p />
 The video4linux video loopback input device for motion images. If a particular pipe is to be used then use the device filename of this pipe, if a dash '-' is given motion will use /proc/video/vloopback/vloopbacks to locate a free pipe. Default: not set
 <p />
-Using this you can view the results in real time. E.g. by using the program <a href="http://www.smcc.demon.nl/camstream/" rel="nofollow" target="_top">camstream</a>. The difference between this option and the video-pipe option is that this option shows the motion version of the images instead of the normal images.
+Using this you can view the results in real time. E.g. by using the program <a href="http://www.smcc.demon.nl/camstream/" target="_top">camstream</a>. The difference between this option and the video-pipe option is that this option shows the motion version of the images instead of the normal images.
 <p />
 Disable this option by not having it in the config file (or comment it out with "#" or ";").
 <p />
@@ -4652,7 +4132,7 @@ Disable this option by not having it in the config file (or comment it out with 
 <p />
 The video4linux video loopback input device for normal images. If a particular pipe is to be used then use the device filename of this pipe. If a dash '-' is given motion will use /proc/video/vloopback/vloopbacks to locate a free pipe.
 <p />
-Using this you can view the results in real time. E.g. by using the program <a href="http://www.smcc.demon.nl/camstream/" rel="nofollow" target="_top">camstream</a>.
+Using this you can view the results in real time. E.g. by using the program <a href="http://www.smcc.demon.nl/camstream/" target="_top">camstream</a>.
 <p />
 Disable this option by not having it in the config file (or comment it out with "#" or ";").
 <p />
