@@ -1,23 +1,20 @@
-/*	video_freebsd.h
+/*	bktr_plugin.h
  *
- *	Include file for video_freebsd.c
- *      Copyright 2004 by Angel Carpintero (ack@telefonica.net)
+ *	Include file for bktr_plugin.c
+ *      Copyright 2006 by Angel Carpintero (ack@telefonica.net)
  *      This software is distributed under the GNU public license version 2
  *      See also the file 'COPYING'.
  *
  */
 
-#ifndef _INCLUDE_VIDEO_FREEBSD_H
-#define _INCLUDE_VIDEO_FREEBSD_H
-
-#ifndef WITHOUT_V4L
+#ifndef _INCLUDE_BKTR_PLUGIN_H
+#define _INCLUDE_BKTR_PLUGIN_H
 
 #include <machine/ioctl_meteor.h>
 #include <machine/ioctl_bt848.h>
 
-#endif
 
-/* bktr (video4linux) stuff FIXME more modes not only these */
+/* bktr (BSD video capture interface) stuff FIXME more modes not only these */
 
 /* not used yet FIXME ! only needed for tuner use */
 /*
@@ -68,7 +65,7 @@
 #define CAPTURE_CONTINOUS 1
 
 #define VIDEO_DEVICE "/dev/bktr0"
-#define TUNER_DEVICE "/dev/turner0"
+#define TUNER_DEVICE "/dev/tuner0"
 
 
 struct video_dev {
@@ -93,25 +90,34 @@ struct video_dev {
 	int owner;
 	int frames;
 	
-	/* Device type specific stuff: */
-#ifndef WITHOUT_V4L	
  	int capture_method;	
-	int v4l_fmt;
-	unsigned char *v4l_buffers[2];
-	int v4l_curbuffer;
-	int v4l_maxbuffer;
-	int v4l_bufsize;
-#endif
+	int bktr_fmt;
+	unsigned char *bktr_buffers[2];
+	int bktr_curbuffer;
+	int bktr_maxbuffer;
+	int bktr_bufsize;
 };
 
-/* video functions, video_freebsd.c */
-int vid_start(struct context *);
-int vid_next(struct context *, unsigned char *map);
+typedef struct bktr_config {
+	char    *bktr_videodevice;
+	int     bktr_input;
+	int     bktr_norm;
+	int     bktr_frequency;
+	int     bktr_tuner_number;
+} bktr_config, *bktr_config_ptr;
+
+#define CFG_BKTRPARM(V)  \
+param_name:      #V,  \
+param_voffset:   offsetof(bktr_config, V),
+
+/* video functions, bktr_plugin.c */
+int vid_start(motion_ctxt_ptr);
+int vid_next(motion_ctxt_ptr, unsigned char *map);
 
 #ifndef WITHOUT_V4L
-void vid_init(void);
-void vid_close(void);
-void vid_cleanup(void);
+void vid_init(motion_ctxt_ptr);
+void vid_close(motion_ctxt_ptr);
+void vid_cleanup(motion_ctxt_ptr);
 #endif
 
-#endif /* _INCLUDE_VIDEO_FREEBSD_H */
+#endif /* _INCLUDE_BKTR_PLUGIN_H */

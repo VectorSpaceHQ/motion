@@ -1,7 +1,7 @@
-/*	video_freebsd.c
+/*	bktr_plugin.c	
  *
  *	BSD Video stream functions for motion.
- *	Copyright 2004 by Angel Carpintero (ack@telefonica.net)
+ *	Copyright 2006 by Angel Carpintero (ack@telefonica.net)
  *	This software is distributed under the GNU public license version 2
  *	See also the file 'COPYING'.
  *
@@ -9,14 +9,18 @@
 
 /* Common stuff: */
 #include "motion.h"
-#include "video_freebsd.h"
-#include "conf.h"
+#include "bktr_plugin.h"
+#include "plugins.h"
+
+#include "newconfig.h"
 /* for rotation */
 #include "rotate.h"
 
-#ifndef WITHOUT_V4L
+#define BKTR_PARAM ((bktr_config_ptr)cnt->video_vars->video_params)
 
-/* for the v4l stuff: */
+#include "bktr_params.h"
+
+/* for the bktr stuff: */
 #include <sys/mman.h>
 #include <sys/types.h>
 
@@ -514,7 +518,7 @@ statict int setup_pixelformat( int bktr )
 
 */
 
-static void v4l_picture_controls(struct context *cnt, struct video_dev *viddev)
+static void bktr_picture_controls(struct context *cnt, struct video_dev *viddev)
 {
 	int dev=viddev->fd_bktr;
 
@@ -557,7 +561,7 @@ static void v4l_picture_controls(struct context *cnt, struct video_dev *viddev)
  - set_capture_mode
 
 */
-static unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, int width, int height, unsigned short input, unsigned short norm, unsigned long freq)
+static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, int width, int height, unsigned short input, unsigned short norm, unsigned long freq)
 {
 	int dev_bktr=viddev->fd_bktr;
 	//int dev_tunner=viddev->fd_tuner;
@@ -626,11 +630,11 @@ static unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, i
 	/* That is the buffer size for capture images ,
 	 so is dependent of color space of input format / FIXME */
 
-	viddev->v4l_bufsize = (((width*height*3/2)) * sizeof(unsigned char *));
-	viddev->v4l_fmt = VIDEO_PALETTE_YUV420P;
+	viddev->bktr_bufsize = (((width*height*3/2)) * sizeof(unsigned char *));
+	viddev->bktr_fmt = VIDEO_PALETTE_YUV420P;
 	
 
-	map = mmap((caddr_t)0,viddev->v4l_bufsize,PROT_READ|PROT_WRITE,MAP_SHARED, dev_bktr, (off_t)0);
+	map = mmap((caddr_t)0,viddev->bktr_bufsize,PROT_READ|PROT_WRITE,MAP_SHARED, dev_bktr, (off_t)0);
 
 	if (map == MAP_FAILED){
 		motion_log(LOG_ERR, 1, "mmap failed");
@@ -639,16 +643,16 @@ static unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, i
 
 	/* FIXME double buffer */ 
 	if (0) {
-		viddev->v4l_maxbuffer=2;
-		viddev->v4l_buffers[0]=map;
-		viddev->v4l_buffers[1]=(unsigned char *)map+0; /* 0 is not valid just a test */
-		//viddev->v4l_buffers[1]=map+vid_buf.offsets[1];
+		viddev->bktr_maxbuffer=2;
+		viddev->bktr_buffers[0]=map;
+		viddev->bktr_buffers[1]=(unsigned char *)map+0; /* 0 is not valid just a test */
+		//viddev->bktr_buffers[1]=map+vid_buf.offsets[1];
 	} else {
-		viddev->v4l_buffers[0]=map;
-		viddev->v4l_maxbuffer=1;
+		viddev->bktr_buffers[0]=map;
+		viddev->bktr_maxbuffer=1;
 	}
 
-	viddev->v4l_curbuffer=0;
+	viddev->bktr_curbuffer=0;
 
 	/* Clear the buffer */
 
@@ -665,19 +669,19 @@ static unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, i
         }else viddev->capture_method = CAPTURE_SINGLE;
 
 	/* FIXME*/
-	switch (viddev->v4l_fmt) {
+	switch (viddev->bktr_fmt) {
 		case VIDEO_PALETTE_YUV420P:
-			viddev->v4l_bufsize=(width*height*3)/2;
+			viddev->bktr_bufsize=(width*height*3)/2;
 			motion_log(-1, 0, "VIDEO_PALETTE_YUV420P palette setting bufsize");
 			break;
 		case VIDEO_PALETTE_YUV422:
-			viddev->v4l_bufsize=(width*height*2);
+			viddev->bktr_bufsize=(width*height*2);
 			break;
 		case VIDEO_PALETTE_RGB24:
-			viddev->v4l_bufsize=(width*height*3);
+			viddev->bktr_bufsize=(width*height*3);
 			break;
 		case VIDEO_PALETTE_GREY:
-			viddev->v4l_bufsize=width*height;
+			viddev->bktr_bufsize=width*height;
 			break;
 	}
 	
@@ -693,7 +697,7 @@ static unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, i
 
 
 /**
- * v4l_next fetches a video frame from a v4l device
+ * bktr_next fetches a video frame from a bktr device
  * Parameters:
  *     viddev     Pointer to struct containing video device handle
  *     map        Pointer to the buffer in which the function puts the new image
@@ -705,7 +709,7 @@ static unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, i
  *    -1          Fatal error
  *     1          Non fatal error (not implemented)
  */
-static int v4l_next(struct video_dev *viddev,unsigned char *map, int width, int height)
+static int bktr_next(struct video_dev *viddev,unsigned char *map, int width, int height)
 {
 	int dev_bktr=viddev->fd_bktr;
 	unsigned char *cap_map=NULL;
@@ -725,11 +729,11 @@ static int v4l_next(struct video_dev *viddev,unsigned char *map, int width, int 
 	sigaddset (&set, SIGTERM);
 	sigaddset (&set, SIGHUP);
 	pthread_sigmask (SIG_BLOCK, &set, &old);
-	cap_map=viddev->v4l_buffers[viddev->v4l_curbuffer];
+	cap_map=viddev->bktr_buffers[viddev->bktr_curbuffer];
 
-	viddev->v4l_curbuffer++;
-	if (viddev->v4l_curbuffer >= viddev->v4l_maxbuffer)
-		viddev->v4l_curbuffer=0;
+	viddev->bktr_curbuffer++;
+	if (viddev->bktr_curbuffer >= viddev->bktr_maxbuffer)
+		viddev->bktr_curbuffer=0;
 
 	/* capture */
 
@@ -752,7 +756,7 @@ static int v4l_next(struct video_dev *viddev,unsigned char *map, int width, int 
 	pthread_sigmask (SIG_UNBLOCK, &old, NULL);
 	
 
-	switch (viddev->v4l_fmt){
+	switch (viddev->bktr_fmt){
 		case VIDEO_PALETTE_RGB24:
 			rgb24toyuv420p(map, cap_map, width, height);
 			break;
@@ -760,7 +764,7 @@ static int v4l_next(struct video_dev *viddev,unsigned char *map, int width, int 
 			yuv422to420p(map, cap_map, width, height);
 			break;
 		default:
-			memcpy(map, cap_map, viddev->v4l_bufsize);
+			memcpy(map, cap_map, viddev->bktr_bufsize);
 	}
 
 	
@@ -770,14 +774,14 @@ static int v4l_next(struct video_dev *viddev,unsigned char *map, int width, int 
 
 /* set input & freq if needed FIXME not allowed use Tuner yet */
 
-static void v4l_set_input(struct context *cnt, struct video_dev *viddev, unsigned char *map, int width, int height,
+static void bktr_set_input(struct context *cnt, struct video_dev *viddev, unsigned char *map, int width, int height,
                     unsigned short input, unsigned short norm, int skip, unsigned long freq)
 {
 	int i;
 	unsigned long frequnits = freq;
 
 	if (input != viddev->input || width != viddev->width || height!=viddev->height || freq!=viddev->freq){ 
-		motion_log(LOG_WARNING, 0, "v4l_set_input really needed ?");
+		motion_log(LOG_WARNING, 0, "bktr_set_input really needed ?");
 
 		if (set_input(viddev, input) == -1)
 			return;
@@ -801,7 +805,7 @@ static void v4l_set_input(struct context *cnt, struct video_dev *viddev, unsigne
 		if (set_geometry(viddev, width, height) == -1)
 			return;
 	
-		v4l_picture_controls(cnt, viddev);
+		bktr_picture_controls(cnt, viddev);
 		
 		viddev->input=input;
 		viddev->width=width;
@@ -811,10 +815,10 @@ static void v4l_set_input(struct context *cnt, struct video_dev *viddev, unsigne
 
 		/* skip a few frames if needed */
 		for (i=0; i<skip; i++)
-			v4l_next(viddev, map, width, height);
+			bktr_next(viddev, map, width, height);
 	}else{
 		/* No round robin - we only adjust picture controls */
-		v4l_picture_controls(cnt, viddev);
+		bktr_picture_controls(cnt, viddev);
 	}
 }
 
@@ -865,8 +869,8 @@ void vid_cleanup(void)
 	int i=-1;
 	if (viddevs){ 
 		while(viddevs[++i]){
-			munmap(viddevs[i]->v4l_buffers[0],viddevs[i]->v4l_bufsize);
-			viddevs[i]->v4l_buffers[0] = MAP_FAILED;
+			munmap(viddevs[i]->bktr_buffers[0],viddevs[i]->bktr_bufsize);
+			viddevs[i]->bktr_buffers[0] = MAP_FAILED;
 			free(viddevs[i]);
 		}
 		free(viddevs);
@@ -874,161 +878,149 @@ void vid_cleanup(void)
 	}
 }
 
-#endif /*WITHOUT_V4L*/
-
 
 int vid_start(struct context *cnt)
 {
 	struct config *conf=&cnt->conf;
 	int fd_bktr=-1,fd_tuner=-1;
-	
-	if (conf->netcam_url)
-		return netcam_start(cnt);
+	int i=-1;
+	int width, height;
+	unsigned short input, norm;
+	unsigned long frequency;
 
-#ifndef WITHOUT_V4L
-	{
-		int i=-1;
-		int width, height;
-		unsigned short input, norm;
-		unsigned long frequency;
+	/* We use width and height from conf in this function. They will be assigned
+	 * to width and height in imgs here, and cap_width and cap_height in 
+	 * rotate_data won't be set until in rotate_init.
+	 * Motion requires that width and height are multiples of 16 so we check for this
+	 */
+	if (conf->width % 16) {
+		motion_log(LOG_ERR, 0,
+		           "config image width (%d) is not modulo 16",
+		           conf->width);
+		return -1;
+	}
+	if (conf->height % 16) {
+		motion_log(LOG_ERR, 0,
+		           "config image height (%d) is not modulo 16",
+		           conf->height);
+		return -1;
+	}
+	width = conf->width;
+	height = conf->height;
+	input = conf->input;
+	norm = conf->norm;
+	frequency = conf->frequency;
 
-		/* We use width and height from conf in this function. They will be assigned
-		 * to width and height in imgs here, and cap_width and cap_height in 
-		 * rotate_data won't be set until in rotate_init.
-		 * Motion requires that width and height are multiples of 16 so we check for this
-		 */
-		if (conf->width % 16) {
-			motion_log(LOG_ERR, 0,
-			           "config image width (%d) is not modulo 16",
-			           conf->width);
-			return -1;
-		}
-		if (conf->height % 16) {
-			motion_log(LOG_ERR, 0,
-			           "config image height (%d) is not modulo 16",
-			           conf->height);
-			return -1;
-		}
-		width = conf->width;
-		height = conf->height;
-		input = conf->input;
-		norm = conf->norm;
-		frequency = conf->frequency;
+	pthread_mutex_lock(&vid_mutex);
 
-		pthread_mutex_lock(&vid_mutex);
+	/* Transfer width and height from conf to imgs. The imgs values are the ones
+	 * that is used internally in Motion. That way, setting width and height via
+	 * http remote control won't screw things up.
+	 */
+	cnt->imgs.width=width;
+	cnt->imgs.height=height;
 
-		/* Transfer width and height from conf to imgs. The imgs values are the ones
-		 * that is used internally in Motion. That way, setting width and height via
-		 * http remote control won't screw things up.
-		 */
-		cnt->imgs.width=width;
-		cnt->imgs.height=height;
-
-		/* First we walk through the already discovered video devices to see
-		 * if we have already setup the same device before. If this is the case
-		 * the device is a Round Robin device and we set the basic settings
-		 * and return the file descriptor
-		 */
-		while (viddevs[++i]) { 
-			if (!strcmp(conf->video_device, viddevs[i]->video_device)) {
-				int fd;
-				cnt->imgs.type=viddevs[i]->v4l_fmt;
-				motion_log(-1, 0, "vid_start cnt->imgs.type [%i]", cnt->imgs.type);
-				switch (cnt->imgs.type) {
-					case VIDEO_PALETTE_GREY:
-						cnt->imgs.motionsize=width*height;
-						cnt->imgs.size=width*height;
-					break;
-					case VIDEO_PALETTE_RGB24:
-					case VIDEO_PALETTE_YUV422:
-						cnt->imgs.type=VIDEO_PALETTE_YUV420P;
-					case VIDEO_PALETTE_YUV420P:
-						motion_log(-1, 0,
-						           " VIDEO_PALETTE_YUV420P setting imgs.size and imgs.motionsize");
-						cnt->imgs.motionsize=width*height;
-						cnt->imgs.size=(width*height*3)/2;
-					break;
-				}
-				fd=viddevs[i]->fd_bktr; // FIXME return fd_tuner ?!
-				pthread_mutex_unlock(&vid_mutex);
-				return fd;
+	/* First we walk through the already discovered video devices to see
+	 * if we have already setup the same device before. If this is the case
+	 * the device is a Round Robin device and we set the basic settings
+	 * and return the file descriptor
+	 */
+	while (viddevs[++i]) { 
+		if (!strcmp(conf->video_device, viddevs[i]->video_device)) {
+			int fd;
+			cnt->imgs.type=viddevs[i]->bktr_fmt;
+			motion_log(-1, 0, "vid_start cnt->imgs.type [%i]", cnt->imgs.type);
+			switch (cnt->imgs.type) {
+				case VIDEO_PALETTE_GREY:
+					cnt->imgs.motionsize=width*height;
+					cnt->imgs.size=width*height;
+				break;
+				case VIDEO_PALETTE_RGB24:
+				case VIDEO_PALETTE_YUV422:
+					cnt->imgs.type=VIDEO_PALETTE_YUV420P;
+				case VIDEO_PALETTE_YUV420P:
+					motion_log(-1, 0,
+					           " VIDEO_PALETTE_YUV420P setting imgs.size and imgs.motionsize");
+					cnt->imgs.motionsize=width*height;
+					cnt->imgs.size=(width*height*3)/2;
+				break;
 			}
+			fd=viddevs[i]->fd_bktr; // FIXME return fd_tuner ?!
+			pthread_mutex_unlock(&vid_mutex);
+				return fd;
 		}
+	}
 
-		viddevs=myrealloc(viddevs, sizeof(struct video_dev *)*(i+2), "vid_start");
-		viddevs[i]=mymalloc(sizeof(struct video_dev));
-		viddevs[i+1]=NULL;
+	viddevs=myrealloc(viddevs, sizeof(struct video_dev *)*(i+2), "vid_start");
+	viddevs[i]=mymalloc(sizeof(struct video_dev));
+	viddevs[i+1]=NULL;
+	pthread_mutexattr_init(&viddevs[i]->attr);
+	pthread_mutex_init(&viddevs[i]->mutex, NULL);
+	fd_bktr=open(conf->video_device, O_RDWR);
+	if (fd_bktr <0) { 
+		motion_log(LOG_ERR, 1, "open video device %s",conf->video_device);
+		motion_log(LOG_ERR, 0, "Motion Exits.");
+		exit(1);
+	}
 
-		pthread_mutexattr_init(&viddevs[i]->attr);
-		pthread_mutex_init(&viddevs[i]->mutex, NULL);
-
-		fd_bktr=open(conf->video_device, O_RDWR);
-		if (fd_bktr <0) { 
-			motion_log(LOG_ERR, 1, "open video device %s",conf->video_device);
+	/* Only open tuner if freq and input is 1 that means that tunner has been selected as source FIXME ?! */
+	if (( frequency ) && ( input = IN_TV )) {
+		fd_tuner=open(conf->tuner_device, O_RDWR);
+		if (fd_tuner <0) { 
+			motion_log(LOG_ERR, 1, "open tuner device %s",conf->tuner_device);
 			motion_log(LOG_ERR, 0, "Motion Exits.");
 			exit(1);
 		}
-
-		/* Only open tuner if freq and input is 1 that means that tunner has been selected as source FIXME ?! */
-		if (( frequency ) && ( input = IN_TV )) {
-			fd_tuner=open(conf->tuner_device, O_RDWR);
-			if (fd_tuner <0) { 
-				motion_log(LOG_ERR, 1, "open tuner device %s",conf->tuner_device);
-				motion_log(LOG_ERR, 0, "Motion Exits.");
-				exit(1);
-			}
-		}
-
-		viddevs[i]->video_device=conf->video_device;
-		viddevs[i]->tuner_device=conf->tuner_device;
-		viddevs[i]->fd_bktr=fd_bktr;
-		viddevs[i]->fd_tuner=fd_tuner;
-		viddevs[i]->input=input;
-		viddevs[i]->height=height;
-		viddevs[i]->width=width;
-		viddevs[i]->freq=frequency;
-		viddevs[i]->owner=-1;
-
-		/* We set brightness, contrast, saturation and hue = 0 so that they only get
-                 * set if the config is not zero.
-                 */
-		
-		viddevs[i]->brightness=0;
-		viddevs[i]->contrast=0;
-		viddevs[i]->saturation=0;
-		viddevs[i]->hue=0;
-		viddevs[i]->owner=-1;
-
-		/* default palette */ 
-		viddevs[i]->v4l_fmt=VIDEO_PALETTE_YUV420P;
-		viddevs[i]->v4l_curbuffer=0;
-		viddevs[i]->v4l_maxbuffer=1;
-
-		if (!v4l_start (cnt, viddevs[i], width, height, input, norm, frequency)){ 
-			pthread_mutex_unlock(&vid_mutex);
-			return -1;
-		}
-	
-		cnt->imgs.type=viddevs[i]->v4l_fmt;
-	
-		switch (cnt->imgs.type) { 
-			case VIDEO_PALETTE_GREY:
-				cnt->imgs.size=width*height;
-				cnt->imgs.motionsize=width*height;
-			break;
-			case VIDEO_PALETTE_RGB24:
-			case VIDEO_PALETTE_YUV422:
-				cnt->imgs.type=VIDEO_PALETTE_YUV420P;
-			case VIDEO_PALETTE_YUV420P:
-				motion_log(-1, 0, "VIDEO_PALETTE_YUV420P imgs.type");
-				cnt->imgs.size=(width*height*3)/2;
-				cnt->imgs.motionsize=width*height;
-			break;
-		}
-	
-		pthread_mutex_unlock(&vid_mutex);
 	}
-#endif /*WITHOUT_V4L*/
+	viddevs[i]->video_device=conf->video_device;
+	viddevs[i]->tuner_device=conf->tuner_device;
+	viddevs[i]->fd_bktr=fd_bktr;
+	viddevs[i]->fd_tuner=fd_tuner;
+	viddevs[i]->input=input;
+	viddevs[i]->height=height;
+	viddevs[i]->width=width;
+	viddevs[i]->freq=frequency;
+	viddevs[i]->owner=-1;
+
+	/* We set brightness, contrast, saturation and hue = 0 so that they only get
+         * set if the config is not zero.
+         */
+	
+	viddevs[i]->brightness=0;
+	viddevs[i]->contrast=0;
+	viddevs[i]->saturation=0;
+	viddevs[i]->hue=0;
+	viddevs[i]->owner=-1;
+
+	/* default palette */ 
+	viddevs[i]->bktr_fmt=VIDEO_PALETTE_YUV420P;
+	viddevs[i]->bktr_curbuffer=0;
+	viddevs[i]->bktr_maxbuffer=1;
+
+	if (!bktr_start (cnt, viddevs[i], width, height, input, norm, frequency)){ 
+		pthread_mutex_unlock(&vid_mutex);
+		return -1;
+	}
+	
+	cnt->imgs.type=viddevs[i]->bktr_fmt;
+	
+	switch (cnt->imgs.type) { 
+		case VIDEO_PALETTE_GREY:
+			cnt->imgs.size=width*height;
+			cnt->imgs.motionsize=width*height;
+		break;
+		case VIDEO_PALETTE_RGB24:
+		case VIDEO_PALETTE_YUV422:
+			cnt->imgs.type=VIDEO_PALETTE_YUV420P;
+		case VIDEO_PALETTE_YUV420P:
+			motion_log(-1, 0, "VIDEO_PALETTE_YUV420P imgs.type");
+			cnt->imgs.size=(width*height*3)/2;
+			cnt->imgs.motionsize=width*height;
+		break;
+	}
+	
+	pthread_mutex_unlock(&vid_mutex);
+
 
 	/* FIXME needed tuner device ?! */
 	return fd_bktr;
@@ -1036,33 +1028,20 @@ int vid_start(struct context *cnt)
 
 
 /**
- * vid_next fetches a video frame from a either v4l device or netcam
+ * vid_next fetches a video frame from bktr device 
  * Parameters:
  *     cnt        Pointer to the context for this thread
  *     map        Pointer to the buffer in which the function puts the new image
  *
  * Returns
  *     0          Success
- *    -1          Fatal V4L error
- *    -2          Fatal Netcam error
- *     1          Non fatal V4L error (not implemented)
- *     2          Non fatal Netcam error
+ *    -1          Fatal BKTR error
+ *     1          Non fatal BKTR error (not implemented)
  */
 int vid_next(struct context *cnt, unsigned char *map)
 {
 	struct config *conf=&cnt->conf;
 	int ret = -1;
-
-	if (conf->netcam_url) {
-		if (cnt->video_dev == -1)
-			return NETCAM_GENERAL_ERROR;
-
-		ret = netcam_next(cnt, map);
-		return ret;
-	}
-
-#ifndef WITHOUT_V4L
-	
 	int i=-1;
 	int width, height;
 	int dev_bktr = cnt->video_dev;
@@ -1086,10 +1065,10 @@ int vid_next(struct context *cnt, unsigned char *map)
 	}
 
 
-	v4l_set_input(cnt, viddevs[i], map, width, height, conf->input, conf->norm,
+	bktr_set_input(cnt, viddevs[i], map, width, height, conf->input, conf->norm,
 	              conf->roundrobin_skip, conf->frequency);
 	
-	ret = v4l_next(viddevs[i], map, width, height);
+	ret = bktr_next(viddevs[i], map, width, height);
 
 	if (--viddevs[i]->frames <= 0) { 
 		viddevs[i]->owner=-1;
@@ -1101,6 +1080,5 @@ int vid_next(struct context *cnt, unsigned char *map)
 		rotate_map(cnt, map);
  	}
 	
-#endif /*WITHOUT_V4L*/
 	return ret;
 }
