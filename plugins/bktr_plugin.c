@@ -174,26 +174,26 @@ static int camparam_normalize( int param, int cfg_value, int *ioctl_val )
 }
 */
 
-static int set_hue( int viddev, int new_hue )
+static int set_hue(struct context *cnt, int viddev, int new_hue )
 {
 	signed char ioctlval=new_hue;
 
 	if( ioctl( viddev, METEORSHUE, &ioctlval ) < 0 ) {
-                motion_log(LOG_ERR, 1, "METEORSHUE Error setting hue [%d]",new_hue);
+                cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSHUE Error setting hue [%d]",new_hue);
                 return -1;
         }
 
-	motion_log(-1, 0, "set hue to [%d]",ioctlval);
+	cnt->callbacks->motion_log(-1, 0, "set hue to [%d]",ioctlval);
 
 	return ioctlval;
 }
 
-static int get_hue( int viddev , int *hue)
+static int get_hue(struct context *cnt, int viddev , int *hue)
 {
 	signed char ioctlval;
 
 	if( ioctl( viddev, METEORGHUE, &ioctlval ) < 0 ) {
-		motion_log(LOG_ERR, 1, "METEORGHUE Error getting hue");
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGHUE Error getting hue");
 		return -1;
 	}
 
@@ -201,27 +201,27 @@ static int get_hue( int viddev , int *hue)
 	return ioctlval;
 }
 
-static int set_saturation( int viddev, int new_saturation ) 
+static int set_saturation(struct context *cnt, int viddev, int new_saturation ) 
 {
 	unsigned char ioctlval= new_saturation;
 
 	if( ioctl( viddev, METEORSCSAT, &ioctlval ) < 0 ) {
-		motion_log(LOG_ERR, 1, "METEORSCSAT Error setting saturation [%d]",new_saturation);
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSCSAT Error setting saturation [%d]",new_saturation);
 		return -1;
 	}
 
-	motion_log(-1, 0, "set saturation to [%d]",ioctlval);
+	cnt->callbacks->cnt->callbacks->motion_log(-1, 0, "set saturation to [%d]",ioctlval);
 
 	return ioctlval;
 }
 
-static int get_saturation( int viddev , int *saturation)
+static int get_saturation(struct context *cnt, int viddev , int *saturation)
 {
 	unsigned char ioctlval;
 
 	if( ioctl( viddev, METEORGCSAT, &ioctlval ) < 0 ) {
 
-		motion_log(LOG_ERR, 1, "METEORGCSAT Error getting saturation");
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGCSAT Error getting saturation");
 		return -1;
 	}
 
@@ -229,26 +229,26 @@ static int get_saturation( int viddev , int *saturation)
 	return ioctlval;
 }
 
-static int set_contrast( int viddev, int new_contrast ) 
+static int set_contrast(struct context *cnt, int viddev, int new_contrast ) 
 {
 	unsigned char ioctlval = new_contrast;
 
 	if( ioctl( viddev, METEORSCONT, &ioctlval ) < 0 ) {
-		motion_log(LOG_ERR, 1, "METEORSCONT Error setting contrast [%d]", new_contrast);
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSCONT Error setting contrast [%d]", new_contrast);
 		return 0;
 	}
 
-	motion_log(-1, 0, "set contrast to [%d]",ioctlval);
+	cnt->callbacks->cnt->callbacks->motion_log(-1, 0, "set contrast to [%d]",ioctlval);
 
 	return ioctlval;
 }
 
-static int get_contrast( int viddev, int *contrast )
+static int get_contrast(struct context *cnt, int viddev, int *contrast )
 {
 	unsigned char ioctlval;
 
 	if( ioctl (viddev, METEORGCONT, &ioctlval ) < 0 ) {
-		motion_log(LOG_ERR, 1, "METEORGCONT Error getting contrast");
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGCONT Error getting contrast");
 		return -1;
 	}
 
@@ -257,27 +257,27 @@ static int get_contrast( int viddev, int *contrast )
 }
 
 
-static int set_brightness( int viddev, int new_bright )
+static int set_brightness(struct context *cnt, int viddev, int new_bright )
 {
 	unsigned char ioctlval = new_bright;
 
 	if( ioctl( viddev, METEORSBRIG, &ioctlval ) < 0 ) {
-		motion_log(LOG_ERR, 1, "METEORSBRIG  brightness [%d]",new_bright);
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSBRIG  brightness [%d]",new_bright);
 		return -1;
 	}
 
-	motion_log(-1, 0, "set brightness to [%d]",ioctlval);
+	cnt->callbacks->cnt->callbacks->motion_log(-1, 0, "set brightness to [%d]",ioctlval);
 	
 	return ioctlval;
 }
 
 
-static int get_brightness( int viddev, int *brightness )
+static int get_brightness(struct context *cnt, int viddev, int *brightness )
 {
 	unsigned char ioctlval;
 
 	if( ioctl( viddev, METEORGBRIG, &ioctlval ) < 0 ) {
-                motion_log(LOG_ERR, 1, "METEORGBRIG  getting brightness");
+                cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGBRIG  getting brightness");
                 return -1;
         }
 
@@ -293,10 +293,10 @@ static int set_channel( struct video_dev *viddev, int new_channel )
 
 	ioctlval = new_channel;
 	if( ioctl( viddev->fd_tuner, TVTUNER_SETCHNL, &ioctlval ) < 0 ) {
-		motion_log(LOG_ERR, 1, "Error channel %d",ioctlval);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "Error channel %d",ioctlval);
 		return -1;
 	} else {
-		motion_log(LOG_DEBUG, 0, "channel set to %d",ioctlval);
+		cnt->callbacks->motion_log(LOG_DEBUG, 0, "channel set to %d",ioctlval);
 	}
 
 	viddev->channel = new_channel;
@@ -307,7 +307,7 @@ static int set_channel( struct video_dev *viddev, int new_channel )
 
 /* set frequency to tuner */
 
-static int set_freq(struct video_dev *viddev, unsigned long freq)
+static int set_freq(struct context *cnt, struct video_dev *viddev, unsigned long freq)
 {
 	int tuner_fd = viddev->fd_tuner;
 	int old_audio;
@@ -315,12 +315,12 @@ static int set_freq(struct video_dev *viddev, unsigned long freq)
 	/* HACK maybe not need it , but seems that is needed to mute before changing frequency */
 
 	if ( ioctl( tuner_fd, BT848_GAUDIO, &old_audio ) < 0 ) {
-		motion_log(LOG_ERR, 1, "BT848_GAUDIO");
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "BT848_GAUDIO");
 		return -1;
 	}
 	
 	if (ioctl(tuner_fd, TVTUNER_SETFREQ, &freq) < 0){
-		motion_log(LOG_ERR, 1, "Tuning (TVTUNER_SETFREQ) failed , freq [%lu]",freq);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "Tuning (TVTUNER_SETFREQ) failed , freq [%lu]",freq);
 		return -1;
 	}
 
@@ -328,7 +328,7 @@ static int set_freq(struct video_dev *viddev, unsigned long freq)
 	if ( old_audio ){
 		old_audio = AUDIO_MUTE;
 		if ( ioctl(tuner_fd , BT848_SAUDIO, &old_audio ) < 0 ) {
-			motion_log(LOG_ERR, 1, "BT848_SAUDIO %i",old_audio);
+			cnt->callbacks->motion_log(LOG_ERR, 1, "BT848_SAUDIO %i",old_audio);
 			return -1;
 		}
 	}
@@ -345,7 +345,7 @@ static int set_freq(struct video_dev *viddev, unsigned long freq)
 	VBI ?! (METEOR_INPUT_DEV_SVIDEO)
 */
 
-static int set_input(struct video_dev *viddev, unsigned short input)
+static int set_input(struct context *cnt, struct video_dev *viddev, unsigned short input)
 {
 	int actport;
 	int portdata[] = { METEOR_INPUT_DEV0, METEOR_INPUT_DEV1,
@@ -353,23 +353,23 @@ static int set_input(struct video_dev *viddev, unsigned short input)
 	                 METEOR_INPUT_DEV_SVIDEO  };
 
 	if( input >= array_elem( portdata ) ) {
-		motion_log(LOG_WARNING, 0, "Channel Port %d out of range (0-4)",input);
+		cnt->callbacks->motion_log(LOG_WARNING, 0, "Channel Port %d out of range (0-4)",input);
 		input = IN_DEFAULT;
 	}
 
 	actport = portdata[ input ];
 	if( ioctl( viddev->fd_bktr, METEORSINPUT, &actport ) < 0 ) {
 		if( input != IN_DEFAULT ) {
-			motion_log(LOG_WARNING, 0,
+			cnt->callbacks->motion_log(LOG_WARNING, 0,
 			           "METEORSINPUT %d invalid - Trying default %d ", input, IN_DEFAULT );
 			input = IN_DEFAULT;
 			actport = portdata[ input ];
 			if( ioctl( viddev->fd_bktr, METEORSINPUT, &actport ) < 0 ) {
-				motion_log(LOG_ERR, 1, "METEORSINPUT %d init", input);
+				cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSINPUT %d init", input);
 				return -1;
 			}
 		} else {
-			motion_log(LOG_ERR, 1, "METEORSINPUT  %d init",input);
+			cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSINPUT  %d init",input);
 			return -1;
 		}
 	}
@@ -377,7 +377,7 @@ static int set_input(struct video_dev *viddev, unsigned short input)
 	return 0;
 }
 
-static int set_geometry(struct video_dev *viddev, int width, int height)
+static int set_geometry(struct context *cnt, struct video_dev *viddev, int width, int height)
 {
 	struct meteor_geomet geom;
 
@@ -395,7 +395,7 @@ static int set_geometry(struct video_dev *viddev, int width, int height)
 	geom.frames  = 1;
 
 	if( ioctl( viddev->fd_bktr, METEORSETGEO, &geom ) < 0 ) {
-		motion_log(LOG_ERR, 1, "Couldn't set the geometry");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "Couldn't set the geometry");
 		return -1;
 	}
 
@@ -406,25 +406,25 @@ static int set_geometry(struct video_dev *viddev, int width, int height)
    set input format ( PAL, NTSC, SECAM, etc ... )
 */
 
-static int set_input_format(struct video_dev *viddev, unsigned short newformat) 
+static int set_input_format(struct context *cnt, struct video_dev *viddev, unsigned short newformat) 
 {
 	int input_format[] = { NORM_PAL_NEW, NORM_NTSC_NEW, NORM_SECAM_NEW, NORM_DEFAULT_NEW};
 	int format;
  
 	if( newformat >= array_elem( input_format ) ) {
-		motion_log(LOG_WARNING, 0, "Input format %d out of range (0-2)",newformat );
+		cnt->callbacks->motion_log(LOG_WARNING, 0, "Input format %d out of range (0-2)",newformat );
 		format = NORM_DEFAULT_NEW;
 		newformat = 3;
 	} else
 		format = input_format[newformat]; 
 
 	if( ioctl( viddev->fd_bktr, BT848SFMT, &format ) < 0 ) {
-		motion_log(LOG_ERR, 1, "BT848SFMT, Couldn't set the input format , try again with default");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "BT848SFMT, Couldn't set the input format , try again with default");
 		format = NORM_DEFAULT_NEW;
 		newformat = 3;
 		
 		if( ioctl( viddev->fd_bktr, BT848SFMT, &format ) < 0 ) {
-			motion_log(LOG_ERR, 1, "BT848SFMT, Couldn't set the input format either default");
+			cnt->callbacks->motion_log(LOG_ERR, 1, "BT848SFMT, Couldn't set the input format either default");
 			return -1;
 		}
 	}
@@ -444,7 +444,7 @@ statict int setup_pixelformat( int bktr )
 		if( ioctl( bktr, METEORGSUPPIXFMT, &p ) < 0 ){
 			if( errno == EINVAL )
 				break;
-			motion_log(LOG_ERR, 1, "METEORGSUPPIXFMT getting pixformat %d",i);	
+			cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGSUPPIXFMT getting pixformat %d",i);	
 			return -1;
 		}
 
@@ -453,40 +453,40 @@ statict int setup_pixelformat( int bktr )
 
 	switch ( p.type ){
 		case METEOR_PIXTYPE_RGB:
-			motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB");
+			cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB");
 			switch(p.masks[0]) {
 				case 31744: // 15 bpp 
 					format = p.swap_bytes ? VIDEO_RGB15_LE : VIDEO_RGB15_BE;
-					motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_RGB15");
+					cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_RGB15");
 				break;
 				case 63488: // 16 bpp 
 					format = p.swap_bytes ? VIDEO_RGB16_LE : VIDEO_RGB16_BE;
-					motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_RGB16");
+					cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_RGB16");
 				break;
 				case 16711680: // 24/32 bpp 
 					if (p.Bpp == 3 && p.swap_bytes == 1) {
 						format = VIDEO_BGR24;
-						motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_BGR24");
+						cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_BGR24");
 					} else if (p.Bpp == 4 && p.swap_bytes == 1 && p.swap_shorts == 1) {
 						format = VIDEO_BGR32;
-						motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_BGR32");
+						cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_BGR32");
 						} else if (p.Bpp == 4 && p.swap_bytes == 0 && p.swap_shorts == 0) {
 							format = VIDEO_RGB32;
-							motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_RGB32");
+							cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_RGB VIDEO_RGB32");
 						}
 					}
 				break;
 				case METEOR_PIXTYPE_YUV:
 					format = VIDEO_YUV422P;
-					motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_YUV");
+					cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_YUV");
 				break;
 				case METEOR_PIXTYPE_YUV_12:
 					format = VIDEO_YUV422P;
-					motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_YUV_12");
+					cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_YUV_12");
 					break;
 				case METEOR_PIXTYPE_YUV_PACKED:
 					format = VIDEO_YUV422P;
-					motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_YUV_PACKED");
+					cnt->callbacks->motion_log(-1, 0, "setup_pixelformat METEOR_PIXTYPE_YUV_PACKED");
 				break;
 	
 			}
@@ -494,20 +494,20 @@ statict int setup_pixelformat( int bktr )
 			if( p.type == METEOR_PIXTYPE_RGB && p.Bpp == 3 ){
 				// Found a good pixeltype -- set it up 
 				if( ioctl( bktr, METEORSACTPIXFMT, &i ) < 0 ){
-					motion_log(LOG_WARNING, 1, "METEORSACTPIXFMT etting pixformat METEOR_PIXTYPE_RGB Bpp == 3");
+					cnt->callbacks->motion_log(LOG_WARNING, 1, "METEORSACTPIXFMT etting pixformat METEOR_PIXTYPE_RGB Bpp == 3");
 				// Not immediately fatal 
 				}
-				motion_log(LOG_DEBUG, 0, "input format METEOR_PIXTYPE_RGB %i",i);
+				cnt->callbacks->motion_log(LOG_DEBUG, 0, "input format METEOR_PIXTYPE_RGB %i",i);
 				format=i;
 			}
 
 			if( p.type == METEOR_PIXTYPE_YUV_PACKED ){
 				// Found a good pixeltype -- set it up
 				if( ioctl( bktr, METEORSACTPIXFMT, &i ) < 0 ){
-					motion_log(LOG_WARNING, 1, "METEORSACTPIXFMT setting pixformat METEOR_PIXTYPE_YUV_PACKED");
+					cnt->callbacks->motion_log(LOG_WARNING, 1, "METEORSACTPIXFMT setting pixformat METEOR_PIXTYPE_YUV_PACKED");
 				// Not immediately fatal
 				} 
-				motion_log(LOG_DEBUG, 0, "input format METEOR_PIXTYPE_YUV_PACKED %i",i);
+				cnt->callbacks->motion_log(LOG_DEBUG, 0, "input format METEOR_PIXTYPE_YUV_PACKED %i",i);
 				format=i;
 			}
 
@@ -523,24 +523,24 @@ static void bktr_picture_controls(struct context *cnt, struct video_dev *viddev)
 	int dev=viddev->fd_bktr;
 
 	if ( (cnt->conf.contrast) && (cnt->conf.contrast != viddev->contrast) ){ 
-		set_contrast(dev,cnt->conf.contrast);
+		set_contrast(cnt, dev,cnt->conf.contrast);
 		viddev->contrast = cnt->conf.contrast;	
 	}
 
 	if ( (cnt->conf.hue) && (cnt->conf.hue != viddev->hue) ) {
-		set_hue(dev, cnt->conf.hue);
+		set_hue(cnt, dev, cnt->conf.hue);
 		viddev->hue = cnt->conf.hue;	
 	}
 
 	if ( (cnt->conf.brightness) && 
 	     (cnt->conf.brightness != viddev->brightness)) {
-		set_brightness(dev, cnt->conf.brightness);
+		set_brightness(cnt, dev, cnt->conf.brightness);
 		viddev->brightness = cnt->conf.brightness; 
 	}
 
 	if ( (cnt->conf.saturation ) && 
 	     (cnt->conf.saturation != viddev->saturation) ){
-		set_saturation(dev, cnt->conf.saturation);
+		set_saturation(cnt, dev, cnt->conf.saturation);
 		viddev->saturation = cnt->conf.saturation;
 	}
 }
@@ -578,10 +578,10 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	/* Temporary HACK that allow to use input 1 ( Tuner for most of cards ) as Composite if frequency is set to -1 FIXME */
 	if (( input == IN_TV ) && (freq != -1)) {
 		if (!freq) {
-			motion_log(LOG_ERR, 1, "Not valid Frequency [%lu] for Source input [%i]", freq, input);
+			cnt->callbacks->motion_log(LOG_ERR, 1, "Not valid Frequency [%lu] for Source input [%i]", freq, input);
 			return (NULL);
 		}else if (set_freq(viddev, freq) == -1) {
-			motion_log(LOG_ERR, 1, "Frequency [%lu] Source input [%i]", freq, input);
+			cnt->callbacks->motion_log(LOG_ERR, 1, "Frequency [%lu] Source input [%i]", freq, input);
 			return (NULL);
 		}
 	}
@@ -589,17 +589,17 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	/* FIXME if we set as input tuner , we need to set option for tuner not for bktr */
 
 	if ( set_input_format(viddev, norm) == -1 ) {
-		motion_log(LOG_ERR, 1, "set input format [%d]",norm);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "set input format [%d]",norm);
 		return (NULL);
 	}
 
 	if (set_geometry(viddev, width, height) == -1) {
-		motion_log(LOG_ERR, 1, "set geometry [%d]x[%d]",width, height);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "set geometry [%d]x[%d]",width, height);
 		return (NULL);
 	}
 /*
 	if (ioctl(dev_bktr, METEORSACTPIXFMT, &pixelformat) < 0 ){
-        	motion_log(LOG_ERR, 1, "set enconding method BSD_VIDFMT_I420"); 
+        	cnt->callbacks->motion_log(LOG_ERR, 1, "set enconding method BSD_VIDFMT_I420"); 
 		return(NULL);
         }
 
@@ -613,7 +613,7 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 
 	if (freq) {
 		if (cnt->conf.setup_mode)
-			motion_log(-1, 0, "Frequency set (no implemented yet");
+			cnt->callbacks->motion_log(-1, 0, "Frequency set (no implemented yet");
 	/*
 	 TODO missing implementation
 		set_channelset(viddev);
@@ -637,7 +637,7 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	map = mmap((caddr_t)0,viddev->bktr_bufsize,PROT_READ|PROT_WRITE,MAP_SHARED, dev_bktr, (off_t)0);
 
 	if (map == MAP_FAILED){
-		motion_log(LOG_ERR, 1, "mmap failed");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "mmap failed");
 		return (NULL);
 	}
 
@@ -657,7 +657,7 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	/* Clear the buffer */
 
         if (ioctl(dev_bktr, BT848SCBUF, &dummy) < 0) {
-                motion_log(LOG_ERR, 1, "BT848SCBUF");
+                cnt->callbacks->motion_log(LOG_ERR, 1, "BT848SCBUF");
                 return NULL;
         }
 
@@ -665,14 +665,14 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	SLEEP(1,0)
 
 	if (ioctl(dev_bktr, METEORCAPTUR, &single) < 0){
-		motion_log(LOG_ERR, 1, "METEORCAPTUR using single method Error capturing");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORCAPTUR using single method Error capturing");
         }else viddev->capture_method = CAPTURE_SINGLE;
 
 	/* FIXME*/
 	switch (viddev->bktr_fmt) {
 		case VIDEO_PALETTE_YUV420P:
 			viddev->bktr_bufsize=(width*height*3)/2;
-			motion_log(-1, 0, "VIDEO_PALETTE_YUV420P palette setting bufsize");
+			cnt->callbacks->motion_log(-1, 0, "VIDEO_PALETTE_YUV420P palette setting bufsize");
 			break;
 		case VIDEO_PALETTE_YUV422:
 			viddev->bktr_bufsize=(width*height*2);
@@ -687,10 +687,10 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	
 	{
 	int val;
-	motion_log(LOG_INFO,0,"HUE [%d]",get_hue(dev_bktr,&val));
-	motion_log(LOG_INFO,0,"SATURATION [%d]",get_saturation(dev_bktr,&val));
-	motion_log(LOG_INFO,0,"BRIGHTNESS [%d]",get_brightness(dev_bktr,&val));
-	motion_log(LOG_INFO,0,"CONTRAST [%d]",get_contrast(dev_bktr,&val));
+	cnt->callbacks->motion_log(LOG_INFO,0,"HUE [%d]",get_hue(cnt, dev_bktr, &val));
+	cnt->callbacks->motion_log(LOG_INFO,0,"SATURATION [%d]",get_saturation(cnt, dev_bktr, &val));
+	cnt->callbacks->motion_log(LOG_INFO,0,"BRIGHTNESS [%d]",get_brightness(cnt, dev_bktr, &val));
+	cnt->callbacks->motion_log(LOG_INFO,0,"CONTRAST [%d]",get_contrast(cnt, dev_bktr, &val));
 	}
 	return map;
 }
@@ -739,14 +739,14 @@ static int bktr_next(struct video_dev *viddev,unsigned char *map, int width, int
 
 	if (viddev->capture_method == CAPTURE_CONTINOUS){
 		if (ioctl(dev_bktr, METEORCAPTUR, &continous) < 0) {
-			motion_log(LOG_ERR, 1, "Error capturing using continous method");
+			cnt->callbacks->motion_log(LOG_ERR, 1, "Error capturing using continous method");
 			sigprocmask (SIG_UNBLOCK, &old, NULL);
 			return (-1);
 		}
 	}else{
 
 		if (ioctl(dev_bktr, METEORCAPTUR, &single) < 0) {
-			motion_log(LOG_ERR, 1, "Error capturing using single method");
+			cnt->callbacks->motion_log(LOG_ERR, 1, "Error capturing using single method");
 			sigprocmask (SIG_UNBLOCK, &old, NULL);
 			return (-1);
 		}
@@ -781,7 +781,7 @@ static void bktr_set_input(struct context *cnt, struct video_dev *viddev, unsign
 	unsigned long frequnits = freq;
 
 	if (input != viddev->input || width != viddev->width || height!=viddev->height || freq!=viddev->freq){ 
-		motion_log(LOG_WARNING, 0, "bktr_set_input really needed ?");
+		cnt->callbacks->motion_log(LOG_WARNING, 0, "bktr_set_input really needed ?");
 
 		if (set_input(viddev, input) == -1)
 			return;
@@ -797,7 +797,7 @@ static void bktr_set_input(struct context *cnt, struct video_dev *viddev, unsign
 		// FIXME
 		/*
 		if ( setup_pixelformat(viddev) == -1) {
-			motion_log(LOG_ERR, 1, "ioctl (VIDIOCSFREQ)");
+			cnt->callbacks->motion_log(LOG_ERR, 1, "ioctl (VIDIOCSFREQ)");
 			return
 		}
 		*/
@@ -841,18 +841,27 @@ pthread_mutex_t vid_mutex;
 /* structure used for per device locking */
 struct video_dev **viddevs=NULL;
 
-void vid_init(void)
+void vid_init(motion_ctxt_ptr cnt)
 {
+	pthread_mutex_lock(cnt->global_lock);
 	if (!viddevs) { 
-		viddevs=mymalloc(sizeof(struct video_dev *));
+		viddevs=cnt->callbacks->motion_alloc(sizeof(struct video_dev *));
 		viddevs[0]=NULL;
+		pthread_mutex_init(&vid_mutex, NULL);
+	}
+	if (cnt->video_vars->video_params) {
+		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 0, "in vid_init: video_config already allocated");
+	} else {
+		cnt->video_vars->video_params = cnt->callbacks->motion_alloc(sizeof(bktr_config));
+		memset(cnt->video_vars->video_params, 0, sizeof(bktr_config));
 	}
 
-	pthread_mutex_init(&vid_mutex, NULL);
+	pthread_mutex_unlock(cnt->global_lock);	
+	
 }
 
 /* Called by childs to get rid of open video devices */
-void vid_close(void)
+void vid_close(motion_ctxt_ptr cnt)
 {
 	int i=-1;
 
@@ -864,7 +873,8 @@ void vid_close(void)
 	}
 }
 
-void vid_cleanup(void)
+
+void vid_cleanup(motion_ctxt_ptr cnt)
 {
 	int i=-1;
 	if (viddevs){ 
@@ -894,22 +904,22 @@ int vid_start(struct context *cnt)
 	 * Motion requires that width and height are multiples of 16 so we check for this
 	 */
 	if (conf->width % 16) {
-		motion_log(LOG_ERR, 0,
+		cnt->callbacks->motion_log(LOG_ERR, 0,
 		           "config image width (%d) is not modulo 16",
 		           conf->width);
 		return -1;
 	}
 	if (conf->height % 16) {
-		motion_log(LOG_ERR, 0,
+		cnt->callbacks->motion_log(LOG_ERR, 0,
 		           "config image height (%d) is not modulo 16",
 		           conf->height);
 		return -1;
 	}
 	width = conf->width;
 	height = conf->height;
-	input = conf->input;
-	norm = conf->norm;
-	frequency = conf->frequency;
+	input = BKTR_PARAM->conf->input;
+	norm = BKTR_PARAM->conf->norm;
+	frequency = BKTR_PARAM->conf->frequency;
 
 	pthread_mutex_lock(&vid_mutex);
 
@@ -926,10 +936,10 @@ int vid_start(struct context *cnt)
 	 * and return the file descriptor
 	 */
 	while (viddevs[++i]) { 
-		if (!strcmp(conf->video_device, viddevs[i]->video_device)) {
+		if (!strcmp(BKTR_PARAM->conf->video_device, viddevs[i]->video_device)) {
 			int fd;
 			cnt->imgs.type=viddevs[i]->bktr_fmt;
-			motion_log(-1, 0, "vid_start cnt->imgs.type [%i]", cnt->imgs.type);
+			cnt->callbacks->motion_log(-1, 0, "vid_start cnt->imgs.type [%i]", cnt->imgs.type);
 			switch (cnt->imgs.type) {
 				case VIDEO_PALETTE_GREY:
 					cnt->imgs.motionsize=width*height;
@@ -939,7 +949,7 @@ int vid_start(struct context *cnt)
 				case VIDEO_PALETTE_YUV422:
 					cnt->imgs.type=VIDEO_PALETTE_YUV420P;
 				case VIDEO_PALETTE_YUV420P:
-					motion_log(-1, 0,
+					cnt->callbacks->motion_log(-1, 0,
 					           " VIDEO_PALETTE_YUV420P setting imgs.size and imgs.motionsize");
 					cnt->imgs.motionsize=width*height;
 					cnt->imgs.size=(width*height*3)/2;
@@ -951,29 +961,29 @@ int vid_start(struct context *cnt)
 		}
 	}
 
-	viddevs=myrealloc(viddevs, sizeof(struct video_dev *)*(i+2), "vid_start");
-	viddevs[i]=mymalloc(sizeof(struct video_dev));
+	viddevs=cnt->callbacks->motion_realloc(viddevs, sizeof(struct video_dev *)*(i+2), "vid_start");
+	viddevs[i]=cnt->callbacks->motion_alloc(sizeof(struct video_dev));
 	viddevs[i+1]=NULL;
 	pthread_mutexattr_init(&viddevs[i]->attr);
 	pthread_mutex_init(&viddevs[i]->mutex, NULL);
-	fd_bktr=open(conf->video_device, O_RDWR);
+	fd_bktr=open(BKTR_PARAM->conf->video_device, O_RDWR);
 	if (fd_bktr <0) { 
-		motion_log(LOG_ERR, 1, "open video device %s",conf->video_device);
-		motion_log(LOG_ERR, 0, "Motion Exits.");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "open video device %s",BKTR_PARAM->conf->video_device);
+		cnt->callbacks->motion_log(LOG_ERR, 0, "Motion Exits.");
 		exit(1);
 	}
 
 	/* Only open tuner if freq and input is 1 that means that tunner has been selected as source FIXME ?! */
 	if (( frequency ) && ( input = IN_TV )) {
-		fd_tuner=open(conf->tuner_device, O_RDWR);
+		fd_tuner=open(BKTR_PARAM->conf->tuner_device, O_RDWR);
 		if (fd_tuner <0) { 
-			motion_log(LOG_ERR, 1, "open tuner device %s",conf->tuner_device);
-			motion_log(LOG_ERR, 0, "Motion Exits.");
+			cnt->callbacks->motion_log(LOG_ERR, 1, "open tuner device %s",BKTR_PARAM->conf->tuner_device);
+			cnt->callbacks->motion_log(LOG_ERR, 0, "Motion Exits.");
 			exit(1);
 		}
 	}
-	viddevs[i]->video_device=conf->video_device;
-	viddevs[i]->tuner_device=conf->tuner_device;
+	viddevs[i]->video_device=BKTR_PARAM->conf->video_device;
+	viddevs[i]->tuner_device=BKTR_PARAM->conf->tuner_device;
 	viddevs[i]->fd_bktr=fd_bktr;
 	viddevs[i]->fd_tuner=fd_tuner;
 	viddevs[i]->input=input;
@@ -1013,7 +1023,7 @@ int vid_start(struct context *cnt)
 		case VIDEO_PALETTE_YUV422:
 			cnt->imgs.type=VIDEO_PALETTE_YUV420P;
 		case VIDEO_PALETTE_YUV420P:
-			motion_log(-1, 0, "VIDEO_PALETTE_YUV420P imgs.type");
+			cnt->callbacks->motion_log(-1, 0, "VIDEO_PALETTE_YUV420P imgs.type");
 			cnt->imgs.size=(width*height*3)/2;
 			cnt->imgs.motionsize=width*height;
 		break;
@@ -1065,10 +1075,10 @@ int vid_next(struct context *cnt, unsigned char *map)
 	}
 
 
-	bktr_set_input(cnt, viddevs[i], map, width, height, conf->input, conf->norm,
-	              conf->roundrobin_skip, conf->frequency);
+	bktr_set_input(cnt, viddevs[i], map, width, height, BKTR_PARAM->conf->input, BKTR_PARAM->conf->norm,
+	              conf->roundrobin_skip, BKTR_PARAM->conf->frequency);
 	
-	ret = bktr_next(viddevs[i], map, width, height);
+	ret = bktr_next(cnt, viddevs[i], map, width, height);
 
 	if (--viddevs[i]->frames <= 0) { 
 		viddevs[i]->owner=-1;
@@ -1077,8 +1087,39 @@ int vid_next(struct context *cnt, unsigned char *map)
 	
  	if(cnt->rotate_data.degrees > 0){ 
 		/* rotate the image as specified */
-		rotate_map(cnt, map);
+		cnt->callbacks->rotate_map(cnt, map);
  	}
 	
 	return ret;
 }
+
+static motion_video_input pointer_table = {
+	video_init:        vid_init,
+	video_start:       vid_start,
+	video_next:        vid_next,
+	video_close:       vid_close,
+	video_dev_cleanup: NULL,
+	video_cleanup:     vid_cleanup,
+};
+
+static void *bktr_plugin_main(motion_msg msg)
+{
+	switch (msg) {
+		case MOTION_VALIDATION_TABLE:
+			return (void *)&bktr_params;   /* in bktr_params.h */
+		case MOTION_VALIDATION_SIZE:
+			return (void *)&bktr_params_size;
+		case MOTION_VIDEO_INPUT:
+			return (void *)&pointer_table;
+		default:
+			return NULL;
+	}		
+}
+
+motion_plugin_descr MOTION_PLUGIN_SYM = {
+	name: "bktr",
+	version: "1.0",
+	author: "Angel Carpintero",
+	motion_plugin_control: bktr_plugin_main,
+};
+
