@@ -42,13 +42,6 @@ static param_definition v4l_params[] = {
 	param_type:     INTEGER_PARAM,
 	param_default:  "0",
 	},
-	{
-	CFG_V4LPARM(v4l_videodevice)
-	param_descr:    "Videodevice to be used for capturing\n"
-	                "for FreeBSD default is /dev/bktr0",
-	param_type:     STRING_PARAM,
-	param_default:  "/dev/video0",
-	},
 };
 static int v4l_params_size = sizeof(v4l_params) / sizeof(v4l_params[0]);
 
