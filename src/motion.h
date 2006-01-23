@@ -366,6 +366,7 @@ extern pthread_key_t tls_key_threadnr; /* key for thread number */
 
 int http_bindsock(int, int);
 void * mymalloc(size_t);
+char * mystrndup(char *, size_t);
 void * myrealloc(void *, size_t, const char *);
 FILE * myfopen(const char *, const char *);
 size_t mystrftime(struct context *, char *, size_t, const char *, const struct tm *t, const char *, int);

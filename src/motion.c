@@ -1935,7 +1935,7 @@ int main (int argc, char **argv)
  * mymalloc
  * 
  *   Allocates some memory and checks if that succeeded or not. If it failed,
- *   do some errorlogging and bail out.
+ *   do some error logging and bail out.
  *
  *   NOTE: Kenneth Lavrsen changed printing of size_t types so instead of using 
  *   conversion specifier %zd I changed it to %llu and casted the size_t 
@@ -1958,6 +1958,42 @@ void * mymalloc(size_t nbytes)
 		exit(1);
 	}
 
+	return dummy;
+}
+
+/**
+ * mystrndup
+ *
+ * Allocates and copies nbytes from source string to destination string.
+ * If source string is NULL do some error login and bail out.
+ * If allocation failed do some error login and bail out.
+ * 
+ * Parameters :
+ * 
+ * ptr : pointer to source string
+ * nbytes : no. of bytes to copy from source string to destination string
+ * 
+ * Returns: a pointer to new allocated and copy string
+ */ 
+char *mystrndup(char *ptr, size_t nbytes)
+{
+	char *dummy = NULL;
+	
+	if (ptr == NULL){
+		motion_log(LOG_EMERG, 1, "Could not copy NULL pointer");
+		exit(1);	
+	}
+	
+	dummy = (char *)mymalloc( nbytes+1 );
+	
+	if (dummy) {
+		strncpy(dummy, ptr, nbytes);
+		dummy[nbytes]= '\0';
+	} else {
+		motion_log(LOG_EMERG, 1, "Could not allocate %llu bytes of memory!", (unsigned long long)nbytes);
+		exit(1);	
+	}
+	
 	return dummy;
 }
 
