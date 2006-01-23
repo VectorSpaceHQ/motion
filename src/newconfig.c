@@ -182,17 +182,12 @@ int	res;
 	get_next_str(&cp1, &len1);
 	cp2 = cp1 + len1;
 
-//	cptr1 = strndup(cptr1, len1);
-	cptr1 = mymalloc(len1);
-	memcpy(cptr1, (const char *)cp1, len1);
-
+	cptr1 = mystrndup(cp1, len1);
 
 	/* isolate the second value */
 	get_next_str(&cp2, &len2);
 
-//	cptr2 = strndup(cptr2, len2);
-	cptr2 = mymalloc(len2);
-	memcpy(cptr2, (const char *)cp2, len2);
+	cptr2 = mystrndup(cp2, len2);
 
 	switch (flag) {
 		case CMP_INT:
@@ -597,9 +592,7 @@ static int parse_name_value(char *line, int length, char **param_name,
 	}
 	if (namelen == 0)
 		return -1;
-//	*param_name = strndup(line, namelen);        /* ok, we have the name */
-	*param_name = mymalloc(namelen+1);
-	memcpy(*param_name, (const char*)line, namelen);
+	*param_name = mystrndup(line, namelen);        /* ok, we have the name */
 
 	value = skip_nws(cptr);
 
@@ -623,12 +616,9 @@ static int parse_name_value(char *line, int length, char **param_name,
 			return -1;
 		ix++;
 		cptr++;
+		
 		/* assure the value doesn't include the delimiters */
-
-		//*param_value = strndup(value + 1, ix - 2);
-
-		*param_value = mymalloc(ix-2);
-		memcpy(*param_value, (const char *)value+1, ix-2);
+		*param_value = mystrndup(value + 1, ix - 2);
 
 		/* this check isn't required, but helps prove all ok */
 		for (; ix < linelen; ix++) {
@@ -669,9 +659,7 @@ static int parse_name_value(char *line, int length, char **param_name,
 			break;
 	}
 	if (ix > 0){
-		//*param_value = strndup(value, ix);
-		*param_value = mymalloc(ix);
-		memcpy(*param_value, (const char *)value, ix);
+		*param_value = mystrndup(value, ix);
 	}
 	return 0;
 }
@@ -1519,11 +1507,9 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 					case RANGE_VALIDATION:
 						cptr = strchr(pv->param_values,' ');
 						if (cptr) {
+							/* lenght of start value + string term */	
 							slen = ++cptr - pv->param_values;
-							/* allocate space for start value + string term */
-							cptr1 = mymalloc(slen);
-							memcpy(cptr1, (const char *)pv->param_values, slen-1);
-							cptr1[slen-1] = 0;
+							cptr1 = mystrndup((char *)pv->param_values, slen);
 							fprintf(outfile, "%sAllowed values: %s - %s\n",
 							        param_descr_pref,
 								cptr1, cptr);
