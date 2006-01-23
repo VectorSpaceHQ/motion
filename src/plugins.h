@@ -151,5 +151,7 @@ int plugin_resolve(mh_ptr handle, const char *symbol, void **address);
 int plugin_resolve_nolock(mh_ptr handle, const char *symbol,
                                   void **address);
 
+mh_ptr plugin_cleanup(mh_ptr handle);
+
 #endif /* __PLUGINS_H_ */
 

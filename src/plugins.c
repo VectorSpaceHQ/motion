@@ -16,8 +16,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
-// FIXME: calls to malloc should be replaced with mymalloc after testing
-#include <malloc.h>
 
 /**
  * TODO
@@ -113,6 +111,34 @@ int plugin_resolve_nolock(struct mhandle *handle, const char *symbol,
 	return 1;
 }
 
+
+/**
+ * plugin_cleanup
+ *
+ *   Tries to free the plugin handle resources
+ *
+ * Parameters:
+ *  
+ *  handle - the plugin handle  
+ *  
+ * Returns: NULL
+ */
+struct mhandle *plugin_cleanup(struct mhandle *handle)
+{
+	if (handle) {
+		if (handle->handle) {
+			dlclose(handle->handle);
+		}
+		free(handle->filename);
+		free(handle);
+	}
+	pthread_mutex_unlock(&thread_lock);
+	
+	return NULL;
+}
+
+
+
 /**
  * plugin_load
  *
@@ -150,22 +176,18 @@ struct mhandle *plugin_load(const char *filename, int lazy)
 	if (!handle) {
 		error = dlerror();
 		fprintf(stderr, "Failed to load the plugin '%s' - %s.\n", filename, error);
-		/*
-		 * I know Kenneth hates gotos, but it's quite handy for
-		 * error-checking in this function...
-		 */
-		goto err;
+		return plugin_cleanup(ret);
 	}
 
 	/* Allocate the plugin handle struct. */
-	ret = malloc(sizeof(struct mhandle)); //mymalloc
+	ret = mymalloc(sizeof(struct mhandle));
 	memset(ret, 0, sizeof(struct mhandle)); /* reset */
 	ret->handle = handle;
 
 	/* Get the plugin info, which is mandatory. */
 	if (!plugin_resolve_nolock(ret, MOTION_PLUGIN_SYM_NAME, (void **)&modinfo)) {
 		fprintf(stderr, "No plugin info found in plugin '%s'.\n", filename);
-		goto err;
+		return plugin_cleanup(ret);
 	}
 
 	ret->pluginfo = modinfo;
@@ -186,17 +208,6 @@ struct mhandle *plugin_load(const char *filename, int lazy)
 	
 	pthread_mutex_unlock(&thread_lock);
 	return ret;
-
-err:
-	if (ret) {
-		if (ret->handle) {
-			dlclose(ret->handle);
-		}
-		free(ret->filename);
-		free(ret);
-	}
-	pthread_mutex_unlock(&thread_lock);
-	return NULL;
 }
 
 /* plugin_close - closes/unloads the specified plugin */
