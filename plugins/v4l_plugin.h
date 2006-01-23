@@ -71,7 +71,7 @@ typedef struct v4l_config {
 param_name:      #V,  \
 param_voffset:   offsetof(v4l_config, V),
 
-/* video functions, video.c */
+/* video functions, v4l_plugin.c */
 static int vid_start(motion_ctxt_ptr);
 static int vid_next(motion_ctxt_ptr, unsigned char *);
 static void vid_init(motion_ctxt_ptr);
@@ -80,4 +80,4 @@ static int vid_putpipe(motion_ctxt_ptr, int, unsigned char *, int);
 static void vid_close(motion_ctxt_ptr);
 static void vid_cleanup(motion_ctxt_ptr);
 
-#endif /* _INCLUDE_VIDEO_H */
+#endif /* _INCLUDE_V4LPLUGIN_H */

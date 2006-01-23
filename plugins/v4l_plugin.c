@@ -1,4 +1,4 @@
-/*	video.c
+/*	v4l_plugin.c
  *
  *	Video stream functions for motion.
  *	Copyright 2000 by Jeroen Vreeken (pe1rxq@amsat.org)
