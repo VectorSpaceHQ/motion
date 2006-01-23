@@ -1027,18 +1027,6 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 					value = NULL;
 					continue;
 				}
-#if 0
-				/*
-				 * For plugins, we check whether the param name
-				 * ends with the special string "_plugin")
-				 */
-				if ((cptr = strrchr(name, '_'))) {
-					if ((!strcmp(cptr+1, "plugin"))) {
-						proc_plugin(new_config, name, value);
-						continue;
-					}
-				}
-#endif
 			 	/* We now know that we have a "general"
 			         * parameter.  What we don't yet know is what
 			         * type of value the param should contain, and
@@ -1414,11 +1402,13 @@ int set_ext_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, param_definition_p
  */
 void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 	int ix;
-	static char sect_separator[]   = "#################################"
-	                                 "#################################";
+	static char sect_separator[]   = "###################################"
+	                                 "###################################";
 	static char sect_cont_pref[]   = "#    ";
-	static char sect_cont_end[]    = "                                 "
-	                                 "                                #";
+	static char sect_cont_end[]    = "                                   "
+	                                 "                                  #";
+#define sect_separator_len (sizeof(sect_separator) - 1)
+#define sect_cont_pref_len (sizeof(sect_cont_pref) - 1)
 	static char param_descr_pref[] = "# ";
 	const char *sptr, *cptr;
 	char *cptr1;
@@ -1426,7 +1416,8 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 	char wline[129];
 	config_param_ptr   p;
 	param_definition_ptr  pv;
-	char has_value;
+	char has_value, first;
+	int fill_length;
 
 	if (!conf || !outfile) {
 		motion_log(LOG_ERR, 0, "Invalid config_ctxt_ptr in dump_config_file");
@@ -1455,19 +1446,37 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 			/* Now, provided each line is not too long,
 			 * make the box
 			 */
+			first = 1;
 			do {
 				/* calculate the length of the line */
 				cptr = strchr(sptr, '\n');
-				/* start the line with a 'prefix' ('# ') */
-				strcpy(wline, sect_cont_pref);
 				/* put the length in 'slen' */
 				if (cptr)	/* if more lines follow */
 					slen = cptr++ - sptr;
 				else		/* if last line */
 					slen = strlen(sptr);
 				/* make sure line + prefix will fit in buffer */
-				if (slen > sizeof(wline) - sizeof(sect_cont_pref) - 1)
-					slen = sizeof(wline) - sizeof(sect_cont_pref) - 1;
+				if (slen > sizeof(wline) - sect_cont_pref_len)
+					slen = sizeof(wline) - sect_cont_pref_len;
+				/* start the line with a 'prefix' ('# ') */
+				strcpy(wline, sect_cont_pref);
+				
+				if (first) {    /* we want to "center" the first line */
+					first = 0;
+					/*
+					 * calculate required fill based upon the size of
+					 * the section separator and 2*prefix
+					 */
+					fill_length = ((sect_separator_len - slen) / 2) -
+					               sect_cont_pref_len;
+					if (fill_length > 0) {
+						/* new string terminator at end */
+						wline[sect_cont_pref_len + fill_length] = 0;
+						/* then add in required spaces */
+						while (fill_length > 0)
+							wline[sect_cont_pref_len + --fill_length] = ' ';
+					}
+				}
 				strncat(wline, sptr, slen);
 				/* if description line < separator, append a "...#" */
 				if (strlen(wline) < strlen(sect_separator))
@@ -1510,11 +1519,11 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 					case RANGE_VALIDATION:
 						cptr = strchr(pv->param_values,' ');
 						if (cptr) {
-							slen = cptr++ - pv->param_values;
-							//cptr1 = strndup(pv->param_values, slen);
+							slen = ++cptr - pv->param_values;
+							/* allocate space for start value + string term */
 							cptr1 = mymalloc(slen);
-							memcpy(cptr1, (const char *)pv->param_values, slen);
-
+							memcpy(cptr1, (const char *)pv->param_values, slen-1);
+							cptr1[slen-1] = 0;
 							fprintf(outfile, "%sAllowed values: %s - %s\n",
 							        param_descr_pref,
 								cptr1, cptr);
@@ -1700,7 +1709,11 @@ int conf_load (motion_ctxt_ptr cnt) {
 			motion_log(LOG_ERR, 1, "Trying to open config dump file");
 			return -1;
 		}
-		dump_config_file(outfile, gconf_ctxt);
+		sect_chain_ptr = gconf_ctxt;
+		while (sect_chain_ptr) {
+			dump_config_file(outfile, sect_chain_ptr);
+			sect_chain_ptr = sect_chain_ptr->next;
+		}
 		fclose(outfile);
 		free(dump_config_filename);
 	}
