@@ -145,7 +145,8 @@ static void rgb24toyuv420p(unsigned char *map, unsigned char *cap_map, int width
 			v++;
 		}
 
-		if ((loop & 1) == 1) {
+		if ((loop & 1) == 0) 
+		{
 			u-=width/2;
 			v-=width/2;
 		}
@@ -542,6 +543,10 @@ static void bktr_picture_controls(struct context *cnt, struct video_dev *viddev)
 	     (cnt->conf.saturation != viddev->saturation) ){
 		set_saturation(cnt, dev, cnt->conf.saturation);
 		viddev->saturation = cnt->conf.saturation;
+	}
+
+	if (cnt->conf.auto_brightness) {
+		/* TODO */
 	}
 }
 
