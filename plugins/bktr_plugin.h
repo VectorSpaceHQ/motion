@@ -113,11 +113,8 @@ param_voffset:   offsetof(bktr_config, V),
 /* video functions, bktr_plugin.c */
 int vid_start(motion_ctxt_ptr);
 int vid_next(motion_ctxt_ptr, unsigned char *map);
-
-#ifndef WITHOUT_V4L
 void vid_init(motion_ctxt_ptr);
 void vid_close(motion_ctxt_ptr);
 void vid_cleanup(motion_ctxt_ptr);
-#endif
 
 #endif /* _INCLUDE_BKTR_PLUGIN_H */

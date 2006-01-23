@@ -13,9 +13,7 @@
 #include <stddef.h>
 
 #define _LINUX_TIME_H 1
-#ifndef WITHOUT_V4L
 #include <linux/videodev.h>
-#endif
 
 /* video4linux stuff */
 #define NORM_DEFAULT    0
