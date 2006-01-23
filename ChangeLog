@@ -1,3 +1,9 @@
+Mon Jan 23 02:42:00 CET 2006 Angel Carpintero
+	* src/motion.c motion.h: Added mystrndup() function to use with
+	  the same behaviour of strndup().
+	* src/newconfig.c: use mystrndup() replacing the previous attempt
+	  to replace strndup().	
+
 Sun Jan 22 09:15:00 PST 2006 William Brack
 
 	* src/newconfig.c: further enhancement for the "dump" routine,
