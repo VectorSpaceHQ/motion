@@ -544,7 +544,7 @@ param_definition global_params [] = {
 	},
 #ifdef HAVE_FFMPEG
 	{
-	CFG_PARM(ffmpeg_filename)
+	CFG_PARM(movie_filename)
 	param_descr:    "File path for motion triggered ffmpeg films (mpeg) relative to target_dir\n"
 	                "Default value is equivalent to legacy oldlayout option\n"
 	                "For Motion 3.0 compatible mode choose: %Y/%m/%d/%H%M%S\n"

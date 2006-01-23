@@ -319,10 +319,10 @@ static void event_ffmpeg_newfile(struct context *cnt, int type ATTRIBUTE_UNUSED,
 	if (!cnt->conf.ffmpeg_cap_new && !cnt->conf.ffmpeg_cap_motion)
 		return;
 		
-	/* conf.ffmpeg_filename would normally be defined but if someone deleted it by control interface
+	/* conf.movie_filename would normally be defined but if someone deleted it by control interface
 	   it is better to revert to the default than fail */
-	if (cnt->conf.ffmpeg_filename)
-		ffmpeg_filename = cnt->conf.ffmpeg_filename;
+	if (cnt->conf.movie_filename)
+		ffmpeg_filename = cnt->conf.movie_filename;
 	else
 		ffmpeg_filename = DEF_MPEGPATH;
 

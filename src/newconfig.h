@@ -245,7 +245,7 @@ typedef struct config {
 	const char *vidpipe;
 	const char *target_dir;
 	const char *jpeg_filename;
-	const char *ffmpeg_filename;
+	const char *movie_filename;
 	const char *snapshot_filename;
 	const char *timelapse_filename;
 	char *on_event_start;
