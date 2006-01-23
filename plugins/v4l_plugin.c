@@ -894,47 +894,42 @@ static int vid_next(motion_ctxt_ptr cnt, unsigned char *map)
 {
 	struct config *conf=&cnt->conf;
 	int ret = -1;
+	int i = -1;
+	int width, height;
+	int dev = cnt->video_dev;
 
-	/* We start a new block so we can make declarations without breaking
-	 * gcc 2.95 or older
-	 */
-	{
-		int i = -1;
-		int width, height;
-		int dev = cnt->video_dev;
+	/* NOTE: Since this is a capture, we need to use capture dimensions. */
+	width = cnt->rotate_data.cap_width;
+	height = cnt->rotate_data.cap_height;
 
-		/* NOTE: Since this is a capture, we need to use capture dimensions. */
-		width = cnt->rotate_data.cap_width;
-		height = cnt->rotate_data.cap_height;
+	while (viddevs[++i])
+		if (viddevs[i]->fd==dev)
+			break;
 
-		while (viddevs[++i])
-			if (viddevs[i]->fd==dev)
-				break;
+	if (!viddevs[i])
+		return -1;
 
-		if (!viddevs[i])
-			return -1;
-
-		if (viddevs[i]->owner != cnt->threadnr) {
-			pthread_mutex_lock(&viddevs[i]->mutex);
-			viddevs[i]->owner = cnt->threadnr;
-			viddevs[i]->frames = conf->roundrobin_frames;
-			cnt->switched = 1;
-		}
-
-		v4l_set_input(cnt, viddevs[i], map, width, height, V4L_PARAM->v4l_input, V4L_PARAM->v4l_norm,
-		               conf->roundrobin_skip, V4L_PARAM->v4l_frequency, V4L_PARAM->v4l_tuner_number);
-		ret = v4l_next(cnt, viddevs[i], map, width, height);
-
-		if (--viddevs[i]->frames <= 0) {
-			viddevs[i]->owner = -1;
-			pthread_mutex_unlock(&viddevs[i]->mutex);
-		}
-
-		if(cnt->rotate_data.degrees > 0) {
-			/* rotate the image as specified */
-			cnt->callbacks->motion_rotate_map(cnt, map);
-		}
+	if (viddevs[i]->owner != cnt->threadnr) {
+		pthread_mutex_lock(&viddevs[i]->mutex);
+		viddevs[i]->owner = cnt->threadnr;
+		viddevs[i]->frames = conf->roundrobin_frames;
+		cnt->switched = 1;
 	}
+
+	v4l_set_input(cnt, viddevs[i], map, width, height, V4L_PARAM->v4l_input, V4L_PARAM->v4l_norm,
+	               conf->roundrobin_skip, V4L_PARAM->v4l_frequency, V4L_PARAM->v4l_tuner_number);
+	ret = v4l_next(cnt, viddevs[i], map, width, height);
+
+	if (--viddevs[i]->frames <= 0) {
+		viddevs[i]->owner = -1;
+		pthread_mutex_unlock(&viddevs[i]->mutex);
+	}
+
+	if(cnt->rotate_data.degrees > 0) {
+		/* rotate the image as specified */
+		cnt->callbacks->motion_rotate_map(cnt, map);
+	}
+	
 	return ret;
 }
 
