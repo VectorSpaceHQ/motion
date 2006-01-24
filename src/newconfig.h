@@ -210,7 +210,6 @@ typedef struct config {
 	int lightswitch;
 	int night_compensate;
 	unsigned int low_cpu;
-	int nochild;
 	int auto_brightness;
 	int brightness;
 	int contrast;
@@ -242,6 +241,9 @@ typedef struct config {
 	int ffmpeg_timelapse;
 	const char *ffmpeg_timelapse_mode; 
 	const char *video_device;
+#ifdef __freebsd__
+	const char *tuner_device;
+#endif
 	const char *vidpipe;
 	const char *target_dir;
 	const char *jpeg_filename;
