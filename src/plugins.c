@@ -93,7 +93,11 @@ int plugin_resolve_nolock(struct mhandle *handle, const char *symbol,
                           void **address)
 {
 	void *addr;
+#ifndef __freebsd__
 	char *error;
+#else
+	const char *error;
+#endif
 
 	/* dlsym() may return a NULL address, which may be ok. Thus, to check for
 	 * error, we have to clear the error with dlerror(), and then see if 
@@ -167,7 +171,11 @@ struct mhandle *plugin_load(const char *filename, int lazy)
 	void *handle;
 	struct mhandle *ret = NULL;
 	struct motion_plugin *modinfo;
+#ifndef __freebsd__
 	char *error;
+#else
+	const char *error;
+#endif
 
 	pthread_mutex_lock(&thread_lock);
 	

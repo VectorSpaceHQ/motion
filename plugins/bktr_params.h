@@ -8,7 +8,7 @@
  * for the parameter validation address.
  *
  * Note that params described in this table must have an entry in the structure
- * v4l_config, defined in bktr_plugin.h.
+ * bktr_config, defined in bktr_plugin.h.
  */
 
 static param_definition bktr_params[] = {
@@ -22,12 +22,13 @@ static param_definition bktr_params[] = {
 	param_type:     STRING_PARAM,
 	param_default:  "/dev/bktr0",
 	},
+	{
 	CFG_BKTRPARM(bktr_tunerdevice)
 	param_descr:	"tuner device to be used for capturing.\n"
 			"bktr_input must be set to 1 and a rasonable to bktr_frequency\n",
 	param_type:	STRING_PARAM,
 	param_default:  NULL,
-	}
+	},
 	{
 	CFG_BKTRPARM(bktr_input)
 	param_descr:    "The video input channel to be used",

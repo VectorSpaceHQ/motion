@@ -180,7 +180,7 @@ static int set_hue(struct context *cnt, int viddev, int new_hue )
 	signed char ioctlval=new_hue;
 
 	if( ioctl( viddev, METEORSHUE, &ioctlval ) < 0 ) {
-                cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSHUE Error setting hue [%d]",new_hue);
+                cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSHUE Error setting hue [%d]",new_hue);
                 return -1;
         }
 
@@ -194,7 +194,7 @@ static int get_hue(struct context *cnt, int viddev , int *hue)
 	signed char ioctlval;
 
 	if( ioctl( viddev, METEORGHUE, &ioctlval ) < 0 ) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGHUE Error getting hue");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGHUE Error getting hue");
 		return -1;
 	}
 
@@ -207,11 +207,11 @@ static int set_saturation(struct context *cnt, int viddev, int new_saturation )
 	unsigned char ioctlval= new_saturation;
 
 	if( ioctl( viddev, METEORSCSAT, &ioctlval ) < 0 ) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSCSAT Error setting saturation [%d]",new_saturation);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSCSAT Error setting saturation [%d]",new_saturation);
 		return -1;
 	}
 
-	cnt->callbacks->cnt->callbacks->motion_log(-1, 0, "set saturation to [%d]",ioctlval);
+	cnt->callbacks->motion_log(-1, 0, "set saturation to [%d]",ioctlval);
 
 	return ioctlval;
 }
@@ -222,7 +222,7 @@ static int get_saturation(struct context *cnt, int viddev , int *saturation)
 
 	if( ioctl( viddev, METEORGCSAT, &ioctlval ) < 0 ) {
 
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGCSAT Error getting saturation");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGCSAT Error getting saturation");
 		return -1;
 	}
 
@@ -235,11 +235,11 @@ static int set_contrast(struct context *cnt, int viddev, int new_contrast )
 	unsigned char ioctlval = new_contrast;
 
 	if( ioctl( viddev, METEORSCONT, &ioctlval ) < 0 ) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSCONT Error setting contrast [%d]", new_contrast);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSCONT Error setting contrast [%d]", new_contrast);
 		return 0;
 	}
 
-	cnt->callbacks->cnt->callbacks->motion_log(-1, 0, "set contrast to [%d]",ioctlval);
+	cnt->callbacks->motion_log(-1, 0, "set contrast to [%d]",ioctlval);
 
 	return ioctlval;
 }
@@ -249,7 +249,7 @@ static int get_contrast(struct context *cnt, int viddev, int *contrast )
 	unsigned char ioctlval;
 
 	if( ioctl (viddev, METEORGCONT, &ioctlval ) < 0 ) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGCONT Error getting contrast");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGCONT Error getting contrast");
 		return -1;
 	}
 
@@ -263,11 +263,11 @@ static int set_brightness(struct context *cnt, int viddev, int new_bright )
 	unsigned char ioctlval = new_bright;
 
 	if( ioctl( viddev, METEORSBRIG, &ioctlval ) < 0 ) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSBRIG  brightness [%d]",new_bright);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "METEORSBRIG  brightness [%d]",new_bright);
 		return -1;
 	}
 
-	cnt->callbacks->cnt->callbacks->motion_log(-1, 0, "set brightness to [%d]",ioctlval);
+	cnt->callbacks->motion_log(-1, 0, "set brightness to [%d]",ioctlval);
 	
 	return ioctlval;
 }
@@ -278,7 +278,7 @@ static int get_brightness(struct context *cnt, int viddev, int *brightness )
 	unsigned char ioctlval;
 
 	if( ioctl( viddev, METEORGBRIG, &ioctlval ) < 0 ) {
-                cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGBRIG  getting brightness");
+                cnt->callbacks->motion_log(LOG_ERR, 1, "METEORGBRIG  getting brightness");
                 return -1;
         }
 
@@ -316,7 +316,7 @@ static int set_freq(struct context *cnt, struct video_dev *viddev, unsigned long
 	/* HACK maybe not need it , but seems that is needed to mute before changing frequency */
 
 	if ( ioctl( tuner_fd, BT848_GAUDIO, &old_audio ) < 0 ) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 1, "BT848_GAUDIO");
+		cnt->callbacks->motion_log(LOG_ERR, 1, "BT848_GAUDIO");
 		return -1;
 	}
 	
@@ -635,7 +635,7 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	 so is dependent of color space of input format / FIXME */
 
 	viddev->bktr_bufsize = (((width*height*3/2)) * sizeof(unsigned char *));
-	viddev->bktr_fmt = VIDEO_PALETTE_YUV420P;
+	viddev->bktr_fmt = VIDEO_YUV420P;
 	
 
 	map = mmap((caddr_t)0,viddev->bktr_bufsize,PROT_READ|PROT_WRITE,MAP_SHARED, dev_bktr, (off_t)0);
@@ -674,17 +674,17 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 
 	/* FIXME*/
 	switch (viddev->bktr_fmt) {
-		case VIDEO_PALETTE_YUV420P:
+		case VIDEO_YUV420P:
 			viddev->bktr_bufsize=(width*height*3)/2;
-			cnt->callbacks->motion_log(-1, 0, "VIDEO_PALETTE_YUV420P palette setting bufsize");
+			cnt->callbacks->motion_log(-1, 0, "VIDEO_YUV420P palette setting bufsize");
 			break;
-		case VIDEO_PALETTE_YUV422:
+		case VIDEO_UYVY:
 			viddev->bktr_bufsize=(width*height*2);
 			break;
-		case VIDEO_PALETTE_RGB24:
+		case VIDEO_RGB24:
 			viddev->bktr_bufsize=(width*height*3);
 			break;
-		case VIDEO_PALETTE_GREY:
+		case VIDEO_GRAY:
 			viddev->bktr_bufsize=width*height;
 			break;
 	}
@@ -713,7 +713,7 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
  *    -1          Fatal error
  *     1          Non fatal error (not implemented)
  */
-static int bktr_next(struct video_dev *viddev,unsigned char *map, int width, int height)
+static int bktr_next(struct context *cnt, struct video_dev *viddev,unsigned char *map, int width, int height)
 {
 	int dev_bktr=viddev->fd_bktr;
 	unsigned char *cap_map=NULL;
@@ -761,10 +761,10 @@ static int bktr_next(struct video_dev *viddev,unsigned char *map, int width, int
 	
 
 	switch (viddev->bktr_fmt){
-		case VIDEO_PALETTE_RGB24:
+		case VIDEO_RGB24:
 			rgb24toyuv420p(map, cap_map, width, height);
 			break;
-		case VIDEO_PALETTE_YUV422:
+		case VIDEO_UYVY:
 			yuv422to420p(map, cap_map, width, height);
 			break;
 		default:
@@ -806,7 +806,7 @@ static void bktr_set_input(struct context *cnt, struct video_dev *viddev, unsign
 		}
 		*/
 
-		if (set_geometry(viddev, width, height) == -1)
+		if (set_geometry(cnt ,viddev, width, height) == -1)
 			return;
 	
 		bktr_picture_controls(cnt, viddev);
@@ -819,7 +819,7 @@ static void bktr_set_input(struct context *cnt, struct video_dev *viddev, unsign
 
 		/* skip a few frames if needed */
 		for (i=0; i<skip; i++)
-			bktr_next(viddev, map, width, height);
+			bktr_next(cnt, viddev, map, width, height);
 	}else{
 		/* No round robin - we only adjust picture controls */
 		bktr_picture_controls(cnt, viddev);
@@ -854,7 +854,7 @@ void vid_init(motion_ctxt_ptr cnt)
 		pthread_mutex_init(&vid_mutex, NULL);
 	}
 	if (cnt->video_vars->video_params) {
-		cnt->callbacks->cnt->callbacks->motion_log(LOG_ERR, 0, "in vid_init: video_config already allocated");
+		cnt->callbacks->motion_log(LOG_ERR, 0, "in vid_init: video_config already allocated");
 	} else {
 		cnt->video_vars->video_params = cnt->callbacks->motion_alloc(sizeof(bktr_config));
 		memset(cnt->video_vars->video_params, 0, sizeof(bktr_config));
@@ -947,16 +947,16 @@ int vid_start(struct context *cnt)
 			cnt->imgs.type=viddevs[i]->bktr_fmt;
 			cnt->callbacks->motion_log(-1, 0, "vid_start cnt->imgs.type [%i]", cnt->imgs.type);
 			switch (cnt->imgs.type) {
-				case VIDEO_PALETTE_GREY:
+				case VIDEO_GRAY:
 					cnt->imgs.motionsize=width*height;
 					cnt->imgs.size=width*height;
 				break;
-				case VIDEO_PALETTE_RGB24:
-				case VIDEO_PALETTE_YUV422:
-					cnt->imgs.type=VIDEO_PALETTE_YUV420P;
-				case VIDEO_PALETTE_YUV420P:
+				case VIDEO_RGB24:
+				case VIDEO_UYVY:
+					cnt->imgs.type=VIDEO_YUV420P;
+				case VIDEO_YUV420P:
 					cnt->callbacks->motion_log(-1, 0,
-					           " VIDEO_PALETTE_YUV420P setting imgs.size and imgs.motionsize");
+					           " VIDEO_YUV420P setting imgs.size and imgs.motionsize");
 					cnt->imgs.motionsize=width*height;
 					cnt->imgs.size=(width*height*3)/2;
 				break;
@@ -1011,7 +1011,7 @@ int vid_start(struct context *cnt)
 	viddevs[i]->owner=-1;
 
 	/* default palette */ 
-	viddevs[i]->bktr_fmt=VIDEO_PALETTE_YUV420P;
+	viddevs[i]->bktr_fmt=VIDEO_YUV420P;
 	viddevs[i]->bktr_curbuffer=0;
 	viddevs[i]->bktr_maxbuffer=1;
 
@@ -1023,15 +1023,15 @@ int vid_start(struct context *cnt)
 	cnt->imgs.type=viddevs[i]->bktr_fmt;
 	
 	switch (cnt->imgs.type) { 
-		case VIDEO_PALETTE_GREY:
+		case VIDEO_GRAY:
 			cnt->imgs.size=width*height;
 			cnt->imgs.motionsize=width*height;
 		break;
-		case VIDEO_PALETTE_RGB24:
-		case VIDEO_PALETTE_YUV422:
-			cnt->imgs.type=VIDEO_PALETTE_YUV420P;
-		case VIDEO_PALETTE_YUV420P:
-			cnt->callbacks->motion_log(-1, 0, "VIDEO_PALETTE_YUV420P imgs.type");
+		case VIDEO_RGB24:
+		case VIDEO_UYVY:
+			cnt->imgs.type=VIDEO_YUV420P;
+		case VIDEO_YUV420P:
+			cnt->callbacks->motion_log(-1, 0, "VIDEO_YUV420P imgs.type");
 			cnt->imgs.size=(width*height*3)/2;
 			cnt->imgs.motionsize=width*height;
 		break;
@@ -1095,7 +1095,7 @@ int vid_next(struct context *cnt, unsigned char *map)
 	
  	if(cnt->rotate_data.degrees > 0){ 
 		/* rotate the image as specified */
-		cnt->callbacks->rotate_map(cnt, map);
+		cnt->callbacks->motion_rotate_map(cnt, map);
  	}
 	
 	return ret;
