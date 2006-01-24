@@ -1,5 +1,4 @@
 dnl Process this file with autoconf to produce a configure script
-
 AC_INIT(src/motion.c)
 
 VERSION=4.0-alpha
@@ -11,6 +10,47 @@ dnl BB: I don't know what this one is for
 AM_MAINTAINER_MODE
 AM_PROG_LIBTOOL
 
+THREAD_CFLAGS=""
+THREAD_CHECK="pthread.h"
+
+Darwin=""
+FreeBSD=""
+
+
+AC_MSG_CHECKING(for Darwin)
+Darwin=`uname -a | grep "Darwin"`
+
+if test "${Darwin}" = ""; then
+	AC_MSG_RESULT(no)
+	AC_MSG_CHECKING(for *BSD)
+
+	FreeBSD=`uname -a | grep "BSD"`
+	if test "${FreeBSD}" = ""; then
+		AC_MSG_RESULT(no)
+		VIDEO="video.o"
+	else
+		AC_MSG_RESULT(yes)
+		THREAD_CHECK="/usr/local/include/pthread/linuxthreads/pthread.h"
+		THREAD_LIB_CHECK="/usr/local/lib/liblthread.so"
+		TEMP_CFLAGS="${CFLAGS} -D__freebsd__ -I/usr/local/include"
+		TEMP_LDFLAGS="${LDFLAGS} -L/usr/local/lib"
+		TEMP_LIBS="-L/usr/local/lib"
+		VIDEO="video_freebsd.o"
+	fi
+else
+	TEMP_CFLAGS="${CFLAGS} -I/sw/include -D__freebsd__"
+	TEMP_LDFLAGS="${LDFLAGS} -L/sw/lib"
+	TEMP_LIBS="-L/sw/lib"
+	VIDEO="video_freebsd.o"
+	FINK_LIB="-L/sw/lib"
+	Darwin="yes"
+	AC_MSG_RESULT($Darwin)
+fi
+
+
+AC_SUBST(VIDEO)
+
+dnl Checks for programs.
 dnl Checks for programs.
 dnl Setting CFLAGS is a Bill hack to prevent automatic -O2
 dnl (which screws up debugging).  Ideally it should be controlled
@@ -18,9 +58,31 @@ dnl by --with-developer-flags
 CFLAGS="-g"
 AC_PROG_CC
 
-TEMP_LIBS="-lm"
-TEMP_CFLAGS="${CFLAGS}"
-TEMP_LDFLAGS="${LDFLAGS}"
+TEMP_LIBS="-lm ${TEMP_LIBS}"
+TEMP_CFLAGS="${TEMP_CFLAGS} ${CFLAGS}"
+TEMP_LDFLAGS="${TEMP_LDFLAGS} ${LDFLAGS}"
+
+
+if test "${FreeBSD}" != ""; then
+
+dnl
+dnl Check to Exclude BKTR 
+dnl
+BKTR="yes"
+AC_ARG_WITH(bktr,
+[  --without-bktr           Exclude to use bktr subsytem , that usually usefull
+                          for devices as network cameras.
+                          ]
+                          ,
+BKTR="$withval"
+)
+
+
+	if test "${BKTR}" = "no"; then
+        	TEMP_CFLAGS="${TEMP_CFLAGS} -DWITHOUT_V4L"
+	fi
+
+else
 
 dnl
 dnl Check to Exclude V4L
@@ -33,9 +95,65 @@ AC_ARG_WITH(v4l,
 V4L="$withval"
 )
 
+fi
+
+
+if test "${Darwin}" = "yes"; then
+	V4L="no"
+fi
+
 if test "${V4L}" = "no"; then
 	TEMP_CFLAGS="${TEMP_CFLAGS} -DWITHOUT_V4L"
 fi
+
+
+if test "${FreeBSD}" != ""; then
+
+AC_MSG_CHECKING(for linuxthreads)
+
+dnl
+dnl Check for thread header
+dnl
+	if test -f "${THREAD_CHECK}"; then
+        	HEADERS_THREAD_CFLAGS="-I/usr/local/include/pthread/linuxthreads"
+        	THREADS="yes"
+	else
+        	THREADS="no"
+	fi
+
+dnl
+dnl Check for thread lib
+dnl
+	if test -f "${THREAD_LIB_CHECK}" ; then
+		THREADS="yes"
+		LIB_THREAD="-llthread -llgcc_r"
+	else
+        	THREADS="no"
+	fi
+
+dnl Checks for Library linuxthreads for FreeBSD
+dnl
+dnl linuxthreads on freeBSD, ports collection
+dnl /usr/local/include/pthreads/linuxthreads/pthread.h
+dnl #include <linuxthreads/pthread.h>
+dnl /usr/local/lib/libpthread.so
+dnl
+
+	if test "${THREADS}" = "yes"; then
+		TEMP_CFLAGS="${HEADERS_THREAD_CFLAGS} $TEMP_CFLAGS -DWITH_LINUXTREADS"
+                TEMP_LIBS="$TEMP_LIBS ${LIB_THREAD}"
+                THREAD_CFLAGS="-D_THREAD_SAFE"
+                PTHREAD_SUPPORT="yes"
+                AC_MSG_RESULT($THREADS)
+        else
+                PTHREAD_SUPPORT="no"
+                AC_MSG_RESULT($THREADS)
+                echo
+                echo You do not have linuxthread installed
+                echo
+        fi
+
+else
 
 dnl Checks for Library pthread ( no cross platform )
 AC_CHECK_LIB(pthread,pthread_create,[
@@ -47,6 +165,10 @@ AC_CHECK_LIB(pthread,pthread_create,[
 		echo
 	]	
 )
+
+fi
+
+
 
 dnl
 dnl Check for the special mmx accelerated jpeg library
@@ -113,6 +235,8 @@ dnl Look for _a_ jpeg lib that will work.
 dnl
 if test x$JPEG_SUPPORT != xyes ; then
   dnl Checks for libraries
+  LDFLAGS=$TEMP_LDFLAGS
+
   AC_CHECK_LIB(jpeg, jpeg_set_defaults, [
 		TEMP_LIBS="$TEMP_LIBS -ljpeg"
 		JPEG_SUPPORT="yes"
@@ -156,11 +280,10 @@ else if test "${FFMPEG}" = "yes"; then
 
 	if test -f /usr/bin/ffmpeg-config; then
 		FFMPEG_LIBS_DEB="`ffmpeg-config --libs avformat`"
-		FFMPEG_DEB="`ffmpeg-config --cflags`"
+		FFMPEG_CFLAGS_DEB="`ffmpeg-config --cflags`"
 		FFMPEG_OK="found"
-	fi	
-	
-	if test -f /usr/lib64/libavcodec.a -o -f /usr/lib64/libavcodec.so && test -f /usr/lib64/libavformat.a -o -f /usr/lib64/libavformat.so ; then
+		AC_MSG_RESULT(found for debian)
+	elif test -f /usr/lib64/libavcodec.a -o -f /usr/lib64/libavcodec.so && test -f /usr/lib64/libavformat.a -o -f /usr/lib64/libavformat.so ; then
 		AC_MSG_RESULT(found)
 		FFMPEG_OK="found"
 		FFMPEG="/usr/lib64"
@@ -211,17 +334,31 @@ else
 	fi
 fi
 
+#
+# Now check for ffmpeg headers ( avformat.h ) if ffmpeg libs were found
+#
+
 if test "${FFMPEG_OK}" = "found"; then
-	if test -f ${FFMPEG}/include/avformat.h; then
-		TEMP_CFLAGS="-I${FFMPEG}/include ${TEMP_CFLAGS}"
+	AC_MSG_CHECKING(for ffmpeg headers)
+	
+	if test "${FFMPEG_CFLAGS_DEB}" != "" ; then
+		FFMPEG_CFLAGS="${FFMPEG_CFLAGS_DEB}"
+		AC_MSG_RESULT(found for debian)
+	elif test -f ${FFMPEG}/include/avformat.h; then
+		AC_MSG_RESULT(found)
+		FFMPEG_CFLAGS="-I${FFMPEG}/include"
 	elif test -f ${FFMPEG}/avformat.h; then
-		TEMP_CFLAGS="-I${FFMPEG} ${TEMP_CFLAGS}"
+		AC_MSG_RESULT(found)
+		FFMPEG_CFLAGS="-I${FFMPEG}"
 	elif test -f `AS_DIRNAME([${FFMPEG}])`/include/avformat.h; then
-		TEMP_CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include ${TEMP_CFLAGS}"
+		AC_MSG_RESULT(found)
+		FFMPEG_CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include"
 	elif test -f `AS_DIRNAME([${FFMPEG}])`/include/ffmpeg/avformat.h; then
-		TEMP_CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include/ffmpeg ${TEMP_CFLAGS}"
+		AC_MSG_RESULT(found)
+		FFMPEG_CFLAGS="-I`AS_DIRNAME([${FFMPEG}])`/include/ffmpeg"
 	else
 		AC_MSG_RESULT(not found)
+		FFMPEG_OK="no_found"
 		echo "**********************************************"
 		echo "*       avformat.h not found:                *"
 		echo "*    ALL FFMPEG FEATURES DISABLED            *"
@@ -232,16 +369,24 @@ if test "${FFMPEG_OK}" = "found"; then
 		echo ""
 	fi
 
-	
-	if test "${FFMPEG_LIBS_DEB}" != "" ; then
-		TEMP_LIBS="$TEMP_LIBS -L${FFMPEG} ${FFMPEG_LIBS_DEB}"	
-	else
-		TEMP_LIBS="$TEMP_LIBS -L${FFMPEG} -lavformat -lavcodec -lm -lz"
-		TEMP_LDFLAGS="${TEMP_LDFLAGS} -L${FFMPEG}"
-	fi	
-	TEMP_CFLAGS="${TEMP_CFLAGS} -DHAVE_FFMPEG"
-	FFMPEG_OBJ="ffmpeg.o"
-	AC_SUBST(FFMPEG_OBJ)
+#
+# If ffmpeg libs and headers have been found 
+#
+
+	if  test "${FFMPEG_OK}" = "found"; then	
+		if test "${FFMPEG_LIBS_DEB}" != ""; then
+			TEMP_LIBS="$TEMP_LIBS ${FFMPEG_LIBS_DEB}"
+#			TEMP_LDFLAGS="${TEMP_LDFLAGS} ${FFMPEG_LIBS_DEB}"
+		else
+			TEMP_LIBS="$TEMP_LIBS -L${FFMPEG} -lavformat -lavcodec -lm -lz"
+			TEMP_LDFLAGS="${TEMP_LDFLAGS} -L${FFMPEG}"
+		fi
+
+		TEMP_CFLAGS="${TEMP_CFLAGS} -DHAVE_FFMPEG ${FFMPEG_CFLAGS}"
+
+		FFMPEG_OBJ="ffmpeg.o"
+		AC_SUBST(FFMPEG_OBJ)
+	fi
 fi	
 fi
 
@@ -423,6 +568,10 @@ DEVELOPER_FLAGS="$withval"
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
+
+if test "${FreeBSD}" != ""; then
+	OPTIMIZECPU=""
+fi
 
 if test "${OPTIMIZECPU}" = "yes"; then
 
@@ -672,10 +821,22 @@ echo "   *   Configure status   *"
 echo "   ************************"
 echo ""
 
+
+if test "${Darwin}" != ""; then
+	echo "OS             :     Darwin"
+elif test "${FreeBSD}" != ""; then
+	echo "OS             :     *BSD"		
+else 
+	echo "OS             :     Linux"
+fi
+
 if test "${PTHREAD_SUPPORT}" = "yes"; then
 	echo "pthread Support:     Yes"
 else
-	echo "pthread Support:     No" 
+	echo "pthread Support:     No"
+	echo "**********************************************"
+        echo "** Fatal Error YOU MUST HAVE pthread Support *"
+        echo "**********************************************" 
 fi
 
 if test "${JPEG_SUPPORT_MMX}" = "yes"; then
@@ -684,12 +845,26 @@ elif test "${JPEG_SUPPORT}" = "yes"; then
 	echo "jpeg Support:        Yes"
 else
 	echo "jpeg Support:        No"
+	echo "**********************************************"
+        echo "** Fatal Error YOU MUST HAVE jpeg Support  ***"
+        echo "**********************************************"
 fi
 
-if test "${V4L}" = "yes"; then
-	echo "V4L included:        Yes"
+
+if test "${FreeBSD}" != ""; then
+	if test "${BKTR}" = "yes"; then
+        	echo "BKTR included:       Yes"
+	else
+        	echo "BKTR included:       No"
+	fi
+
+
 else
-	echo "V4L included:        No"
+	if test "${V4L}" = "yes"; then
+		echo "V4L included:        Yes"
+	else
+		echo "V4L included:        No"
+	fi
 fi
 
 if test "${FFMPEG_OK}" = "found"; then
