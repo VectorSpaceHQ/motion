@@ -288,7 +288,7 @@ static int get_brightness(struct context *cnt, int viddev, int *brightness )
 
 // Set channel needed ? FIXME 
 /*
-static int set_channel( struct video_dev *viddev, int new_channel ) 
+static int set_channel(struct context *cnt, struct video_dev *viddev, int new_channel ) 
 {
 	int ioctlval;
 
@@ -580,12 +580,11 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	void *map;
 
 	/* if we have choose the tuner is needed to setup the frequency */
-	/* Temporary HACK that allow to use input 1 ( Tuner for most of cards ) as Composite if frequency is set to -1 FIXME */
-	if (( input == IN_TV ) && (freq != -1)) {
+	if ( (viddev->tuner_device != NULL) && ( input == IN_TV ) ) {
 		if (!freq) {
 			cnt->callbacks->motion_log(LOG_ERR, 1, "Not valid Frequency [%lu] for Source input [%i]", freq, input);
 			return (NULL);
-		}else if (set_freq(viddev, freq) == -1) {
+		}else if (set_freq(cnt, viddev, freq) == -1) {
 			cnt->callbacks->motion_log(LOG_ERR, 1, "Frequency [%lu] Source input [%i]", freq, input);
 			return (NULL);
 		}
@@ -593,12 +592,12 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 	
 	/* FIXME if we set as input tuner , we need to set option for tuner not for bktr */
 
-	if ( set_input_format(viddev, norm) == -1 ) {
+	if ( set_input_format(cnt, viddev, norm) == -1 ) {
 		cnt->callbacks->motion_log(LOG_ERR, 1, "set input format [%d]",norm);
 		return (NULL);
 	}
 
-	if (set_geometry(viddev, width, height) == -1) {
+	if (set_geometry(cnt, viddev, width, height) == -1) {
 		cnt->callbacks->motion_log(LOG_ERR, 1, "set geometry [%d]x[%d]",width, height);
 		return (NULL);
 	}
@@ -621,9 +620,9 @@ static unsigned char *bktr_start(struct context *cnt, struct video_dev *viddev, 
 			cnt->callbacks->motion_log(-1, 0, "Frequency set (no implemented yet");
 	/*
 	 TODO missing implementation
-		set_channelset(viddev);
-		set_channel(viddev);
-		if (set_freq (viddev, freq) == -1) {
+		set_channelset(cnt, viddev);
+		set_channel(cnt, viddev);
+		if (set_freq (cnt, viddev, freq) == -1) {
 			return (NULL);
 		}
 	*/
@@ -788,14 +787,14 @@ static void bktr_set_input(struct context *cnt, struct video_dev *viddev, unsign
 	if (input != viddev->input || width != viddev->width || height!=viddev->height || freq!=viddev->freq){ 
 		cnt->callbacks->motion_log(LOG_WARNING, 0, "bktr_set_input really needed ?");
 
-		if (set_input(viddev, input) == -1)
+		if (set_input(cnt, viddev, input) == -1)
 			return;
 
-		if (set_input_format(viddev, norm) == -1 )
+		if (set_input_format(cnt, viddev, norm) == -1 )
 			return;
 		
-		if (( input == IN_TV ) && (frequnits)) {
-			if (set_freq (viddev, freq) == -1)
+		if ((viddev->tuner_device != NULL) &&( input == IN_TV ) && (frequnits > 0)) {
+			if (set_freq (cnt, viddev, freq) == -1)
 				return;
 		}
 
@@ -914,17 +913,19 @@ int vid_start(struct context *cnt)
 		           conf->width);
 		return -1;
 	}
+	
 	if (conf->height % 16) {
 		cnt->callbacks->motion_log(LOG_ERR, 0,
 		           "config image height (%d) is not modulo 16",
 		           conf->height);
 		return -1;
 	}
+	
 	width = conf->width;
 	height = conf->height;
-	input = BKTR_PARAM->conf->input;
-	norm = BKTR_PARAM->conf->norm;
-	frequency = BKTR_PARAM->conf->frequency;
+	input = BKTR_PARAM->bktr_input;
+	norm = BKTR_PARAM->bktr_norm;
+	frequency = BKTR_PARAM->bktr_frequency;
 
 	pthread_mutex_lock(&vid_mutex);
 
@@ -941,7 +942,7 @@ int vid_start(struct context *cnt)
 	 * and return the file descriptor
 	 */
 	while (viddevs[++i]) { 
-		if (!strcmp(BKTR_PARAM->conf->video_device, viddevs[i]->video_device)) {
+		if (!strcmp(BKTR_PARAM->bktr_videodevice, viddevs[i]->video_device)) {
 			int fd;
 			cnt->imgs.type=viddevs[i]->bktr_fmt;
 			cnt->callbacks->motion_log(-1, 0, "vid_start cnt->imgs.type [%i]", cnt->imgs.type);
@@ -962,33 +963,35 @@ int vid_start(struct context *cnt)
 			}
 			fd=viddevs[i]->fd_bktr; // FIXME return fd_tuner ?!
 			pthread_mutex_unlock(&vid_mutex);
-				return fd;
+			return fd;
 		}
 	}
 
 	viddevs=cnt->callbacks->motion_realloc(viddevs, sizeof(struct video_dev *)*(i+2), "vid_start");
 	viddevs[i]=cnt->callbacks->motion_alloc(sizeof(struct video_dev));
 	viddevs[i+1]=NULL;
+	
 	pthread_mutexattr_init(&viddevs[i]->attr);
 	pthread_mutex_init(&viddevs[i]->mutex, NULL);
-	fd_bktr=open(BKTR_PARAM->conf->video_device, O_RDWR);
+
+	fd_bktr=open(BKTR_PARAM->bktr_videodevice, O_RDWR);
 	if (fd_bktr <0) { 
-		cnt->callbacks->motion_log(LOG_ERR, 1, "open video device %s",BKTR_PARAM->conf->video_device);
+		cnt->callbacks->motion_log(LOG_ERR, 1, "open video device %s",BKTR_PARAM->bktr_videodevice);
 		cnt->callbacks->motion_log(LOG_ERR, 0, "Motion Exits.");
-		exit(1);
+		return -1;
 	}
 
 	/* Only open tuner if freq and input is 1 that means that tunner has been selected as source FIXME ?! */
 	if (( frequency ) && ( input = IN_TV )) {
-		fd_tuner=open(BKTR_PARAM->conf->tuner_device, O_RDWR);
+		fd_tuner=open(BKTR_PARAM->bktr_tunerdevice, O_RDWR);
 		if (fd_tuner <0) { 
-			cnt->callbacks->motion_log(LOG_ERR, 1, "open tuner device %s",BKTR_PARAM->conf->tuner_device);
+			cnt->callbacks->motion_log(LOG_ERR, 1, "open tuner device %s",BKTR_PARAM->bktr_tunerdevice);
 			cnt->callbacks->motion_log(LOG_ERR, 0, "Motion Exits.");
-			exit(1);
+			return -1;
 		}
 	}
-	viddevs[i]->video_device=BKTR_PARAM->conf->video_device;
-	viddevs[i]->tuner_device=BKTR_PARAM->conf->tuner_device;
+	viddevs[i]->video_device=BKTR_PARAM->bktr_videodevice;
+	viddevs[i]->tuner_device=BKTR_PARAM->bktr_tunerdevice;
 	viddevs[i]->fd_bktr=fd_bktr;
 	viddevs[i]->fd_tuner=fd_tuner;
 	viddevs[i]->input=input;
@@ -1080,8 +1083,8 @@ int vid_next(struct context *cnt, unsigned char *map)
 	}
 
 
-	bktr_set_input(cnt, viddevs[i], map, width, height, BKTR_PARAM->conf->input, BKTR_PARAM->conf->norm,
-	              conf->roundrobin_skip, BKTR_PARAM->conf->frequency);
+	bktr_set_input(cnt, viddevs[i], map, width, height, BKTR_PARAM->bktr_input, BKTR_PARAM->bktr_norm,
+	              conf->roundrobin_skip, BKTR_PARAM->bktr_frequency);
 	
 	ret = bktr_next(cnt, viddevs[i], map, width, height);
 

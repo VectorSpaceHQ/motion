@@ -10,9 +10,14 @@
 #ifndef _INCLUDE_BKTR_PLUGIN_H
 #define _INCLUDE_BKTR_PLUGIN_H
 
+/*
+ * This is deprecated and only is included from FreeBSD port tree for FreeBSD < 5.0
 #include <machine/ioctl_meteor.h>
 #include <machine/ioctl_bt848.h>
+*/
 
+#include <dev/bktr/ioctl_meteor.h>
+#include <dev/bktr/ioctl_bt848.h>
 
 /* bktr (BSD video capture interface) stuff FIXME more modes not only these */
 
@@ -64,8 +69,9 @@
 #define CAPTURE_SINGLE    0
 #define CAPTURE_CONTINOUS 1
 
-#define VIDEO_DEVICE "/dev/bktr0"
-#define TUNER_DEVICE "/dev/tuner0"
+/* Remove that must be in bktr_params.h */
+//#define VIDEO_DEVICE "/dev/bktr0"
+//#define TUNER_DEVICE "/dev/tuner0"
 
 
 struct video_dev {
@@ -100,10 +106,10 @@ struct video_dev {
 
 typedef struct bktr_config {
 	char    *bktr_videodevice;
+	char    *bktr_tunerdevice;
 	int     bktr_input;
 	int     bktr_norm;
 	int     bktr_frequency;
-	int     bktr_tuner_number;
 } bktr_config, *bktr_config_ptr;
 
 #define CFG_BKTRPARM(V)  \

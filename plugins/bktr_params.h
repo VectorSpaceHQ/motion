@@ -22,11 +22,11 @@ static param_definition bktr_params[] = {
 	param_type:     STRING_PARAM,
 	param_default:  "/dev/bktr0",
 	},
-	CFG_BKTRPARM(bktr_tuner)
+	CFG_BKTRPARM(bktr_tunerdevice)
 	param_descr:	"tuner device to be used for capturing.\n"
 			"bktr_input must be set to 1 and a rasonable to bktr_frequency\n",
 	param_type:	STRING_PARAM,
-	param_default:  "/dev/turner0",
+	param_default:  NULL,
 	}
 	{
 	CFG_BKTRPARM(bktr_input)
