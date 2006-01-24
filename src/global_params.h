@@ -543,6 +543,7 @@ param_definition global_params [] = {
 	param_default:  "DEF_JPEGPATH",
 	},
 #ifdef HAVE_FFMPEG
+// FIXME that should not be FFMPEG dependent , it should be movie_plugin dependent	
 	{
 	CFG_PARM(movie_filename)
 	param_descr:    "File path for motion triggered ffmpeg films (mpeg) relative to target_dir\n"
