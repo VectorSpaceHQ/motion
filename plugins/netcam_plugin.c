@@ -637,6 +637,7 @@ static int netcam_connect(netcam_context_ptr netcam, struct timeval *timeout)
 		return -1;
 	}
 	/* lookup the hostname given in the netcam URL */
+	memset(&res, 0, sizeof(res));
 	if ((ret = getaddrinfo(netcam->connect_host, NULL, NULL, &res))
 	     != 0) {
 		netcam->cnt->callbacks->motion_log(LOG_ERR, 0,

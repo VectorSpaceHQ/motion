@@ -1,3 +1,18 @@
+Tue Jan 24 15:15:00 PST 2006 William Brack
+	* plugins/netcam_plugin.c: added a memset to clear data
+	  before calling getaddrinfo (to cleanup a minor warning from
+	  valgrind)
+	* src/motion.[ch]: added a memset to clear data from the newly
+	  allocated imgs.smartmask_final (to make valgrind happier);
+	  relocated miscellaneous utility routines out of this module
+	  and into a new module, utils.[ch]
+	* src/utils.[ch]: new home for miscellaneous utility routines,
+	  plus added some new routines for handling a "dictionary".
+	  This is currently only used within newconfig.c, but may be
+	  expanded.
+	* src/newconfig.c: enhanced to utilise a "dictionary" to handle
+	  accessing configuration parameters within a config section.
+	  
 Mon Jan 23 03:15:00 CET 2006 Angel Carpintero
 	* src/plugin.c plugin.h : Added plugin_cleanup() to free 
 	  the plugin handle resources and remove the goto from
@@ -11,12 +26,10 @@ Mon Jan 23 02:42:00 CET 2006 Angel Carpintero
 	  to replace strndup().	
 
 Sun Jan 22 09:15:00 PST 2006 William Brack
-
 	* src/newconfig.c: further enhancement for the "dump" routine,
 	  fixing problem with 'range' and printing section headers.
 
 Sat Jan 21 13:33:00 PST 2006 William Brack
-
 	* src/ Makefile.am, newconfig.c, motion.c: commented out areas
 	  requiring webhttpd until Version 4 conversion gets further.
 	* src/ dummymotion.h, fudge.h: removed from CVS
@@ -30,17 +43,14 @@ Sat Jan 21 13:33:00 PST 2006 William Brack
 	  formatting to please Lavr :-)
 	  
 Fri Jan 20 22:55:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* changed all occurences of "ctxt_ptr" to be "motion_ctxt_ptr"
 	  (many modules in both src and plugins)
 
 Fri Jan 20 11:25:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* src/newconfig.c: Added code to set the default plugin path
 	  if no path is specified on the "plugin" config param.
 
 Fri Jan 20 10:03:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* src/ motion.h, motion.c: re-located video_params out of
 	  context->video_ctxt (which was a pointer to static data),
 	  into context->video_vars (which was previously named
@@ -49,7 +59,6 @@ Fri Jan 20 10:03:00 PST 2006 William Brack <wbrack@mmm.com.hk>
 	  above change.
 
 Thu Jan 19 18:05:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* CHANGELOG: removed from CVS
 	* motion_version.h.in: new file, contains #define for
 	  current version
@@ -63,7 +72,6 @@ Thu Jan 19 18:05:00 PST 2006 William Brack <wbrack@mmm.com.hk>
 	  default location for motion plugins (not yet done)
 
 Thu Jan 19 08:57:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* configure.in: changed VERSION to be 4.0-alpha
 	* plugins/netcam_plugin.c: updated for config file handling,
 	  now should be useable.
@@ -77,7 +85,6 @@ Thu Jan 19 08:57:00 PST 2006 William Brack <wbrack@mmm.com.hk>
 	* src/conf.h: removed from CVS
 	
 Wed Jan 18 12:00:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* src/ alg.c, event.c, motion.c picture.c, rotate.c,
 	  webhttpd.c: changed all config variables to be the same
 	  name as the configuration parameter
@@ -102,7 +109,6 @@ Wed Jan 18 12:00:00 PST 2006 William Brack <wbrack@mmm.com.hk>
 	  newconfig.c
 	  
 Sun Jan  8 19:35:00 PST 2006 William Brack <wbrack@mmm.com.hk>
-
 	* src/newconfig.[ch]: Substantial addition to the logic, and
 	  addition of code for doing most of the required validation.
 	  Tested with "Default Config" from the Twiki - no crashes, and
@@ -114,24 +120,20 @@ Sun Jan  8 19:35:00 PST 2006 William Brack <wbrack@mmm.com.hk>
 	* src/global_params.h: some additions and a few corrections.
 	
 Wed Dec 28 18:35:00 PST 2005 William Brack <wbrack@mmm.com.hk>
-
 	* src/global_params.h: minor fix to some typing errors
 
 Wed Dec 28 17:26:38 PST 2005 William Brack <wbrack@mmm.com.hk>
-
 	* src/newconfig.[ch]: further enhancement of the proposed new
 	  configuration code.  Synced with current Lavr sources for
 	  most params.  Elements for some validation added to config
 	  structure, and dump routines enhanced to show valid values.
 
 Mon Oct 17 19:31:03 HKT 2005 William Brack <wbrack@mmm.com.hk>
-
 	Massive change, all camelCase identifiers changed to ugly
 	xx_yy form.  *.c, *.h files with capital letters changed
 	to _lowercase_letter form.  Seems to still compile ok.
 
 Tue Oct 11 15:01:11 HKT 2005 William Brack <wbrack@mmm.com.hk>
-
 	* src/newconfig.[ch]: added more code and structures for
 	  config file validation.  Also added code to produce a
 	  "dump" of the config file after the configuration context
@@ -142,14 +144,12 @@ Tue Oct 11 15:01:11 HKT 2005 William Brack <wbrack@mmm.com.hk>
 	  the global parameters, together with the information needed
 	  to validate and dump them.  Currently only a few values
 	  (enough for testing) have been typed in.
-	  
-Mon Oct 10 01:50:37 HKT 2005 William Brack <wbrack@mmm.com.hk>
 
+Mon Oct 10 01:50:37 HKT 2005 William Brack <wbrack@mmm.com.hk>
 	* src/newconfig.[ch]: added include file facility, debugged
 	  and got Valgrind to approve.
 
 Sun Oct  9 14:02:22 HKT 2005 William Brack <wbrack@mmm.com.hk>
-
 	* src/newconfig.[ch]: General cleanup.  Added some
 	  #defines for whitespace.  Wrote a new routine to
 	  parse lines with possible predicates, allowing for
@@ -161,7 +161,6 @@ Sun Oct  9 14:02:22 HKT 2005 William Brack <wbrack@mmm.com.hk>
 	  of plugins, and then on to parameter validation.
 
 Sat Oct  8 23:45:30 HKT 2005 William Brack <wbrack@mmm.com.hk>
-
 	Added in a new module for parsing the currently-proposed
 	configuration file
 	* src/newconfig.c, src/newconfig.h: new routines, currently
@@ -169,7 +168,6 @@ Sat Oct  8 23:45:30 HKT 2005 William Brack <wbrack@mmm.com.hk>
 	  testing.
 
 Mon Oct  3 11:44:21 HKT 2005 William Brack <wbrack@mmm.com.hk>
-
 	After the following, the system shutdown code now seems to be
 	working correctly:
 	* src/plugins.h: changed motionVideoInput structure to have two
@@ -187,7 +185,6 @@ Mon Oct  3 11:44:21 HKT 2005 William Brack <wbrack@mmm.com.hk>
 	  structure, particularly threads_running).
 
 Sun Oct  2 18:06:17 HKT 2005 William Brack <wbrack@mmm.com.hk>
-
 	* configure.in: sync'ed with Lavr sources, including changes to
 	  LDFLAGS and jpeg-mmx
 	* src/*.[ch]: changed prototype param declarations from

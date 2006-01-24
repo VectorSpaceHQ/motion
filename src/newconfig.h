@@ -80,8 +80,11 @@ typedef enum {
  *      strict alphabetical order. Each element of the chain contains the
  *      details of one parameter.
  */
-typedef struct _config_param{
-	struct _config_param    *next;             /* pointer to next in chain */
+typedef struct _config_param config_param;
+typedef config_param *config_param_ptr;
+struct _config_param{
+	config_param_ptr        next;              /* pointer to next in chain */
+	config_param_ptr        dupl;              /* ptr to any duplicate */
 	char                    *name;             /* parameter name */
 	char                    *str_value;        /* string value of the param */
 	param_type_def          type;              /* parameter type */
@@ -92,7 +95,7 @@ typedef struct _config_param{
 		char            *char_ptr;        /* string */
 		void            *void_ptr;        /* void */
 	} value;
-} config_param, *config_param_ptr;
+};
 
 
 /*
@@ -156,6 +159,8 @@ typedef struct _config_ctxt {
 	motion_ctxt_ptr         cnt;               /* pointer to motion context */
 	config_param_ptr        params;            /* pointer to params chain */
 	cfg_valid_ptr           valid_chain;       /* pointer to validation chain */
+	dictionary_ptr          dict;              /* pointer to dictionary for
+                                                      param names */
 	int                     num_valid_params;  /* number of items in table */
 	param_definition_ptr    param_valid;       /* pointer to a variable-length
 	                                              table of valid params */

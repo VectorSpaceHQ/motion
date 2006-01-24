@@ -497,21 +497,77 @@ static int validate_void(param_definition_ptr pdef, config_param_ptr pptr) {
  * There are two important structures which we will create and maintain -
  * "configuration contexts" and "params".  Here we definine routines
  * for destroying them, assuring all previously allocated memory is freed.
+ * The config context is needed in order to delete the param from the
+ * context's dictionary, and to remove it from the param chain.  Note
+ * that a context pointer of NULL indicates that the param has not yet
+ * been put into any context.
  */
-static void destroy_param(config_param_ptr ptr) {
+static void destroy_param(config_ctxt_ptr conf, config_param_ptr ptr) {
+	config_param_ptr wptr;
+	
 	if (debug_level > 4)
 		motion_log(0, 0, "Destroying param '%s'", ptr->name);
 	if (!ptr)
 		return;
+	/*
+	 * I'm not quite sure what's the "right thing" to do here
+	 * with respect to freeing value pointers.  At the moment,
+	 * nothing other than the "str_value" of this param is being
+	 * used, and that is freed later.  For now, I'll just free
+	 * anything else which has been allocated.
+	 */
 	if (ptr->type ==STRING_PARAM) {
-		if (ptr->value.char_ptr == ptr->str_value)
-			ptr->str_value = NULL;
-		if (ptr->value.char_ptr)
-			free(ptr->str_value);
+		if ((ptr->value.char_ptr != NULL) &&
+		    (ptr->value.char_ptr != ptr->str_value))
+			free(ptr->value.char_ptr);
 	}
 	if (ptr->type == VOID_PTR_PARAM) {
-		if (ptr->value.void_ptr)
+		if ((ptr->value.void_ptr) &&
+		    (ptr->value.void_ptr != ptr->str_value))
 			free(ptr->value.void_ptr);
+	}
+	if (conf != NULL) {
+		/*
+		 * We want to remove this param from the context's
+		 * param chain, but there is a little trouble with
+		 * the case of duplicates, which are (rarely)
+		 * allowed.
+		 * In this special case, there is a "duplicate" chain,
+		 * with the dictionary entry pointing to the "base"
+		 * of the chain.  This gives us two problems - first,
+		 * we must update the chain; second, if the dictionary
+		 * entry is pointing to this param, we must update
+		 * the dictionary.
+		 */
+		wptr = dict_lookup(conf->dict, ptr->name, -1);
+		/* if this is a duplicate, but not the first, it's simple */
+		if (wptr != ptr) {
+			while ((wptr->dupl != ptr) && (wptr->dupl != NULL)) {
+				wptr = wptr->dupl;
+			}
+			/* We expect to have found a match */
+			if (wptr->dupl == ptr) {
+				/* remove this param from the chain */
+				wptr->dupl = ptr->dupl;
+			/* otherwise it's a program bug - log it! */
+			} else {
+				motion_log(LOG_ERR, 0, "Corrupt dupl chain!");
+			}
+		} else {
+			/*
+			 * The dictionary entry points to this param, so if
+			 * there are duplicates we need to change the dictionary.
+			 * In any event, we can delete the existing entry.
+			 */
+			if (dict_delete(conf->dict, ptr->name, -1)) {
+				motion_log(LOG_ERR, 0, "Error updating dupl chain");
+			} 
+			if (ptr->dupl != NULL) {
+				if (dict_add(conf->dict, ptr->name, -1, ptr->dupl)) {
+					motion_log(LOG_ERR, 0, "Error updating dupl chain");
+				}
+			}
+		}
 	}
 	if (ptr->name)
 		free(ptr->name);
@@ -536,9 +592,12 @@ void destroy_config_ctxt(config_ctxt_ptr ptr) {
 	p1 = ptr->params;
 	while (p1) {
 		p2 = p1->next;
-		destroy_param(p1);
+		destroy_param(ptr, p1);
 		p1 = p2;
 	}
+	/* destroying the dictionary also cleans up any entries in it */
+	if (ptr->dict)
+		dict_destroy(ptr->dict);
 	free(ptr);
 }
 
@@ -895,10 +954,10 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 	config_ctxt_ptr new_config;
 	char	buff[INTERNAL_BUFF_SIZE];
 	char	*name, *value, *cptr;        
-	int	order;
+	int	namelen;
 	int	has_error = 0;
 	parse_result ret;
-	config_param_ptr new_param;
+	config_param_ptr new_param, ppos;
 	param_definition_ptr pptr;
 
 	if (debug_level) {
@@ -927,6 +986,7 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 	} else {
 		new_config->global = conf;
 	}
+	new_config->dict = dict_create();
 
 	while (1) {
 		buff[sizeof(buff)-1] = 0xff;
@@ -993,7 +1053,8 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 				 * file and carry on.  Any error on the open
 				 * is fatal.
 				 */
-				if (!strcmp(name, "include")) {
+				namelen = strlen(name);
+				if (!strncmp(name, "include", namelen)) {
 					cfg_file_ptr new_cfg_file;
 					FILE *newfile;
 
@@ -1036,6 +1097,7 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 					has_error = 1;
 					break;
 				} else {
+#if 0
 					config_param_ptr ppos, p1;  /* ppos will be insertion point */
 					ppos = (config_param_ptr)&new_config->params;
 					p1 = ppos->next;
@@ -1060,8 +1122,45 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 					/* Now need to link this new param onto existing chain */
 					new_param->next = ppos->next;
 					ppos->next = new_param;
+#endif
+					/* First we check if the name is already defined */
+					ppos = (config_param_ptr)dict_lookup(new_config->dict,
+					        name, namelen);
+					/* If it is, check whether duplicates are allowed */
+					if (ppos != NULL) {
+						/* If not, this is an error */
+						if (!(pptr->param_flags & DUPS_OK_PARAM)) {
+							motion_log(LOG_ERR, 0,
+							           "Duplicate '%s' "
+							           "in sect %s", new_param->name,
+							           *node_name ? *node_name : "global");
+							has_error = 1;
+							break;
+						}
+						/* Dups allowed - chain this onto duplicate chain */
+						while (ppos->dupl != NULL)
+							ppos = ppos->dupl;
+						ppos->dupl = new_param;
+					/* If this param is not already present, add it to the dictionary */
+					} else {
+						if (dict_add(new_config->dict, name, namelen, new_param)) {
+							motion_log(LOG_ERR, 0,
+							           "Error looking up param name");
+							has_error = 1;
+							break;
+						}
+					}
 				}
-
+				/*
+				 * The param has been validated, and is guaranteed to be in the
+				 * dictionary.  We can now add it to our parameter chain, which
+				 * is maintained in "occurrence" sequence.
+				 */
+				ppos = (config_param_ptr)&(new_config->params);
+				while (ppos->next)
+					ppos = ppos->next;
+				ppos->next = new_param;
+				
 				if (debug_level > 5)
 					motion_log(-1, 0, "param {%s} value {%s}",
 						new_param->name,
@@ -1074,7 +1173,7 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 		}
 		if (has_error) {
 			/* FIXME - need to set some global flag? */
-			destroy_param(new_param);
+			destroy_param(NULL, new_param);
 			if (has_error < 0) {	/* fatal error */
 				return NULL;
 			}
@@ -1343,7 +1442,6 @@ int set_config_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, void *config_va
 int set_ext_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, param_definition_ptr pptr,
                 int numvalues, void *config_vars) {
 	int ix;
-	int res;
 	config_param_ptr p;
 
 	if (!config_vars) {
@@ -1360,6 +1458,7 @@ int set_ext_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, param_definition_p
 		if (!pptr[ix].param_name) /* Ignore any block titles */
 			continue;
 		/* Look through the params present in the config file */
+#if 0
 		p = conf->params;
 		res = -1;
 		while (p) {
@@ -1369,7 +1468,9 @@ int set_ext_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, param_definition_p
 				break;
 			p = p->next;
 		}
-		val_set(cnt, &pptr[ix], p, config_vars, res);
+#endif
+		p = dict_lookup(conf->dict, pptr[ix].param_name, -1);
+		val_set(cnt, &pptr[ix], p, config_vars, (p == NULL));
 	}
 	return 0;
 }
@@ -1528,6 +1629,7 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 		 * If it's not present, then we print a comment (with a ';') line to
 		 * specify it's default value.
 		 */
+#if 0
 		p = conf->params;
 		has_value = 0;
 		while (p) {
@@ -1546,15 +1648,22 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 			} while ((p != NULL) && !strcmp(pv->param_name, p->name));
 			break;
 		}
-		if (!has_value) {
+#endif
+		p = dict_lookup(conf->dict, pv->param_name, -1);
+		if (p != NULL) {
+			while (p != NULL) {
+				fprintf(outfile, "%s  %s\n", pv->param_name, p->str_value);
+				p = p->dupl;
+			}
+			fputc('\n', outfile);
+		} else {
 			if (pv->param_default) {
 				fprintf(outfile, ";  %s  %s\n\n", pv->param_name,
 					pv->param_default);
 			} else {
 				fprintf(outfile, "#  %s\n\n", pv->param_name);
 			}
-		} else
-			fputc('\n', outfile);
+		}
 	}
 }
 
