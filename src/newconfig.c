@@ -18,6 +18,15 @@
 /* The global var "dump_config_filename" is only for testing config file processing */
 char *dump_config_filename;
 
+static char sect_separator[]   = "###################################"
+                                 "###################################";
+static char sect_cont_pref[]   = "#    ";
+static char sect_cont_end[]    = "                                   "
+                                 "                                  #";
+static char param_descr_pref[] = "# ";
+#define sect_separator_len (sizeof(sect_separator) - 1)
+#define sect_cont_pref_len (sizeof(sect_cont_pref) - 1)
+
 static int parse_name_value(char *, int, char **, char **, int);
 
 /**
@@ -1476,29 +1485,21 @@ int set_ext_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, param_definition_p
 }
 
 /**
- * dump_config_file
+ * dump_param_details
+ *
+ * This routine is called for dumping the full details of param
+ * validation, both for the global params, and for any potential
+ * plugin params.
  * 
- * Routine to write out the current contents of a configuration context,
- * utilising the information present in the validation sub-structure.
- *
  * Parameters:
- *
- *      outfile         pointer to the streaming file descriptor cptr1, pv->param_values, slenr
- *      conf            pointer to the configuration context
- *
- * Returns:
- *      Data written to the specified file
+ *      outfile         pointer to the FILE for output
+ *      conf            pointer to the config structure
+ *      pdef            pointer to param definitions
+ *      pnum            number of definitions present
  */
-void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
+static void dump_param_details(FILE *outfile, config_ctxt_ptr conf, 
+                        param_definition_ptr pdef, int pnum) {
 	int ix;
-	static char sect_separator[]   = "###################################"
-	                                 "###################################";
-	static char sect_cont_pref[]   = "#    ";
-	static char sect_cont_end[]    = "                                   "
-	                                 "                                  #";
-#define sect_separator_len (sizeof(sect_separator) - 1)
-#define sect_cont_pref_len (sizeof(sect_cont_pref) - 1)
-	static char param_descr_pref[] = "# ";
 	const char *sptr, *cptr;
 	char *cptr1;
 	unsigned int slen;
@@ -1507,20 +1508,9 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 	param_definition_ptr  pv;
 	char has_value, first;
 	int fill_length;
-
-	if (!conf || !outfile) {
-		motion_log(LOG_ERR, 0, "Invalid config_ctxt_ptr in dump_config_file");
-		return;
-	}
-
-	if (!conf->title) {
-		fprintf(outfile, "[%s]\n", conf->node_name);
-	} else {
-		fprintf(outfile, "[%s %s]\n", conf->node_name, conf->title);
-	}
-
-	for (ix=0; ix<conf->num_valid_params; ix++) {
-		pv = (param_definition_ptr)&conf->param_valid[ix];
+	
+	for (ix=0; ix<pnum; ix++) {
+		pv = (param_definition_ptr)&pdef[ix];
 		/*
 		 * A little bit of extra work here to produce some nice
 		 * formatting. If there's a section title, we want to put it
@@ -1529,7 +1519,7 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 		 * and ends with a nicely-aligned "#"
 		 */
 		sptr = pv->param_descr;
-		if (!pv->param_name) {		/* Section title */
+		if (pv->param_name == NULL) {		/* Section title */
 			/* Start with a line of "###..#" */
 			fprintf(outfile, "\n%s\n", sect_separator);
 			/* Now, provided each line is not too long,
@@ -1629,26 +1619,6 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 		 * If it's not present, then we print a comment (with a ';') line to
 		 * specify it's default value.
 		 */
-#if 0
-		p = conf->params;
-		has_value = 0;
-		while (p) {
-			int res;
-			res = strcmp(p->name, pv->param_name);
-			if (res < 0) {
-				p = p->next;
-				continue;
-			}
-			if (res > 0)
-				break;
-			has_value = 1;
-			do { 
-				fprintf(outfile, "%s  %s\n", pv->param_name, p->str_value);
-				p = p->next;
-			} while ((p != NULL) && !strcmp(pv->param_name, p->name));
-			break;
-		}
-#endif
 		p = dict_lookup(conf->dict, pv->param_name, -1);
 		if (p != NULL) {
 			while (p != NULL) {
@@ -1657,7 +1627,7 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 			}
 			fputc('\n', outfile);
 		} else {
-			if (pv->param_default) {
+			if (pv->param_default != NULL) {
 				fprintf(outfile, ";  %s  %s\n\n", pv->param_name,
 					pv->param_default);
 			} else {
@@ -1665,6 +1635,55 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 			}
 		}
 	}
+}
+
+/**
+ * dump_config_file
+ * 
+ * Routine to write out the current contents of a configuration context,
+ * utilising the information present in the validation sub-structure.
+ *
+ * Parameters:
+ *
+ *      outfile         pointer to the streaming file descriptor cptr1, pv->param_values, slenr
+ *      conf            pointer to the configuration context
+ *
+ * Returns:
+ *      Data written to the specified file
+ */
+void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
+	int ix;
+	motion_plugin_ptr pptr = plugins_loaded;
+	config_param_ptr p;
+
+	if ((conf == NULL) || (outfile == NULL)) {
+		motion_log(LOG_ERR, 0, "Invalid config_ctxt_ptr in dump_config_file");
+		return;
+	}
+
+	if (conf->title == NULL) {
+		fprintf(outfile, "[%s]\n", conf->node_name);
+	} else {
+		fprintf(outfile, "[%s %s]\n", conf->node_name, conf->title);
+	}
+
+	if (conf->global == NULL) {     /* if dumping the global section */
+		dump_param_details(outfile, conf, conf->param_valid,
+		                    conf->num_valid_params);
+		while (pptr != NULL) {
+			dump_param_details(outfile, conf, pptr->plugin_validate,
+			                    pptr->plugin_validate_numentries);
+			pptr = pptr->next;
+		}
+	} else {
+		p = conf->params;
+		while (p != NULL) {
+			fprintf(outfile, "%s %s\n", p->name, p->str_value);
+			p = p->next;
+		}
+	}
+	fputc('\n', outfile);   /* Assure a blank line between sections */
+
 }
 
 /**
@@ -1814,31 +1833,4 @@ int conf_load (motion_ctxt_ptr cnt) {
 	}
 	return 0;
 }
-#if 0
-/********************************************************************************
- * Following dummy routines previously in conf.c, need to be either implemented *
- * in this routine, or else modify other routines calling them.                 *
- *   (note - currently in transitional header file "fudge.h")                   *
- ********************************************************************************/
-
-#include "fudge.h"
-
-/* referenced by motion.c and webhttpd.c */
-struct context **conf_cmdparse(struct context **cnt, const char *v1, const char *v2) {
-	motion_log(0, 0, "fudge/conf_cmdparse called");
-	return NULL;
-}
-
-/* referenced only by webhttpd.c */
-config_param config_params[1];
-
-const char *config_type(config_param *cfg) {
-	motion_log(0, 0, "fudge/config_type called");
-	return NULL;
-}
-
-void conf_print(struct context **cnt) {
-	motion_log(0, 0, "fudge/conf_print called");
-}
-#endif
 

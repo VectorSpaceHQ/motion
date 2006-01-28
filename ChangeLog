@@ -1,3 +1,9 @@
+Sat Jan 28 09:50:00 PST 2006 William Brack
+	* src/newconfig.c: enhanced the dump_config_file coding so that
+	  the parameter validation choices for any declared plugins are
+	  also dumped.  Also added the code to dump all the params which
+	  are declared within a subsidiary section.
+	  
 Tue Jan 24 15:15:00 PST 2006 William Brack
 	* plugins/netcam_plugin.c: added a memset to clear data
 	  before calling getaddrinfo (to cleanup a minor warning from
