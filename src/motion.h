@@ -251,6 +251,7 @@ typedef struct _motion_plugin {
 	motion_plugin_descr *plugin;
 	int plugin_validate_numentries;
 	param_definition_ptr plugin_validate;
+	dictionary_ptr dict;
 } motion_plugin, *motion_plugin_ptr;
 
 /*

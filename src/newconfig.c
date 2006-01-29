@@ -14,20 +14,62 @@
 #define	INTERNAL_BUFF_SIZE	1024
 
 #include "global_params.h"	/* global_params.h contains preset validation data */
+dictionary_ptr gconf_dict;
 
 /* The global var "dump_config_filename" is only for testing config file processing */
 char *dump_config_filename;
 
-static char sect_separator[]   = "###################################"
-                                 "###################################";
-static char sect_cont_pref[]   = "#    ";
-static char sect_cont_end[]    = "                                   "
-                                 "                                  #";
+/*
+ * Define the "ascii art" which we use on a generated config file.  We will
+ * produce "boxed text" for a "section description".  The "box" will begin and
+ * end with "sect_separator".  Within the box, each line will start with
+ * "sect_descr_pref" and will end with the last few characters of "sect_descr_end".
+ * Outside the box, parameter descriptions will start with "param_descr_prefix".
+ */
+static char sect_separator[]   =
+"######################################################################";
+static char sect_descr_pref[]   = "#    ";
+static char sect_descr_end[]    =
+"                                                                     #";
 static char param_descr_pref[] = "# ";
 #define sect_separator_len (sizeof(sect_separator) - 1)
-#define sect_cont_pref_len (sizeof(sect_cont_pref) - 1)
+#define sect_descr_pref_len (sizeof(sect_descr_pref) - 1)
 
+/* Define any prototypes needed */
 static int parse_name_value(char *, int, char **, char **, int);
+
+/**
+ * make_validation_dict
+ *
+ * Creates a dictionary for the specified validation table
+ *
+ * Parameters:
+ *      pv              pointer to a validation table
+ *      size            number of entries in the table
+ *
+ * Returns:		pointer to a new dictionary, NULL if error
+ */
+static dictionary_ptr make_validation_dict(param_definition_ptr pv, int size) {
+	dictionary_ptr dict;
+	int ix;
+
+	if ((dict = dict_create()) == NULL) {
+		motion_log(LOG_ERR, 0, "Error creating validation dictionary");
+		return NULL;
+	}
+	for (ix = 0; ix < size; ix++) {
+		if (pv->param_name != NULL) {
+			if (dict_add(dict, pv->param_name, -1, pv)) {
+				motion_log(LOG_ERR, 0, "Error adding validation "
+				           "dictionary entry");
+				dict_destroy(dict);
+				return NULL;
+			}
+		}
+		pv++;
+	}
+	return dict;
+}
 
 /**
  * load_plugin
@@ -79,6 +121,9 @@ static motion_plugin_ptr load_plugin(motion_ctxt_ptr cnt, const char *name,
 	numentries = 
 		(int *)(pptr->plugin->motion_plugin_control(MOTION_VALIDATION_SIZE));
 	pptr->plugin_validate_numentries = *numentries;
+	if (*numentries > 0)
+		pptr->dict = make_validation_dict(pptr->plugin_validate,
+		                                  pptr->plugin_validate_numentries);
 	return pptr;
 }
 /*
@@ -100,7 +145,8 @@ static motion_plugin_ptr load_plugin(motion_ctxt_ptr cnt, const char *name,
  * 			of 0 for success, -1 for error.
  */
 static int get_next_str(char **sptr, int *len) {
-char	*wptr;
+	char	*wptr;
+	
 	while (**sptr == ' ')
 		(*sptr)++;
 	if (**sptr == 0)
@@ -133,9 +179,9 @@ char	*wptr;
  */
 
 static int validate_set(const char *vptr, const char *sptr, int ival, int flag) {
-int	len;
-int	pos = 0;
-char	*wptr = (char *)vptr;
+	int	len;
+	int	pos = 0;
+	char	*wptr = (char *)vptr;
 
 	while (!get_next_str(&wptr, &len)) {
 		int res;
@@ -181,10 +227,10 @@ char	*wptr = (char *)vptr;
  *
  */
 static int validate_range(const char *vptr, char *sptr, int ival, int flag) {
-char	*cptr1, *cptr2, *cp1, *cp2;
-int	len1, len2;
-int	val1, val2;
-int	res;
+	char	*cptr1, *cptr2, *cp1, *cp2;
+	int	len1, len2;
+	int	val1, val2;
+	int	res;
 
 	/* isolate the first value in the range */
 	cp1 = (char *)vptr;
@@ -251,6 +297,7 @@ int	res;
  */
 static int convert_boolean(const char *val, const char *vset) {
 	int res;
+	
 	res = validate_set(vset, val, 0, CMP_NOCASE);
 	if ((res < 0) || (res > 1) )
 		return -1;
@@ -272,6 +319,7 @@ static int convert_boolean(const char *val, const char *vset) {
  */
 static int validate_boolean(param_definition_ptr pdef, config_param_ptr pptr) {
 	int res;
+	
 	switch (pdef->param_vtype) {
 		case SET_VALIDATION:
 			res = convert_boolean(pptr->str_value, pdef->param_values);
@@ -300,9 +348,9 @@ static int validate_boolean(param_definition_ptr pdef, config_param_ptr pptr) {
  * 
  */
 static int validate_integer(param_definition_ptr pdef, config_param_ptr pptr) {
-long	lval;
-char	*endptr;
-int	res;
+	long	lval;
+	char	*endptr;
+	int	res;
 
 	/* First we validate that the value is a valid integer */
 	lval = strtol(pptr->str_value, &endptr, 0);
@@ -623,6 +671,7 @@ void destroy_config_ctxt(config_ctxt_ptr ptr) {
  *      Pointer to the first significant character
  */
 static char *skip_nws(char *cptr) {
+	
 	while (*cptr && CHECK_NWS(cptr))
 		cptr++;
 	return cptr;
@@ -631,7 +680,7 @@ static char *skip_nws(char *cptr) {
 /**
  * parse_name_value
  *
- *      Parses the input line into a name and an optional value
+ * Parses the input line into a name and an optional value
  *
  * Parameters
  *
@@ -828,6 +877,7 @@ static param_definition_ptr conf_validate(motion_ctxt_ptr cnt, config_ctxt_ptr c
 	int ret = 0;
 	param_definition_ptr wptr;
 	config_ctxt_ptr ccptr;
+	
 	/*
 	 * First we must lookup the parameter name to determine what type of
 	 * parameter it should be.  Once that is determined, we can try to
@@ -842,37 +892,19 @@ static param_definition_ptr conf_validate(motion_ctxt_ptr cnt, config_ctxt_ptr c
 	wptr = NULL;
 	while (pv_ptr) {	/* for each plugin loaded */
 		/* if plugin has a param validation table */
-		for (ix = 0; ix < pv_ptr->plugin_validate_numentries; ix++) {
-			wptr = &pv_ptr->plugin_validate[ix];
-			/* name NULL meands doc sect descriptor */
-			if (!wptr->param_name)
-				continue;
-			if (!strcmp(pptr->name, wptr->param_name))
-				goto found;
+		if (pv_ptr->dict != NULL) {
+			if ((wptr = dict_lookup(pv_ptr->dict, pptr->name, -1)) != NULL)
+				break;
 		}
 		pv_ptr = pv_ptr->next;
 	}
 
 	/* If not found in the plugins, we next look in standard motion params */
-	if (conf_ptr->global)
-		ccptr = conf_ptr->global;
-	else
-		ccptr = conf_ptr;
-	for  (ix = 0; ix < ccptr->num_valid_params; ix++ ) {
-		wptr = &ccptr->param_valid[ix];
-		if (!wptr->param_name)  /* name NULL means doc sect descriptor */
-			continue;
-		/* if this is not the global section, ignore global-only */
-		if (conf_ptr->global) {
-			if (wptr->param_flags & GLOBAL_ONLY_PARAM)
-				continue;
-		}
-		if (!strcmp(pptr->name, wptr->param_name))
-			goto found;
+	if (wptr == NULL) {
+		if ((wptr = dict_lookup(gconf_dict, pptr->name, -1)) == NULL)
+			return NULL;
 	}
-	return NULL;
 
-found:
 	/*
 	 * We have found an entry for the current parameter name.  Now
 	 * we must validate the param.
@@ -955,7 +987,8 @@ static void proc_plugin(config_ctxt_ptr conf, char *name, char *value) {
  *      Pointer to the newly-created structure, or NULL if any error.
  *      The parameter 'retval' is also filled in with parse_result code.
  */
-static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *chain,
+static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, 
+                                          cfg_file_ptr *chain,
                                           config_ctxt_ptr conf,
                                           char **node_name,
                                           char **node_title,
@@ -989,12 +1022,7 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 	new_config->title = *node_title;
 	*node_title = NULL;
 
-	if (!conf) {             /* if this is the global config section being created */
-		new_config->num_valid_params = sizeof(global_params) / sizeof(param_definition);
-		new_config->param_valid = global_params;
-	} else {
-		new_config->global = conf;
-	}
+	/* create the parameter dictionary */
 	new_config->dict = dict_create();
 
 	while (1) {
@@ -1106,32 +1134,6 @@ static config_ctxt_ptr new_config_section(motion_ctxt_ptr cnt, cfg_file_ptr *cha
 					has_error = 1;
 					break;
 				} else {
-#if 0
-					config_param_ptr ppos, p1;  /* ppos will be insertion point */
-					ppos = (config_param_ptr)&new_config->params;
-					p1 = ppos->next;
-					while (p1) {
-						order = strcmp(p1->name, new_param->name);
-						if ((order == 0) &&
-						    !(pptr->param_flags & DUPS_OK_PARAM)) {
-							motion_log(LOG_ERR, 0,
-							           "Duplicate '%s' "
-							           "in sect %s", new_param->name,
-							           *node_name ? *node_name : "global");
-							has_error = 1;
-							break;
-						}
-						if (order > 0)
-							break;
-						ppos = p1;
-						p1 = p1->next;
-					}
-					if (has_error)
-						break;
-					/* Now need to link this new param onto existing chain */
-					new_param->next = ppos->next;
-					ppos->next = new_param;
-#endif
 					/* First we check if the name is already defined */
 					ppos = (config_param_ptr)dict_lookup(new_config->dict,
 					        name, namelen);
@@ -1285,8 +1287,8 @@ static config_ctxt_ptr create_config_chain(motion_ctxt_ptr cnt, cfg_file_ptr cur
  * Returns:		0 for success, -1 for any error
  *
  */
-static int val_set(motion_ctxt_ptr cnt, param_definition_ptr pv, config_param_ptr p, void *config_array, int default_flag) {
-
+static int val_set(motion_ctxt_ptr cnt, param_definition_ptr pv, config_param_ptr p,
+                   void *config_array, int default_flag) {
 	char *cptr;
 	int *iptr;
 	char **sptr;
@@ -1336,7 +1338,8 @@ static int val_set(motion_ctxt_ptr cnt, param_definition_ptr pv, config_param_pt
 				motion_log(LOG_ERR, 0, "Trouble setting value for '%s'",pv->param_name);
 				return -1;
 		}
-	} else {	/* this is a xxxxx_plugin param, so need to setup motion context structure */
+	} else if (!default_flag) {     /* nothing to do if default flag is set */
+		/* this is a xxxxx_plugin param, so need to setup motion context structure */
 		int len;
 		motion_plugin_ptr plug_ptr;
 
@@ -1397,38 +1400,27 @@ static int val_set(motion_ctxt_ptr cnt, param_definition_ptr pv, config_param_pt
  */
 int set_config_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, void *config_vars) {
 	int ix;
-	int res;
 	config_param_ptr p;
-	param_definition_ptr pv;
-	config_ctxt_ptr gparams;
 
-	if (conf->global)
-		gparams = conf->global;
-	else
-		gparams = conf;
 	/*
 	 * We use the parameter definition(s) to "drive" our actions.
 	 * This is because many of the variables might require being
 	 * set to the "default" value if there was no explicit entry
 	 * in the user's configuration file.
 	 */
-	for (ix = 0; ix < gparams->num_valid_params; ix++) {
-		pv = &gparams->param_valid[ix];
-		if (!pv->param_name)	/* Ignore any block titles */
+	for (ix = 0; ix < num_global_params; ix++) {
+		if (!global_params[ix].param_name)	/* Ignore any block titles */
 			continue;
-		/* Look through the params present in the config file */
-		p = conf->params;
-		res = -1;
-		while (p) {
-			/* they are held in ascending order */
-			res = strcmp(p->name, pv->param_name);
-			if (res >= 0)
-				break;
-			p = p->next;
-		}
-		/* if res != 0 we set default value for globals */
-		if (!res || ((gparams == conf) && pv->param_default))
-			val_set(cnt, pv, p, config_vars, res);
+		/* Is the param present in the config file? */
+		p = dict_lookup(conf->dict, global_params[ix].param_name, -1);
+		/*
+		 * If the param is present, set it's value.  If it's not present,
+		 * but this is the global config section, check whether there is
+		 * a default value to be set.
+		 */
+		if ((p != NULL) || (conf == gconf_ctxt))
+			val_set(cnt, &global_params[ix], p, config_vars,
+			        (p == NULL));
 	}
 	return 0;
 }
@@ -1467,17 +1459,6 @@ int set_ext_values(motion_ctxt_ptr cnt, config_ctxt_ptr conf, param_definition_p
 		if (!pptr[ix].param_name) /* Ignore any block titles */
 			continue;
 		/* Look through the params present in the config file */
-#if 0
-		p = conf->params;
-		res = -1;
-		while (p) {
-			/* they are held in ascending order */
-			res = strcmp(p->name, pptr[ix].param_name);
-			if (res >= 0)
-				break;
-			p = p->next;
-		}
-#endif
 		p = dict_lookup(conf->dict, pptr[ix].param_name, -1);
 		val_set(cnt, &pptr[ix], p, config_vars, (p == NULL));
 	}
@@ -1535,10 +1516,10 @@ static void dump_param_details(FILE *outfile, config_ctxt_ptr conf,
 				else		/* if last line */
 					slen = strlen(sptr);
 				/* make sure line + prefix will fit in buffer */
-				if (slen > sizeof(wline) - sect_cont_pref_len)
-					slen = sizeof(wline) - sect_cont_pref_len;
+				if (slen > sizeof(wline) - sect_descr_pref_len)
+					slen = sizeof(wline) - sect_descr_pref_len;
 				/* start the line with a 'prefix' ('# ') */
-				strcpy(wline, sect_cont_pref);
+				strcpy(wline, sect_descr_pref);
 				
 				if (first) {    /* we want to "center" the first line */
 					first = 0;
@@ -1547,19 +1528,19 @@ static void dump_param_details(FILE *outfile, config_ctxt_ptr conf,
 					 * the section separator and 2*prefix
 					 */
 					fill_length = ((sect_separator_len - slen) / 2) -
-					               sect_cont_pref_len;
+					               sect_descr_pref_len;
 					if (fill_length > 0) {
 						/* new string terminator at end */
-						wline[sect_cont_pref_len + fill_length] = 0;
+						wline[sect_descr_pref_len + fill_length] = 0;
 						/* then add in required spaces */
 						while (fill_length > 0)
-							wline[sect_cont_pref_len + --fill_length] = ' ';
+							wline[sect_descr_pref_len + --fill_length] = ' ';
 					}
 				}
 				strncat(wline, sptr, slen);
 				/* if description line < separator, append a "...#" */
 				if (strlen(wline) < strlen(sect_separator))
-					strcat(wline, &sect_cont_end[strlen(wline)]);
+					strcat(wline, &sect_descr_end[strlen(wline)]);
 				fprintf(outfile, "%s\n", wline);
 				sptr = cptr;
 			} while (cptr);
@@ -1667,9 +1648,8 @@ void dump_config_file(FILE *outfile, config_ctxt_ptr conf) {
 		fprintf(outfile, "[%s %s]\n", conf->node_name, conf->title);
 	}
 
-	if (conf->global == NULL) {     /* if dumping the global section */
-		dump_param_details(outfile, conf, conf->param_valid,
-		                    conf->num_valid_params);
+	if (conf == gconf_ctxt) {     /* if dumping the global section */
+		dump_param_details(outfile, conf, global_params, num_global_params);
 		while (pptr != NULL) {
 			dump_param_details(outfile, conf, pptr->plugin_validate,
 			                    pptr->plugin_validate_numentries);
@@ -1804,6 +1784,11 @@ int conf_load (motion_ctxt_ptr cnt) {
 		phase++;
 	}
 	/* Config file is opened and ready to process */
+	if (gconf_dict == NULL) {
+		if ((gconf_dict = make_validation_dict(global_params,
+		                  sizeof(global_params) / sizeof(param_definition))) == NULL)
+			return -1;
+	}
 	if ((gconf_ctxt = create_config_chain(cnt, cur_file)) == NULL) {
 		motion_log(LOG_ERR, 0, "Config file parsing error");
 		return -1;

@@ -153,17 +153,12 @@ typedef struct {
  */
 typedef struct _config_ctxt {
 	struct _config_ctxt     *next;             /* pointer to next in chain */
-	struct _config_ctxt     *global;           /* pointer to head of the chain */
 	char                    *node_name;        /* the name of this node */
 	char                    *title;            /* optional description */
 	motion_ctxt_ptr         cnt;               /* pointer to motion context */
 	config_param_ptr        params;            /* pointer to params chain */
-	cfg_valid_ptr           valid_chain;       /* pointer to validation chain */
 	dictionary_ptr          dict;              /* pointer to dictionary for
                                                       param names */
-	int                     num_valid_params;  /* number of items in table */
-	param_definition_ptr    param_valid;       /* pointer to a variable-length
-	                                              table of valid params */
 } config_ctxt, *config_ctxt_ptr;
 
 typedef struct _cfg_file {
@@ -306,6 +301,7 @@ int set_ext_values(motion_ctxt_ptr, config_ctxt_ptr, param_definition_ptr, int, 
 void destroy_config_ctxt(config_ctxt_ptr);
 
 extern config_ctxt_ptr gconf_ctxt;
+extern dictionary_ptr gconf_dict;
 extern motion_ctxt_ptr cnt_list;
 
 #endif

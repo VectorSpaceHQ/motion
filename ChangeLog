@@ -1,3 +1,11 @@
+Sun Jan 29 09:00:00 PST 2006 William Brack
+	* src/newconfig.[ch]: implemented dictionary for validation
+	  tables (both global and plugins).  Further cleanup of both
+	  code and structure definitions.
+	* src/motion.[ch], global_params.h: minor changes for above
+	  enhancement.
+	* src/utils.c: fixed problem in dictionary cleanup
+
 Sat Jan 28 09:50:00 PST 2006 William Brack
 	* src/newconfig.c: enhanced the dump_config_file coding so that
 	  the parameter validation choices for any declared plugins are

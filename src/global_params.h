@@ -913,4 +913,4 @@ param_definition global_params [] = {
 	},
 */	
 };
-
+int num_global_params = sizeof(global_params) / sizeof(param_definition);

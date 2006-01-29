@@ -526,17 +526,16 @@ void dict_destroy(dictionary_ptr dict) {
 			inside_dict = 1;
 			while (iter) {
 				next = iter->next;
+				free(iter->name);
 				if (inside_dict) {
 					inside_dict = 0;
 				} else {
-					free(iter->name);
 					free(iter);
 				}
 				dict->nb_entries--;
 				iter = next;
 			}
 		}
-		free(dict->dict->name);
 		free(dict->dict);
 	}
 	free(dict);

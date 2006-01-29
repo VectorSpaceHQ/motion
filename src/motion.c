@@ -1664,11 +1664,19 @@ static void motion_shutdown(void)
 			/* note plugin_close frees the handle */
                         plugin_close(plugins_loaded->handle);
                 }
+		if (plugins_loaded->dict != NULL)
+			dict_destroy(plugins_loaded->dict);
                 free(plugins_loaded);
                 plugins_loaded = pptr;
 	}
-	if (gconf_ctxt)
+	if (gconf_ctxt) {
 		destroy_config_ctxt(gconf_ctxt);
+		gconf_ctxt = NULL;
+	}
+	if (gconf_dict != NULL) {
+		dict_destroy(gconf_dict);
+		gconf_dict = NULL;
+	}
 }
 
 /**
