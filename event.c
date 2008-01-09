@@ -30,7 +30,7 @@
 static void exec_command(struct context *cnt, char *command, char *filename, int filetype)
 {
 	char stamp[PATH_MAX];
-	mystrftime(cnt, stamp, sizeof(stamp), command, &cnt->current_image->timestamp_tm, filename, filetype);
+	mystrftime(cnt, stamp, sizeof(stamp), command, cnt->currenttime_tm, filename, filetype);
 	
 	if (!fork()) {
 		int i;
@@ -123,9 +123,13 @@ static void event_sqlnewfile(struct context *cnt, int type  ATTRIBUTE_UNUSED,
 	 */
 	{
 		char sqlquery[PATH_MAX];
+		char timestr[20];
+		char eventtimestr[20];
 		int ret;
 	
-		mystrftime(cnt, sqlquery, sizeof(sqlquery), cnt->conf.sql_query, &cnt->current_image->timestamp_tm, filename, sqltype);
+		strftime(timestr, sizeof(timestr), "%Y-%m-%d %T", cnt->currenttime_tm);
+		strftime(eventtimestr, sizeof(eventtimestr), "%Y-%m-%d %T", cnt->eventtime_tm);
+		mystrftime(cnt, sqlquery, sizeof(sqlquery), cnt->conf.sql_query, cnt->currenttime_tm, filename, sqltype);
 		
 
 #ifdef HAVE_MYSQL
@@ -170,14 +174,6 @@ static void event_sqlnewfile(struct context *cnt, int type  ATTRIBUTE_UNUSED,
 
 #endif /* defined HAVE_MYSQL || defined HAVE_PGSQL */
 
-static void on_area_command(struct context *cnt, int type ATTRIBUTE_UNUSED,
-            unsigned char *dummy1 ATTRIBUTE_UNUSED,
-            char *dummy2 ATTRIBUTE_UNUSED, void *dummy3 ATTRIBUTE_UNUSED,
-            struct tm *tm ATTRIBUTE_UNUSED)
-{
-	if (cnt->conf.on_area_detected)
-		exec_command(cnt, cnt->conf.on_area_detected, NULL, 0);
-}
 
 static void on_event_start_command(struct context *cnt, int type ATTRIBUTE_UNUSED,
             unsigned char *dummy1 ATTRIBUTE_UNUSED,
@@ -238,39 +234,16 @@ const char *imageext(struct context *cnt)
 }
 
 static void event_image_detect(struct context *cnt, int type ATTRIBUTE_UNUSED,
-	    unsigned char *newimg, char *dummy1 ATTRIBUTE_UNUSED,
-	    void *dummy2 ATTRIBUTE_UNUSED, struct tm *currenttime_tm)
-{
-	char fullfilename[PATH_MAX];
-	char filename[PATH_MAX];
-
-	if (cnt->new_img & NEWIMG_ON) {
-		const char *jpegpath;
-
-		/* conf.jpegpath would normally be defined but if someone deleted it by control interface
-		   it is better to revert to the default than fail */
-		if (cnt->conf.jpegpath)
-			jpegpath = cnt->conf.jpegpath;
-		else
-			jpegpath = DEF_JPEGPATH;
-			
-		mystrftime(cnt, filename, sizeof(filename), jpegpath, currenttime_tm, NULL, 0);
-		snprintf(fullfilename, PATH_MAX, "%s/%s.%s", cnt->conf.filepath, filename, imageext(cnt));
-
-		put_picture(cnt, fullfilename, newimg, FTYPE_IMAGE);
-	}
-}
-
-static void event_imagem_detect(struct context *cnt, int type ATTRIBUTE_UNUSED,
-            unsigned char *newimg ATTRIBUTE_UNUSED, char *dummy1 ATTRIBUTE_UNUSED,
+            unsigned char *newimg, char *dummy1 ATTRIBUTE_UNUSED,
             void *dummy2 ATTRIBUTE_UNUSED, struct tm *currenttime_tm)
 {
 	struct config *conf=&cnt->conf;
-	char fullfilenamem[PATH_MAX];
+	char fullfilename[PATH_MAX];
 	char filename[PATH_MAX];
+	char fullfilenamem[PATH_MAX];
 	char filenamem[PATH_MAX];
 
-	if (conf->motion_img) {
+	if (conf->motion_img || cnt->new_img==NEWIMG_ON || cnt->preview_shot) {
 		const char *jpegpath;
 
 		/* conf.jpegpath would normally be defined but if someone deleted it by control interface
@@ -283,9 +256,14 @@ static void event_imagem_detect(struct context *cnt, int type ATTRIBUTE_UNUSED,
 		mystrftime(cnt, filename, sizeof(filename), jpegpath, currenttime_tm, NULL, 0);
 		/* motion images gets same name as normal images plus an appended 'm' */
 		snprintf(filenamem, PATH_MAX, "%sm", filename);
+		snprintf(fullfilename, PATH_MAX, "%s/%s.%s", cnt->conf.filepath, filename, imageext(cnt));
 		snprintf(fullfilenamem, PATH_MAX, "%s/%s.%s", cnt->conf.filepath, filenamem, imageext(cnt));
-
+	}
+	if (conf->motion_img) {
 		put_picture(cnt, fullfilenamem, cnt->imgs.out, FTYPE_IMAGE_MOTION);
+	}
+	if (cnt->new_img==NEWIMG_ON || cnt->preview_shot) {
+		put_picture(cnt, fullfilename, newimg, FTYPE_IMAGE);
 	}
 }
 
@@ -327,14 +305,6 @@ static void event_image_snapshot(struct context *cnt, int type ATTRIBUTE_UNUSED,
 	}
 
 	cnt->snapshot = 0;
-}
-
-static void event_camera_lost(struct context *cnt, int type ATTRIBUTE_UNUSED,
-            unsigned char *img ATTRIBUTE_UNUSED, char *dummy1 ATTRIBUTE_UNUSED,
-            void *dummy2 ATTRIBUTE_UNUSED, struct tm *currenttime_tm ATTRIBUTE_UNUSED)
-{
-	if (cnt->conf.on_camera_lost)
-		exec_command(cnt, cnt->conf.on_camera_lost, NULL, 0);
 }
 
 #ifdef HAVE_FFMPEG
@@ -395,7 +365,10 @@ static void event_ffmpeg_newfile(struct context *cnt, int type ATTRIBUTE_UNUSED,
 			u=img+width*height;
 			v=u+(width*height)/4;
 		}
-		fps=cnt->lastrate;
+		if (cnt->conf.low_cpu)
+			fps=cnt->conf.frame_limit;
+		else
+			fps=cnt->lastrate;
 		if (fps>30)
 			fps=30;
 		if (fps<2)
@@ -424,7 +397,10 @@ static void event_ffmpeg_newfile(struct context *cnt, int type ATTRIBUTE_UNUSED,
 			v=u+(width*height)/4;
 			convbuf=NULL;
 		}
-		fps=cnt->lastrate;
+		if (cnt->conf.low_cpu)
+			fps=cnt->conf.frame_limit;
+		else
+			fps=cnt->lastrate;
 		if (fps>30)
 			fps=30;
 		if (fps<2)
@@ -606,10 +582,6 @@ struct event_handlers event_handlers[] = {
 	on_motion_detected_command
 	},
 	{
-	EVENT_AREA_DETECTED,
-	on_area_command
-	},
-	{
 	EVENT_FIRSTMOTION,
 	on_event_start_command
 	},
@@ -620,10 +592,6 @@ struct event_handlers event_handlers[] = {
 	{
 	EVENT_IMAGE_DETECTED,
 	event_image_detect
-	},
-	{
-	EVENT_IMAGEM_DETECTED,
-	event_imagem_detect
 	},
 	{
 	EVENT_IMAGE_SNAPSHOT,
@@ -667,10 +635,6 @@ struct event_handlers event_handlers[] = {
 	on_movie_end_command
 	},
 #endif /* HAVE_FFMPEG */
-	{
-	EVENT_CAMERA_LOST,
-	event_camera_lost
-	},
 	{
 	EVENT_STOP,
 	event_stop_webcam

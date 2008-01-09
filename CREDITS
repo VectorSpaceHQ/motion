@@ -147,7 +147,7 @@ Angel Carpintero
    * Added fix to BugReport2005x02x11x170019
    * Added fix to BugReport2005x02x11x150802
    * Major new feature. XMLRPC is replaced by a simpler http remote control
-     interface.
+     interface (implemented by Angel Carpintero)
      http://www.lavrsen.dk/twiki/bin/view/Motion/MotionHttpControl
    * Fixed netcam->userpass problem
    * Added support in configure for athlon64 from
@@ -218,7 +218,7 @@ Angel Carpintero
      Note that RPMS will be built without this (Peter Holik and Angel Carpintero).
      http://www.lavrsen.dk/twiki/bin/view/Motion/LibJpegMmx
    * Fixed memory leak in webhttpd related to use of strdup.
-   * Error Logging Enhancement Patch v 1.3 including:
+   * Error Logging Enhancement Patch v 1.3 (Angel Carpintero) including:
       * Populate the motion_log to the whole motion source code.
       * Fixed FreeBSD copilation.
       * Added the posiblity to pass NULL as struct context *
@@ -231,7 +231,7 @@ Angel Carpintero
       * http://www.lavrsen.dk/twiki/bin/view/Motion/ErrorLoggingEnhancementPatch
    * http-control: Fixed segfault when motion is restarted from command line
      ( kill -s 1 pid_motion ). Improved control code so Motion can Restart and
-     Finish 'smoothly'. 
+     Finish 'smoothly'. (Angel Carpintero).
      http://www.lavrsen.dk/twiki/bin/view/Motion/MotionHttpControl.
    * Fixed a bug in the http control code that failed to accept a client
      connecting in some systems
@@ -369,26 +369,13 @@ Angel Carpintero
      http://www.lavrsen.dk/twiki/bin/view/Motion/MjpegToYUV420pPatch
      (Marius Rieder, Angel Carpintero).
    * Fix segfault in webhttpd.c on motion restart.
-   * Fix segfault in debian http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x09x24x175945  
+   * Fix segfault in debian http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x09x24x175945
    * Add debug level > 5 to get logs from v4l2_select_input, v4l2_set_control and v4l2_set_input.
    * Removed debian ( to avoid conflicts with debian package) and FreeBSD
      ( no needed to deploy BSD port here ) directories.
-   * Improve debian package, create user/group motion and added --chuid motion to init script.
-   * Added help in http control http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x11x19x181541
-   * Fixed http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x10x23x093651
-   * Fix process_id_file when is passed from command line 
-   * Fix http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x10x27x150419
-   * Added Choose V4L2 palette http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x11x19x032318
-   * Improved in http control ( 'back' link, select box, show current values when are going to be changed ). 
-   * Fix http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x11x25x102808
-   * Avoid random errors , initialising some structs for V4L1 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x11x26x010755 (Jason Sharpee & Angel Carpintero)
-   * Fix motion segfaul because ffmpeg API change
-     http://www.lavrsen.dk/twiki/bin/view/Motion/SupportQuestion2007x12x29x175530 (Angel Carpintero)
-   * Little fix in ffmpeg.c comparing version of LIBAVFORMAT_BUILD, since ffmpeg svn -r4486 LIBAVFORMAT_BUILD and 
-     LIBAVCODEC_BUILD uses LIBAVFORMAT_VERSION_INT ((49<<16)+(0<<8)+0) and LIBAVCODEC_VERSION_INT ((49<<16)+(0<<8)+0)
-     (Angel Carpintero)
- 
+   * Added --chuid motion to debian init.d script.
+   * Fix process_id_file when is passed from command line (Angel Carpitero)	
+
 Jared D
    * Change bayer2rgb24() to fix a problem with sn9c102 driver
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x06x05x012249
@@ -403,13 +390,7 @@ Dag Erlandsson
      (Dag Erlandsson and Angel Carpintero).
    * Check EIO for VIDIOC_DQBUF to workaround saa7134 problem.
      (Dag Erlandsson and Angel Carpintero). 
-   * Added the pre_capture buffer redesign to throttle load and enhance pre_capture feature.
-     http://www.lavrsen.dk/twiki/bin/view/Motion/PreCaptureRedesign
-   * Fixed a problem with locate and fixed mask overlay
-   * Added preview center feature.
-     http://www.lavrsen.dk/twiki/bin/view/Motion/PreviewCenter
-   * Fixed timestamp for preview pictures.
-     
+
 Stephen Farrugia
    * Fixing the division by zero problem.
      This makes motion a lot more stable.
@@ -473,11 +454,11 @@ Andrew Hamilton
      be set 'on' and this scales the text to double size. Default is off.
      http://www.lavrsen.dk/twiki/bin/view/Motion/TextScalingPatch
    * Fixed memory leak in ffmpeg code.
-   * Added the ffmpeg_deinterlace feature
+   * Added the ffmpeg_deinterlace feature (Andrew Hamilton)
      http://www.lavrsen.dk/twiki/bin/view/Motion/MotionffmpegDeinterlace 
-   * Added FFV1 ( FF video codec 1 ) codec , Lossless encoding
-     http://www.lavrsen.dk/twiki/bin/view/Motion/LosslessEncoding 
-   * Added mov , Quicktime file format (Andrew Hamilton).
+    * Added FFV1 ( FF video codec 1 ) codec , Lossless encoding
+     http://www.lavrsen.dk/twiki/bin/view/Motion/LosslessEncoding
+
 
 Peter Holik
    * Netcam First Header patch. If an error with jpeg decompression occured at
@@ -1162,15 +1143,6 @@ Michael Reuschling
      setting ffmpeg_timelapse = 1 (fixed by Michael Reuschling)
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2005x01x31x211756
 
-Petter Reinholdtsen
-   * Adding the install option to the makefile.
-
-Marius Rieder
-   * Handle mjpeg decoding and fix color issue adding mjpegtools dependecy
-     http://www.lavrsen.dk/twiki/bin/view/Motion/MjpegColorIssue
-     http://www.lavrsen.dk/twiki/bin/view/Motion/MjpegToYUV420pPatch
-     (Marius Rieder, Angel Carpintero).
-
 James A. Russo.
    * Implemented ffmpeg_timelapse_mode feature.
    * Implemented enhanced SQL features. This adds logging of mpeg
@@ -1179,10 +1151,8 @@ James A. Russo.
      scheme that allows more refined control for SQL and other
      future control.
 
-Jason Sharpee
-   * Avoid random errors , initialising some structs for V4L1
-     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x11x26x010755 (Jason Sharpee & Angel Carpintero)   
-
+Petter Reinholdtsen
+   * Adding the install option to the makefile.
 
 Pete Shipley
    * Fix the problem that happens in FreeBSD and Debian Sarge because
@@ -1237,7 +1207,7 @@ Tommy Svensson
      Quickcam Sphere/Orbit
 
 Timo Taskinen
-   * Added Flash video format (FLV) to ffmpeg.   
+   * Added Flash video format (FLV) to ffmpeg.
      http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x07x19x131921
 
 technolust.cx
@@ -1287,9 +1257,6 @@ James Van Vleet
    * CPU VIA Ezra C3 autodetection support added.
      http://www.lavrsen.dk/twiki/bin/view/Motion/VIAEzraC3Patch	
 
-Simon Walls
-   * Netcam Keepalive and HTTP/1.1 http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x01x22x231542 
-
 Sean Watkins
    * Created a centralized logging function that became event()
 
@@ -1334,11 +1301,6 @@ Joerg Weber
    * Make the creation of reference frame and the decay mechanism depending
      on how much motion was detected relative to threshold setting.
      http://www.lavrsen.dk/twiki/bin/view/Motion/ReferenceFramePatch
-   * Removed low_cpu feature.
-   * Removed night_compensate feature
-   * Implemented a new reference frame algorithm to improve object recognition and location.
-   * Improved smartmask feature: real moving objects don't trigger the mask anymore.
-   * Added area_detect feature.
 
 Dirk Wesenberg
    * Track pan/tilt support for uvcvideo ( Michal Licko ,Dirk Wesenberg and Angel Carpintero )

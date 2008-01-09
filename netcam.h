@@ -15,7 +15,6 @@
 #ifndef _INCLUDE_NETCAM_H
 #define _INCLUDE_NETCAM_H
 
-#undef HAVE_STDLIB_H
 #include <jpeglib.h>
 #include <setjmp.h>
 #include <sys/socket.h>
@@ -153,14 +152,6 @@ typedef struct netcam_context {
 	int connect_port;           /* usually will be 80, but can be
 	                               specified as something else by
 	                               the user */
-
-	int connect_http_10;	    /* set to TRUE if HTTP 1.0 connection */
-
-	int connect_http_11;	    /* set to TRUE if HTTP 1.1 connection */
-
-	int connect_keepalive;      /* set to TRUE if connection maintained
-                                       after a request, otherwise FALSE to
-                                       close down the socket each time */
 
 	char *connect_request;      /* contains the complete string
 	                               required for connection to the

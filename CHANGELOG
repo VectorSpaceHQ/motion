@@ -1,50 +1,7 @@
-3.2.10 Summary of Changes
-
-Features
-   * Added the pre_capture buffer redesign to throttle load and enhance pre_capture feature.
-     http://www.lavrsen.dk/twiki/bin/view/Motion/PreCaptureRedesign (Dag Erlandsson).
-   * Added preview center feature.
-     http://www.lavrsen.dk/twiki/bin/view/Motion/PreviewCenter (Dag Erlandsson).	
-   * Removed low_cpu feature, as it is not really compatible with pre_capture and a lot of other
-     features rely on the pre_capture buffer behind the scenes. (Joerg Weber)
-   * Removed night_compensate feature. This functionality is covered by noise_tune. (Joerg Weber)
-   * Implemented a new reference frame algorithm to improve object recognition and location. (Joerg Weber)
-   * Improved smartmask feature: real moving objects don't trigger the mask anymore. (Joerg Weber)
-   * Added area_detect feature. New config options: area_detect, on_area_detected. (Joerg Weber)
-   * Added help in http control 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x11x19x181541 (Angel Carpintero)
-   * Added Choose V4L2 palette http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x11x19x032318
-     (Angel Carpintero)  
-   * Improved http control ( 'back' link, select box, show current values when are going to be changed ). 
-     (Angel Carpintero)
-   * Improved thread handling, single threads can be stopped/restarted (Dag Erlandsson)
-   * Watchdog, restart hang threads (Dag Erlandsson)
-   * Added ON_CAMERA_LOST event (Dag Erlandsson)
-   * Motion start if a camera isn't there at start, retries to connect if lost (Dag Erlandsson)
-   * Netcam Keepalive and HTTP/1.1 http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x01x22x231542 
-    (Simon Walls)
-   * Added mov , Quicktime file format (Andrew Hamilton).
-
-Bugfixes
-   * Fixed a problem with locate and fixed mask overlay (Dag Erlandsson).
-   * Preview pictures get the timestamp of moment they were captured (Dag Erlandsson).
-   * Fixed http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x10x23x093651 (Angel Carpintero)
-   * Fix process_id_file when is passed from command line (Angel Carpintero)
-   * Fix http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x10x27x150419 (Angel Carpintero)
-   * Fix http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x11x25x102808 (Angel Carpintero)
-   * Avoid random errors , initialising some structs for V4L1 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x11x26x010755 (Jason Sharpee & Angel Carpintero)
-   * Fix motion segfaul because ffmpeg API change 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/SupportQuestion2007x12x29x175530 (Angel Carpintero)
-   * Little fix in ffmpeg.c comparing version of LIBAVFORMAT_BUILD, since ffmpeg svn -r4486 LIBAVFORMAT_BUILD and
-     LIBAVCODEC_BUILD uses LIBAVFORMAT_VERSION_INT ((49<<16)+(0<<8)+0) and LIBAVCODEC_VERSION_INT ((49<<16)+(0<<8)+0)
-     (Angel Carpintero)	
-
-
 3.2.9 Formal Release - Summary of Changes
 
 Features
-   * Removed debian ( to avoid conflicts with debian package) and FreeBSD
+   * Removed debian ( to avoid conflicts with debian package) and FreeBSD 
      ( no needed to deploy BSD port here ) directories. ( Angel Carpintero )
    * Added --chuid motion to debian init.d script. ( Angel Carpintero )
    * Added Flash video format (FLV) to ffmpeg.
@@ -52,8 +9,7 @@ Features
    * Added FFV1 ( FF video codec 1 ) codec , Lossless encoding
      http://www.lavrsen.dk/twiki/bin/view/Motion/LosslessEncoding (Andrew Hamilton).
 
-
-Bugfixes
+Bugfixes	
    * Fix segfault in webhttpd.c on motion restart (Angel Carpintero)
    * Fix segfault in debian http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2007x09x24x175945
      (Angel Carpintero)
@@ -62,11 +18,11 @@ Bugfixes
    * Handle mjpeg decoding and fix color issue adding mjpegtools dependecy
      http://www.lavrsen.dk/twiki/bin/view/Motion/MjpegColorIssue
      http://www.lavrsen.dk/twiki/bin/view/Motion/MjpegToYUV420pPatch
-     (Marius Rieder, Angel Carpintero).
+     (Marius Rieder, Angel Carpintero).	
    * Add debug level > 5 to get logs from v4l2_select_input, v4l2_set_control and v4l2_set_input.
      (Angel Carpintero)
-
-
+   * Fix process_id_file when is passed from command line (Angel Carpitero)
+ 
 3.2.8 Formal Release - Summary of Changes
 
 Features

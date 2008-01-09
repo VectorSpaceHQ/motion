@@ -1,13 +1,12 @@
 #! /bin/bash
 #
-# @PACKAGE_NAME@ @PACKAGE_VERSION@	
-# Start the motion detection .
+# motion	Start the motion detection .
 #
 
-NAME=@PACKAGE_NAME@
+NAME=motion
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
-DAEMON=@BIN_PATH@/@PACKAGE_NAME@
-PIDFILE=/var/run/@PACKAGE_NAME@/$NAME.pid
+DAEMON=@BIN_PATH@/motion
+PIDFILE=/var/run/$NAME.pid
 
 
 trap "" 1
@@ -19,17 +18,17 @@ test -f $DAEMON || exit 0
 
 case "$1" in
   start)
-    echo "Starting @PACKAGE_NAME@ detection : $NAME"
+    echo "Starting motion detection : $NAME"
     start-stop-daemon --start --pidfile $PIDFILE --exec $DAEMON --chuid motion
     ;;
 
   stop)
-    echo "Stopping @PACKAGE_NAME@ detection : $NAME"
+    echo "Stopping motion detection : $NAME"
     start-stop-daemon --stop --pidfile $PIDFILE --oknodo --exec $DAEMON --retry 30 
     ;;
 
   status)
-    echo "Status @PACKAGE_NAME@ detection : $NAME"
+    echo "Status motion detection : $NAME"
     if (test -f $PIDFILE); then
         echo -n "Running process for $NAME : "
     	pidof $NAME  

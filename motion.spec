@@ -1,5 +1,5 @@
 Name:           motion
-Version:        @VERSION@
+Version:        3.2.9
 Release:        1
 Summary:        MOTION, a Video-surveilance-system
 

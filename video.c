@@ -18,6 +18,7 @@
 /* for the v4l stuff: */
 #include "pwc-ioctl.h"
 #include <sys/mman.h>
+//#include "sys/ioctl.h"
 #include <math.h>
 #include <sys/utsname.h>
 #include <dirent.h>
@@ -138,7 +139,6 @@ unsigned char *v4l_start(struct context *cnt, struct video_dev *viddev, int widt
 	}
 
 	if (freq) {
-		memset(&vid_tuner, 0, sizeof(struct video_tuner));
 		vid_tuner.tuner = tuner_number;
 		if (ioctl (dev, VIDIOCGTUNER, &vid_tuner)==-1) {
 			motion_log(LOG_ERR, 1, "ioctl (VIDIOCGTUNER)");
@@ -314,6 +314,7 @@ int v4l_next(struct video_dev *viddev, unsigned char *map, int width, int height
 			memcpy(map, cap_map, viddev->v4l_bufsize);
 	}
 
+
 	return 0;
 }
 
@@ -329,9 +330,6 @@ void v4l_set_input(struct context *cnt, struct video_dev *viddev, unsigned char 
 	if (input != viddev->input || width != viddev->width || height!=viddev->height ||
 	    freq!=viddev->freq || tuner_number!=viddev->tuner_number) {
 		if (freq) {
-
-			memset(&vid_tuner, 0, sizeof(struct video_tuner));
-
 			vid_tuner.tuner = tuner_number;
 			if (ioctl (dev, VIDIOCGTUNER, &vid_tuner)==-1) {
 				motion_log(LOG_ERR, 1, "ioctl (VIDIOCGTUNER)");
@@ -348,7 +346,6 @@ void v4l_set_input(struct context *cnt, struct video_dev *viddev, unsigned char 
 			}
 		}
 
-		memset(&vid_chnl, 0, sizeof(struct video_channel));
 		vid_chnl.channel = input;
 		
 		if (ioctl (dev, VIDIOCGCHAN, &vid_chnl) == -1) {

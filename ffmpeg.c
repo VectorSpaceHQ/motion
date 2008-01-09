@@ -36,7 +36,6 @@
 #	endif /* __GNUC__ */
 #endif /* LIBAVCODEC_BUILD > 4680 */
 
-
 #if LIBAVFORMAT_BUILD >= 4616
 /* The API for av_write_frame changed with FFmpeg version 0.4.9pre1.
  * It now uses an AVPacket struct instead of direct parameters to the
@@ -120,15 +119,15 @@ URLProtocol mpeg1_file_protocol = {
 /*
  * file_procotol has been removed from avio.h
  * 
- */ 
-   
+ */
+
 #include "avstring.h"
 
 static int file_open(URLContext *h, const char *filename, int flags)
 {
     int access;
     int fd;
-                              
+
     av_strstart(filename, "file:", &filename);
 
     if (flags & URL_RDWR) {
@@ -153,7 +152,7 @@ static int file_read(URLContext *h, unsigned char *buf, int size)
     int fd = (size_t)h->priv_data;
     return read(fd, buf, size);
 }
-         
+
 static int file_write(URLContext *h, unsigned char *buf, int size)
 {
     int fd = (size_t)h->priv_data;
@@ -189,14 +188,8 @@ URLProtocol file_protocol = {
  */
 static int mpeg1_write_trailer(AVFormatContext *s)
 {
-#if LIBAVFORMAT_BUILD >= (52<<16) 
-	put_buffer(s->pb, mpeg1_trailer, 4);
-	put_flush_packet(s->pb);	
-#else
 	put_buffer(&s->pb, mpeg1_trailer, 4);
 	put_flush_packet(&s->pb);
-#endif /* LIBAVFORMAT_BUILD >= (52<<16) */
-
 	return 0; /* success */
 }
 
@@ -205,11 +198,9 @@ void ffmpeg_init()
 {
 	motion_log(LOG_INFO, 0, "ffmpeg LIBAVCODEC_BUILD %d LIBAVFORMAT_BUILD %d", LIBAVCODEC_BUILD, LIBAVFORMAT_BUILD);
 	av_register_all();
-
-#if LIBAVCODEC_BUILD > 4680
+#if LIBAVCODEC_BUILD > 4680	
 	av_log_set_callback( (void *)ffmpeg_avcodec_log );
 #endif
-
 	/* Copy the functions to use for the append file protocol from the standard
 	 * file protocol.
 	 */
@@ -276,12 +267,9 @@ static AVOutputFormat *get_oformat(const char *codec, char *filename)
 		of = guess_format("avi", NULL, NULL);
 		if (of) {
 			/* Use the FFMPEG Lossless Video codec (experimental!).
-			   Requires strict_std_compliance to be <= -2 */
+			Requires strict_std_compliance to be <= -2 */
 			of->video_codec = CODEC_ID_FLV1;
 		}
-	} else if (strcmp(codec, "mov") == 0) {
-		ext = ".mov";
-		of = guess_format("mov", NULL, NULL);		
 	} else {
 		motion_log(LOG_ERR, 0, "ffmpeg_video_codec option value %s is not supported", codec);
 		return NULL;
@@ -363,12 +351,11 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
 	c->codec_type = CODEC_TYPE_VIDEO;
 	is_mpeg1      = c->codec_id == CODEC_ID_MPEG1VIDEO;
 
-
-	if (strcmp(ffmpeg_video_codec, "ffv1") == 0)
-		c->strict_std_compliance = -2; 
-
 	/* Uncomment to allow non-standard framerates. */
 	//c->strict_std_compliance = -1;
+
+	if (strcmp(ffmpeg_video_codec, "ffv1") == 0)
+		c->strict_std_compliance = -2;
 
 	/* Set default parameters */
 	c->bit_rate = bps;
@@ -519,7 +506,7 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
 */
 void ffmpeg_cleanups(struct ffmpeg *ffmpeg)
 {
-	unsigned int i;
+	int i;
 
 	/* close each codec */
 	if (ffmpeg->video_st) {
@@ -554,7 +541,7 @@ void ffmpeg_cleanups(struct ffmpeg *ffmpeg)
 /* Closes a video file. */
 void ffmpeg_close(struct ffmpeg *ffmpeg)
 {
-	unsigned int i;
+	int i;
 
 	/* close each codec */
 	if (ffmpeg->video_st) {
@@ -575,11 +562,7 @@ void ffmpeg_close(struct ffmpeg *ffmpeg)
 
 	if (!(ffmpeg->oc->oformat->flags & AVFMT_NOFILE)) {
 		/* close the output file */
-#if LIBAVFORMAT_BUILD >= (52<<16) 
-		url_fclose(ffmpeg->oc->pb);
-#else
 		url_fclose(&ffmpeg->oc->pb);
-#endif /* LIBAVFORMAT_BUILD >= (52<<16) */
 	}
 
 	/* free the stream */

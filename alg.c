@@ -204,23 +204,27 @@ void alg_noise_tune(struct context *cnt, unsigned char *new)
 	unsigned char *smartmask=imgs->smartmask_final;
 
 	i=imgs->motionsize;
-			
+	
 	for (; i>0; i--) {
-		diff = ABS(*ref - *new);
+		diff = *ref - *new;
+		
 		if (mask)
 			diff = ((diff * *mask++)/255);
+
 		if (*smartmask){
-			sum += diff + 1;
+			sum += ABS(diff) + 1;
 			count++;
 		}
+
 		ref++;
 		new++;
 		smartmask++;
 	}
-	if (count > 3) { /* avoid divide by zero */
-		sum /= count / 3;
-	}
-	cnt->noise = 4 + (cnt->noise + sum) / 2;  /* 5: safe, 4: regular, 3: more sensitive */
+	
+	if (count > 4) /* avoid divide by zero */
+		sum /= count/4;
+		
+	cnt->noise = 4 + (cnt->noise+sum)/2;
 }
 
 void alg_threshold_tune(struct context *cnt, int diffs, int motion)
@@ -344,14 +348,14 @@ static int alg_labeling(struct context *cnt)
 	int height=imgs->height;
 	int labelsize=0;
 	int current_label=2;
-	cnt->current_image->total_labels=0;
+	imgs->total_labels=0;
 	imgs->labelsize_max=0;
 	/* ALL labels above threshold are counted as labelgroup */
 	imgs->labelgroup_max=0;
 	imgs->labels_above=0;
 
 	/* init: 0 means no label set / not checked */
-	memset(labels, 0, width*height*sizeof(labels));
+	memset(labels, 0, width*height*sizeof(int));
 	pixelpos = 0;
 	for( iy=0; iy<height-1; iy++ ) {
 		for( ix=0; ix<width-1; ix++, pixelpos++ ) {
@@ -367,7 +371,7 @@ static int alg_labeling(struct context *cnt)
 			labelsize=iflood(ix, iy, width, height, out, labels, current_label, 0);
 			
 			if( labelsize > 0 ) {
-				//printf( "Label: %i (%i) Size: %i (%i,%i)\n", current_label, cnt->current_image->total_labels, labelsize, ix, iy );
+				//printf( "Label: %i (%i) Size: %i (%i,%i)\n", current_label, imgs->total_labels, labelsize, ix, iy );
 				/* Label above threshold? Mark it again (add 32768 to labelnumber) */
 				if (labelsize > cnt->threshold){
 					labelsize=iflood(ix, iy, width, height, out, labels, current_label+32768, current_label);
@@ -380,13 +384,13 @@ static int alg_labeling(struct context *cnt)
 					imgs->largest_label=current_label;
 				}
 				
-				cnt->current_image->total_labels++;
+				imgs->total_labels++;
 				current_label++;
 			}
 		}
 		pixelpos++; /* compensate for ix<width-1 */
 	}	
-	//printf( "%i Labels found. Largest connected Area: %i Pixel(s). Largest Label: %i\n", imgs->total_labels, imgs->labelsize_max, cnt->current_image->largest_label);
+	//printf( "%i Labels found. Largest connected Area: %i Pixel(s). Largest Label: %i\n", imgs->total_labels, imgs->labelsize_max, imgs->largest_label);
 	/* return group of significant labels */
 	return imgs->labelgroup_max;
 }
@@ -702,6 +706,7 @@ int alg_diff_standard (struct context *cnt, unsigned char *new)
 {
 	struct images *imgs=&cnt->imgs;
 	int i, diffs=0;
+	long int level=0;
 	int noise=cnt->noise;
 	int smartmask_speed=cnt->smartmask_speed;
 	unsigned char *ref=imgs->ref;
@@ -713,6 +718,19 @@ int alg_diff_standard (struct context *cnt, unsigned char *new)
 	mmx_t mmtemp; /* used for transferring to/from memory */
 	int unload;   /* counter for unloading diff counts */
 #endif
+
+	/* If the average level of the picture is to low, compensate by 
+	 * lowering the noise threshold
+	 */
+	if (cnt->conf.nightcomp) {
+		i=imgs->motionsize;
+		for (i--; i>=0; i--) {
+			level+=(unsigned char)new[i];
+		}
+		level/=imgs->motionsize;
+		if (level < noise*2)
+			noise/=2;
+	}
 
 	i=imgs->motionsize;
 	memset(out+i, 128, i/2); /* motion pictures are now b/w i.o. green */
@@ -853,16 +871,14 @@ int alg_diff_standard (struct context *cnt, unsigned char *new)
 			movq_r2r(mm3, mm0);              /* U */
 
 			/* Add to *smartmask_buffer. This is probably the fastest way to do it. */
-			if (cnt->event_nr != cnt->prev_event) {
-				if (mmtemp.ub[0]) smartmask_buffer[0]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[1]) smartmask_buffer[1]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[2]) smartmask_buffer[2]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[3]) smartmask_buffer[3]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[4]) smartmask_buffer[4]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[5]) smartmask_buffer[5]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[6]) smartmask_buffer[6]+=SMARTMASK_SENSITIVITY_INCR;
-				if (mmtemp.ub[7]) smartmask_buffer[7]+=SMARTMASK_SENSITIVITY_INCR;
-			}
+			if (mmtemp.ub[0]) smartmask_buffer[0]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[1]) smartmask_buffer[1]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[2]) smartmask_buffer[2]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[3]) smartmask_buffer[3]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[4]) smartmask_buffer[4]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[5]) smartmask_buffer[5]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[6]) smartmask_buffer[6]+=SMARTMASK_SENSITIVITY_INCR;
+			if (mmtemp.ub[7]) smartmask_buffer[7]+=SMARTMASK_SENSITIVITY_INCR;
 
 			smartmask_buffer+=8;
 			smartmask_final+=8;
@@ -930,8 +946,7 @@ int alg_diff_standard (struct context *cnt, unsigned char *new)
 				   second. To be able to increase by 5 every second (with
 				   speed=10) we add 5 here. NOT related to the 5 at ratio-
 				   calculation. */
-				if (cnt->event_nr != cnt->prev_event)
-					(*smartmask_buffer) += SMARTMASK_SENSITIVITY_INCR;
+				(*smartmask_buffer) += SMARTMASK_SENSITIVITY_INCR;
 				/* apply smart_mask */
 				if (!*smartmask_final)
 					curdiff=0;
@@ -952,7 +967,8 @@ int alg_diff_standard (struct context *cnt, unsigned char *new)
 }
 
 /*
-	Very fast diff function, does not apply mask overlaying.
+	Very fast diff function, does not do nightcompensation or mask
+	overlaying.
 */
 static char alg_diff_fast(struct context *cnt, int max_n_changes, unsigned char *new)
 {
@@ -1046,68 +1062,4 @@ int alg_switchfilter(struct context *cnt, int diffs, unsigned char *newimg)
 		return diffs;
 	}
 	return 0;
-}
-
-/** 
- * alg_update_reference_frame
- *
- *   Called from 'motion_loop' to calculate the reference frame
- *   Moving objects are excluded from the reference frame for a certain
- *   amount of time to improve detection.
- * 
- * Parameters:
- *
- *   cnt    - current thread's context struct
- *   action - UPDATE_REF_FRAME or RESET_REF_FRAME
- *
- */
-/* Seconds */
-#define ACCEPT_STATIC_OBJECT_TIME 10
-#define EXCLUDE_LEVEL_PERCENT 20
-void alg_update_reference_frame(struct context *cnt, int action) 
-{
-	int accept_timer = cnt->lastrate * ACCEPT_STATIC_OBJECT_TIME;
-	int i, threshold_ref;
-	int *ref_dyn = cnt->imgs.ref_dyn;
-	unsigned char *image_virgin = cnt->imgs.image_virgin;
-	unsigned char *ref = cnt->imgs.ref;
-	unsigned char *smartmask = cnt->imgs.smartmask_final;
-	unsigned char *out = cnt->imgs.out;
-
-	if (cnt->lastrate > 5)  /* match rate limit */
-		accept_timer /= (cnt->lastrate / 3);
-
-	if (action == UPDATE_REF_FRAME) { /* black&white only for better performance */
-		threshold_ref = cnt->noise * EXCLUDE_LEVEL_PERCENT / 100;
-		for (i = cnt->imgs.motionsize; i > 0; i--) {
-			/* exclude pixels from ref frame well below noise level */
-			if (((int)(abs(*ref - *image_virgin)) > threshold_ref) && (*smartmask)) {
-				if (*ref_dyn == 0) { /* Always give new pixels a chance */
-					*ref_dyn = 1;
-				}
-				else if (*ref_dyn > accept_timer) { /* Include static Object after some time */
-					*ref_dyn = 0;
-					*ref = *image_virgin;
-				}
-				else if (*out)
-					(*ref_dyn)++; /* Motionpixel? Keep excluding from ref frame */
-				else {
-					*ref_dyn = 0; /* Nothing special - release pixel */
-					*ref = (*ref + *image_virgin) / 2;
-				}
-			}
-			else {  /* No motion: copy to ref frame */
-				*ref_dyn = 0; /* reset pixel */
-				*ref = *image_virgin;
-			}
-			ref++;
-			image_virgin++;
-			smartmask++;
-			ref_dyn++;
-			out++;
-		} /* end for i */
-	} else {   /* action == RESET_REF_FRAME - also used to initialize the frame at startup */
-		memcpy(cnt->imgs.ref, cnt->imgs.image_virgin, cnt->imgs.size); /* copy fresh image */
-		memset(cnt->imgs.ref_dyn, 0, cnt->imgs.motionsize * sizeof(cnt->imgs.ref_dyn));  /* reset static objects */
-	}
 }

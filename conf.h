@@ -42,6 +42,8 @@ struct config {
 	int noise_tune;
 	int minimum_frame_time;
 	int lightswitch;
+	int nightcomp;
+	unsigned int low_cpu;
 	int autobright;
 	int brightness;
 	int contrast;
@@ -76,7 +78,6 @@ struct config {
 	const char *tuner_device;
 #endif
 	const char *video_device;
-	short unsigned int v4l2_palette;
 	const char *vidpipe;
 	const char *filepath;
 	const char *jpegpath;
@@ -97,15 +98,12 @@ struct config {
 	const char *mysql_user;
 	const char *mysql_password;
 	char *on_picture_save;
-	char *on_area_detected;
 	char *on_motion_detected;
 	char *on_movie_start;
 	char *on_movie_end;
-	char *on_camera_lost;
 	const char *motionvidpipe;
 	const char *netcam_url;
 	const char *netcam_userpass;
-	const char *netcam_http;
 	const char *netcam_proxy;
 	const char *pgsql_db;
 	const char *pgsql_host;
@@ -118,9 +116,9 @@ struct config {
 	const char *text_event;
 	int text_double;
 	const char *despeckle;
-	const char *area_detect;
 	int minimum_motion_frames;
 	char *pid_file;
+	// int debug_parameter;
 	int argc;
 	char **argv;
 };
@@ -129,18 +127,17 @@ struct config {
  * typedef for a param copy function. 
  */
 typedef struct context ** (* conf_copy_func)(struct context **, const char *, int);
-typedef const char *(* conf_print_func)(struct context **, char **, int, unsigned short int);
+typedef const char *(* conf_print_func)(struct context **, char **, int, int);
 
 /**
  * description for parameters in the config file
  */
 typedef struct {
-	const char * param_name;	/* name for this parameter                  */
-	const char * param_help;	/* short explanation for parameter          */
-	unsigned short int main_thread;	/* belong only to main thread when value>0  */
-	int conf_value;			/* pointer to a field in struct context     */
-	conf_copy_func  copy;		/* a function to set the value in 'config'  */
-	conf_print_func print;		/* a function to output the value to a file */
+	const char * param_name;	/* name for this parameter             */
+	const char * param_help;	/* short explanation for parameter */
+	int conf_value;	/* pointer to a field in struct context */
+	conf_copy_func  copy;	/* a function to set the value in 'config' */
+	conf_print_func print;	/* a function to output the value to a file */
 } config_param; 
 
 
