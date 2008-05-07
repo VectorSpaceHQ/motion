@@ -302,12 +302,13 @@ void webcam_stop(struct context *cnt)
 	struct webcam *next = cnt->webcam.next;
 
 	if (cnt->conf.setup_mode)
-		motion_log(-1, 0, "Closing webcam listen socket & active webcam sockets");
-	else
-		motion_log(LOG_INFO, 0, "Closing webcam listen socket & active webcam sockets");
+		motion_log(-1, 0, "Closing webcam listen socket");
 	
 	close(cnt->webcam.socket);
 	cnt->webcam.socket = -1;
+	
+	if (cnt->conf.setup_mode)
+		motion_log(LOG_INFO, 0, "Closing active webcam sockets");
 
 	while (next) {
 		list=next;
@@ -321,11 +322,6 @@ void webcam_stop(struct context *cnt)
 		close(list->socket);
 		free(list);
 	}
-
-	if (cnt->conf.setup_mode)
-		motion_log(-1, 0, "Closed webcam listen socket & active webcam sockets");
-	else
-		motion_log(LOG_INFO, 0, "Closed webcam listen socket & active webcam sockets");
 }
 
 /* webcam_put is the starting point of the webcam loop. It is called from

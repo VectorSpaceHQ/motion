@@ -416,7 +416,6 @@ Dag Erlandsson
    * Added preview center feature.
      http://www.lavrsen.dk/twiki/bin/view/Motion/PreviewCenter
    * Fixed timestamp for preview pictures.
-   * Insert Blanking frames http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x12x16x132522
      
 Stephen Farrugia
    * Fixing the division by zero problem.
@@ -1301,7 +1300,8 @@ James Van Vleet
 Simon Walls
    * Netcam Keepalive and HTTP/1.1 http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x01x22x231542 
    * Better debug in netcam for "Error reading image header" 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x02x27x092849 (Simon Walls)
+     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x02x27x092849
+
 
 Sean Watkins
    * Created a centralized logging function that became event()

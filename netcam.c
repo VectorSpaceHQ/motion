@@ -462,7 +462,7 @@ static int netcam_read_next_header(netcam_context_ptr netcam)
 				} else {
 					/* Header is not null. Output it in case it's a new camera with unknown headers. */
 					if (debug_level > CAMERA_INFO)
-						motion_log(LOG_ERR, 0, "Error reading image header, streaming mode (1). " 
+						motion_log(LOG_ERR, 0, "Error reading image header, streaming mode (1). "
 						                       "Unknown header '%s'", header );
 			 	}
 

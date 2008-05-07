@@ -386,8 +386,6 @@ struct context {
 	char newfilename[PATH_MAX];
 	char motionfilename[PATH_MAX];
 	char timelapsefilename[PATH_MAX];
-	short int movie_fps;
-	short int movie_last_shot;
 #endif
 };
 

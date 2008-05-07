@@ -361,23 +361,13 @@ static void event_ffmpeg_newfile(struct context *cnt, int type ATTRIBUTE_UNUSED,
 	int width=cnt->imgs.width;
 	int height=cnt->imgs.height;
 	unsigned char *convbuf, *y, *u, *v;
+	int fps=0;
 	char stamp[PATH_MAX];
 	const char *mpegpath;
 
 	if (!cnt->conf.ffmpeg_cap_new && !cnt->conf.ffmpeg_cap_motion)
 		return;
-
-	cnt->movie_last_shot = -1;
-	cnt->movie_fps = cnt->lastrate;
-
-	if (debug_level >= CAMERA_DEBUG) 
-		motion_log(LOG_DEBUG, 0, "%s FPS %d",__FUNCTION__,cnt->movie_fps);
-
-	if (cnt->movie_fps > 30)
-		cnt->movie_fps = 30;
-	if (cnt->movie_fps < 2)
-		cnt->movie_fps = 2;
-
+		
 	/* conf.mpegpath would normally be defined but if someone deleted it by control interface
 	   it is better to revert to the default than fail */
 	if (cnt->conf.mpegpath)
@@ -405,9 +395,18 @@ static void event_ffmpeg_newfile(struct context *cnt, int type ATTRIBUTE_UNUSED,
 			u=img+width*height;
 			v=u+(width*height)/4;
 		}
+		fps=cnt->lastrate;
+
+		if (debug_level >= CAMERA_DEBUG) 
+			motion_log(LOG_DEBUG, 0, "%s FPS %d",__FUNCTION__,fps);
+
+		if (fps>30)
+			fps=30;
+		if (fps<2)
+			fps=2;
 		if ( (cnt->ffmpeg_new =
 		      ffmpeg_open((char *)cnt->conf.ffmpeg_video_codec, cnt->newfilename, y, u, v,
-		                  cnt->imgs.width, cnt->imgs.height, cnt->movie_fps, cnt->conf.ffmpeg_bps,
+		                  cnt->imgs.width, cnt->imgs.height, fps, cnt->conf.ffmpeg_bps,
 		                  cnt->conf.ffmpeg_vbr)) == NULL) {
 			motion_log(LOG_ERR, 1, "ffopen_open error creating (new) file [%s]",cnt->newfilename);
 			cnt->finish=1;
@@ -430,9 +429,17 @@ static void event_ffmpeg_newfile(struct context *cnt, int type ATTRIBUTE_UNUSED,
 			convbuf=NULL;
 		}
 
+		if (debug_level >= CAMERA_DEBUG) 
+			motion_log(LOG_DEBUG, 0, "%s FPS %d",__FUNCTION__,fps);
+
+		fps=cnt->lastrate;
+		if (fps>30)
+			fps=30;
+		if (fps<2)
+			fps=2;
 		if ( (cnt->ffmpeg_motion =
 		      ffmpeg_open((char *)cnt->conf.ffmpeg_video_codec, cnt->motionfilename, y, u, v,
-		                  cnt->imgs.width, cnt->imgs.height, cnt->movie_fps, cnt->conf.ffmpeg_bps,
+		                  cnt->imgs.width, cnt->imgs.height, fps, cnt->conf.ffmpeg_bps,
 		                  cnt->conf.ffmpeg_vbr)) == NULL){
 			motion_log(LOG_ERR, 1, "ffopen_open error creating (motion) file [%s]", cnt->motionfilename);
 			cnt->finish=1;
@@ -502,10 +509,7 @@ static void event_ffmpeg_timelapse(struct context *cnt,
 		u = img+width*height;
 	
 	v = u+(width*height)/4;
-	if (ffmpeg_put_other_image(cnt->ffmpeg_timelapse, y, u, v) == -1){
-		cnt->finish = 1;
-		cnt->restart = 0;
-	}	
+	ffmpeg_put_other_image(cnt->ffmpeg_timelapse, y, u, v);
 	
 }
 
@@ -526,17 +530,11 @@ static void event_ffmpeg_put(struct context *cnt, int type ATTRIBUTE_UNUSED,
 			u = y + (width * height);
 		
 		v = u + (width * height) / 4;
-		if (ffmpeg_put_other_image(cnt->ffmpeg_new, y, u, v) == -1){
-			cnt->finish = 1;
-			cnt->restart = 0;
-		}	
+		ffmpeg_put_other_image(cnt->ffmpeg_new, y, u, v);
 	}
 	
 	if (cnt->ffmpeg_motion) {
-		if (ffmpeg_put_image(cnt->ffmpeg_motion) == -1){
-			cnt->finish = 1;
-			cnt->restart = 0;
-		}	
+		ffmpeg_put_image(cnt->ffmpeg_motion);
 	}
 }
 
@@ -661,10 +659,6 @@ struct event_handlers event_handlers[] = {
 	event_ffmpeg_put
 	},
 	{
-	EVENT_FFMPEG_PUT,
-	event_ffmpeg_put
-	},
-	{
 	EVENT_ENDMOTION,
 	event_ffmpeg_closefile
 	},
@@ -708,7 +702,7 @@ void event(struct context *cnt, int type, unsigned char *image, char *filename, 
 	int i=-1;
 
 	while (event_handlers[++i].handler) {
-		if (type == event_handlers[i].type)
+		if (type & event_handlers[i].type)
 			event_handlers[i].handler(cnt, type, image, filename, eventdata, tm);
 	}
 }

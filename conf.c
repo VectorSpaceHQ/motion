@@ -26,7 +26,7 @@
 #include "motion.h"
 
 
-#if (defined(BSD) && !defined(PWCBSD))
+#if (defined(BSD))
 #include "video_freebsd.h"
 #else
 #include "video.h"

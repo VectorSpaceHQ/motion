@@ -61,7 +61,7 @@
 #define APPEND_PROTO "appfile"
 
 /* Some forward-declarations. */
-int ffmpeg_put_frame(struct ffmpeg *, AVFrame *);
+void ffmpeg_put_frame(struct ffmpeg *, AVFrame *);
 void ffmpeg_cleanups(struct ffmpeg *);
 AVFrame *ffmpeg_prepare_frame(struct ffmpeg *, unsigned char *, 
                               unsigned char *, unsigned char *);
@@ -592,34 +592,29 @@ void ffmpeg_close(struct ffmpeg *ffmpeg)
 }
 
 /* Puts the image pointed to by ffmpeg->picture. */
-int ffmpeg_put_image(struct ffmpeg *ffmpeg) 
+void ffmpeg_put_image(struct ffmpeg *ffmpeg) 
 {
-	return ffmpeg_put_frame(ffmpeg, ffmpeg->picture);
+	ffmpeg_put_frame(ffmpeg, ffmpeg->picture);
 }
 
 /* Puts an arbitrary picture defined by y, u and v. */
-int ffmpeg_put_other_image(struct ffmpeg *ffmpeg, unsigned char *y,
+void ffmpeg_put_other_image(struct ffmpeg *ffmpeg, unsigned char *y,
                             unsigned char *u, unsigned char *v)
 {
 	AVFrame *picture;
-	int ret = 0;
-
 	/* allocate the encoded raw picture */
 	picture = ffmpeg_prepare_frame(ffmpeg, y, u, v);
 
 	if (picture) {
-		ret = ffmpeg_put_frame(ffmpeg, picture);
-		if (!ret)
-			av_free(picture);
+		ffmpeg_put_frame(ffmpeg, picture);
+		av_free(picture);
 	}
-
-	return ret;
 }
 
 /* Encodes and writes a video frame using the av_write_frame API. This is
  * a helper function for ffmpeg_put_image and ffmpeg_put_other_image. 
  */
-int ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
+void ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
 {
 	int out_size, ret;
 #ifdef FFMPEG_AVWRITEFRAME_NEWAPI
@@ -669,11 +664,8 @@ int ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
 	
 	if (ret != 0) {
 		motion_log(LOG_ERR, 1, "Error while writing video frame");
-		ffmpeg_cleanups(ffmpeg);
-		return (-1);
+		return;
 	}
-
-	return ret; 
 }
 
 /* Allocates and prepares a picture frame by setting up the U, Y and V pointers in

@@ -159,4 +159,5 @@ struct context **copy_string(struct context **, const char *, int);
 char *get_current_dir_name(void);
 #endif
 
+
 #endif /* _INCLUDE_CONF_H */
