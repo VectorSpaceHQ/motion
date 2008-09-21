@@ -1,31 +1,18 @@
-SVN trunk Summary of Changes
+3.2.11 Summary of Changes
 
 Features
-   * Insert Blanking frames http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x12x16x132522 (Dag Erlandsson)
-   * IPV6 for http-control and webcam stream not netcam yet http://www.lavrsen.dk/twiki/bin/view/Motion/IPv6 
-     (Jeroen Massar & Angel Carpintero) 
-   * Experimental approach for MJPEG streams (Motion JPEG) for network cameras 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/LinksysWVC200SupportPatch ( ... )  
-   * Add draw a RED box around the movement as default (Joerg Weber)
-   * Add write/read nonblock functions in webhttpd( timeout on read/write). (Angel Carpintero) 
-   * Added support for ffmpeg-2008-04-09 port version of FreeBSD. (Angel Carpintero)
-   * More changes in option names from http://www.lavrsen.dk/twiki/bin/view/Motion/IntuitiveOptionNamesDiscussion
-     (Angel Carpintero)
-   * motion_locate new parameter names : red , center , redcross  instead of only on, off. (Angel Carpintero)
+   * Added support for ffmpeg-2008-04-09 port version of FreeBSD.
    * Remove mjpegtools dependencies and integrate only needed functions from library. (Angel Carpintero)
-   * External pipe to allow external video encoders 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/DarkwindHackeronMotionPatching (Bill Payne, Angel Carpintero)
    * Allow change/setup framerate in FreeBSD using pwcbsd. (Angel Carpintero)
-   * Split locate_motion into separate 'mode' and 'style' option to allow all
-     possible combinations. (Joerg Weber)
    * Get rid of ffmpeg-config in configure.in for debian. (Angel Carpintero)
 
+
 Bugfixes
-   * Fix Problem Encoding 1280x1024 resolution videos
+   * Fix Problem Encoding 1280x1024 resolution videos  
      http://www.lavrsen.dk/twiki/bin/view/Motion/SupportQuestion2008x06x11x183727 (Angel Carpintero)
    * Add a new parameter netcam_tolerant_check, to be less strict with some buggy network cameras firmwares.
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x06x19x123218 (Angel Carpintero)
-   * Fix round robin in BSD switching to METEOR_CAP_SINGLE. (Angel Carpintero) 
+   * Fix round robin in BSD switching to METEOR_CAP_SINGLE. (Angel Carpintero)   
    * Fix rotate for v4l2 devices using JPEG / MJPEG palettes. (Angel Carpintero)
    * Fix v4l2_palette http://www.lavrsen.dk/twiki/bin/view/Motion/UvcvideoMjpegPatch (Gerrit Hannaert)
    * Fix warning for x86_64 in conf.c using pointers LP64 compliant ( Angel Carpintero ).
@@ -34,7 +21,8 @@ Bugfixes
 
 Bugfixes
     * Fix a security issue in web control interface http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=484572
-      (Angel Carpintero)
+      (Angel Carpintero) 
+
 
 3.2.10 Summary of Changes
 
@@ -79,7 +67,7 @@ Bugfixes
    * Little fix in ffmpeg.c comparing version of LIBAVFORMAT_BUILD, since ffmpeg svn -r4486 LIBAVFORMAT_BUILD and
      LIBAVCODEC_BUILD uses LIBAVFORMAT_VERSION_INT ((49<<16)+(0<<8)+0) and LIBAVCODEC_VERSION_INT ((49<<16)+(0<<8)+0)
      (Angel Carpintero)	
-   * Fix choose v4l2 palette , http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x01x21x043812	(Onakra)
+   * Fix choose v4l2 palette , http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x01x21x043812   (Onakra)
    * Get current directory to allow write motion.conf properly 
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x02x25x013419 (John Bray) 
    * Fix broken PostgreSQL detection for custom location, 
@@ -334,7 +322,7 @@ Features
      after the camera has moved (auto or manual) during which motion detection
      is disabled. This option should be set so low that the motion detection
      is re-enabled the minute the camera is standing still again.
-   * Added new sql_query option. This in combination with convertion
+   * Added new sql_query option. This in combination with conversion
      specifiers incl the two new %f and %n enables the user to use any database
      structure they please. Adding fields is now a simple matter of modifying
      the sql query.
@@ -361,7 +349,7 @@ Features
      and brightness, support large resolutions.
    * RPM specs file changed as suggested for use in the Livna repository.
    * Changed the sequence of events connected with creating files. Data is
-     now written to the databases (if used) before an external comments is
+     now written to the databases (if used) before an external commends is
      on (on_xxxx options) allowing the external program to use the new data
      in the database.
    * Motion is now also works on MaxOSX with similar feature set as FreeBSD.
@@ -434,7 +422,7 @@ snap1
      on the console. (Per Jönsson with additional removal of unused cnt by
      Kenneth Lavrsen).
      http://www.lavrsen.dk/twiki/bin/view/Motion/ThreadNrTlsPatch
-   * Moved the motion_loop initialization into a new function motion_init
+   * Moved the motion_loop initialisation into a new function motion_init
      (Bill Brack).
    * Removed old unused code related to read mode (not mmap) from V4L devices
      (Kenneth Lavrsen).
@@ -532,7 +520,7 @@ snap4
      appended at the end of the 3 on_xxxx commands. (Kenneth Lavrsen)
    * Removed the sql_user_text option that was added in snap 2 (Kenneth
      Lavrsen)
-   * Added new sql_query option. This in combination with convertion
+   * Added new sql_query option. This in combination with conversion
      specifiers incl the two new %f and %n enables the user to use any database
      structure they please. Added fields is now a simple matter of modifying
      the sql query. The default is the same as the default in snap1.
@@ -550,7 +538,7 @@ snap4
      a good idea to setup width and height so it is the same as the netcam.
      If the dimensions are the same Motion will switch over to the netcam
      seemlessly. If the dimensions are different Motion will perform a quick
-     restart so all the many internal buffers can be initialized properly
+     restart so all the many internal buffers can be initialised properly
      (Kenneth Lavrsen).
    * Added a better error handling of a netcam that changes dimensions
      while Motion is running. Instead of just writing error messages Motion
@@ -870,7 +858,7 @@ snap11
      FreeBSD code changes not tested yet.
 
 Release
-   * Netcam error handling improvements and cleanup from Valgrind analysis
+   * Netcam error handling improvements and cleanup from Walgrind analysis
      (Bill Brack).
    * Added a configure option --with-developer-flags which enables many compiler
      warnings that can be used by developers to make code more robust. Not
@@ -1778,7 +1766,7 @@ rc1
      is in "idle" mode.
    * added Kenneth's patch: motion with ffmpeg-0.4.8 now compiles
      again!
-   * small optimisation: if a file is created, the path is now
+   * small optimalisation: if a file is created, the path is now
      only recreated when it did not already exist.
 
 
@@ -2064,7 +2052,7 @@ van Heusden (http://www.vanheusden.com/).
       -locate is on by default (-l function now works reversed)
       -night_compensate is on by default
      Added mpeg framerate adjustment.
-     Added night_compensate for dark pictures.
+     Added night_compenstate for dark pictures.
 
 2.0     froze 2.0
      Integrated motion tracking.

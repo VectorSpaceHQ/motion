@@ -26,7 +26,7 @@
 #include "motion.h"
 
 
-#if (defined(BSD) && !defined(PWCBSD))
+#if (defined(BSD))
 #include "video_freebsd.h"
 #else
 #include "video.h"
@@ -35,134 +35,132 @@
 #ifndef HAVE_GET_CURRENT_DIR_NAME
 char *get_current_dir_name(void)
 {
-    char *buf = mymalloc(MAXPATHLEN);
+    char *buf = malloc(MAXPATHLEN);
     getwd(buf);
     return buf;
 }
 #endif
 
 
-#define stripnewline(x) {if ((x)[strlen(x)-1]=='\n') (x)[strlen(x) - 1] = 0; }
+#define stripnewline(x) {if ((x)[strlen(x)-1]=='\n') (x)[strlen(x) - 1] = 0;}
 
 
 struct config conf_template = {
-    width:                          DEF_WIDTH,
-    height:                         DEF_HEIGHT,
-    quality:                        DEF_QUALITY,
-    rotate_deg:                     0,
-    max_changes:                    DEF_CHANGES,
-    threshold_tune:                 0,
-    output_pictures:                "on",
-    motion_img:                     0,
-    emulate_motion:                 0,
-    event_gap:                      DEF_EVENT_GAP,
-    max_movie_time:                 DEF_MAXMOVIETIME,
-    snapshot_interval:              0,
-    locate_motion_mode:             "off",
-    locate_motion_style:            "box",
-    input:                          IN_DEFAULT,
-    norm:                           0,
-    frame_limit:                    DEF_MAXFRAMERATE,
-    quiet:                          1,
-    picture_type:                   "jpeg",
-    noise:                          DEF_NOISELEVEL,
-    noise_tune:                     1,
-    minimum_frame_time:             0,
-    lightswitch:                    0,
-    autobright:                     0,
-    brightness:                     0,
-    contrast:                       0,
-    saturation:                     0,
-    hue:                            0,
-    roundrobin_frames:              1,
-    roundrobin_skip:                1,
-    pre_capture:                    0,
-    post_capture:                   0,
-    switchfilter:                   0,
-    ffmpeg_output:                  0,
-    extpipe:                        NULL,
-    useextpipe:                     0,
-    ffmpeg_output_debug:            0,
-    ffmpeg_bps:                     DEF_FFMPEG_BPS,
-    ffmpeg_vbr:                     DEF_FFMPEG_VBR,
-    ffmpeg_video_codec:             DEF_FFMPEG_CODEC,
-    stream_port:                    0,
-    stream_quality:                 50,
-    stream_motion:                  0,
-    stream_maxrate:                 1,
-    stream_localhost:               1,
-    stream_limit:                   0,
-    webcontrol_port:                0,
-    webcontrol_localhost:           1,
-    webcontrol_html_output:         1,
-    webcontrol_authentication:      NULL,
-    frequency:                      0,
-    tuner_number:                   0,
-    timelapse:                      0,
-    timelapse_mode:                 DEF_TIMELAPSE_MODE,
+    width:                      DEF_WIDTH,
+    height:                     DEF_HEIGHT,
+    quality:                    DEF_QUALITY,
+    rotate_deg:                 0,
+    max_changes:                DEF_CHANGES,
+    threshold_tune:             0,
+    output_normal:              "on",
+    motion_img:                 0,
+    output_all:                 0,
+    gap:                        DEF_GAP,
+    maxmpegtime:                DEF_MAXMPEGTIME,
+    snapshot_interval:          0,
+    locate:                     "off",
+    input:                      IN_DEFAULT,
+    norm:                       0,
+    frame_limit:                DEF_MAXFRAMERATE,
+    quiet:                      1,
+    ppm:                        0,
+    noise:                      DEF_NOISELEVEL,
+    noise_tune:                 1,
+    minimum_frame_time:         0,
+    lightswitch:                0,
+    autobright:                 0,
+    brightness:                 0,
+    contrast:                   0,
+    saturation:                 0,
+    hue:                        0,
+    roundrobin_frames:          1,
+    roundrobin_skip:            1,
+    pre_capture:                0,
+    post_capture:               0,
+    switchfilter:               0,
+    ffmpeg_cap_new:             0,
+    ffmpeg_cap_motion:          0,
+    ffmpeg_bps:                 DEF_FFMPEG_BPS,
+    ffmpeg_vbr:                 DEF_FFMPEG_VBR,
+    ffmpeg_video_codec:         DEF_FFMPEG_CODEC,
+    webcam_port:                0,
+    webcam_quality:             50,
+    webcam_motion:              0,
+    webcam_maxrate:             1,
+    webcam_localhost:           1,
+    webcam_limit:               0,
+    control_port:               0,
+    control_localhost:          1,
+    control_html_output:        1,
+    control_authentication:     NULL,
+    frequency:                  0,
+    tuner_number:               0,
+    timelapse:                  0,
+    timelapse_mode:             DEF_TIMELAPSE_MODE,
 #if (defined(BSD))
-    tuner_device:                   NULL,
+    tuner_device:               NULL,
 #endif
-    video_device:                   VIDEO_DEVICE,
-    v4l2_palette:                   8,        
-    vidpipe:                        NULL,
-    filepath:                       NULL,
-    imagepath:                      DEF_IMAGEPATH,
-    moviepath:                      DEF_MOVIEPATH,
-    snappath:                       DEF_SNAPPATH,
-    timepath:                       DEF_TIMEPATH,
-    on_event_start:                 NULL,
-    on_event_end:                   NULL,
-    mask_file:                      NULL,
-    smart_mask_speed:               0,
-#if defined(HAVE_MYSQL) || defined(HAVE_PGSQL)    
-    sql_log_image:                  1,
-    sql_log_snapshot:               1,
-    sql_log_movie:                  0,
-    sql_log_timelapse:              0,
-    sql_query:                      DEF_SQL_QUERY,
-    database_type:                  NULL,
-    database_dbname:                NULL,
-    database_host:                  "localhost",
-    database_user:                   NULL,
-    database_password:              NULL,
-    database_port:                  0,
-#endif    
-    on_picture_save:                NULL,
-    on_motion_detected:             NULL,
-    on_area_detected:               NULL,
-    on_movie_start:                 NULL,
-    on_movie_end:                   NULL,
-    on_camera_lost:                 NULL,
-    motionvidpipe:                  NULL,
-    netcam_url:                     NULL,
-    netcam_userpass:                NULL,
-    netcam_keepalive:               "off",
-    netcam_proxy:                   NULL,
-    netcam_tolerant_check:          0,
-    text_changes:                   0,
-    text_left:                      NULL,
-    text_right:                     DEF_TIMESTAMP,
-    text_event:                     DEF_EVENTSTAMP,
-    text_double:                    0,
-    despeckle_filter:               NULL,
-    area_detect:                    NULL,
-    minimum_motion_frames:          1,
-    pid_file:                       NULL,
+    video_device:               VIDEO_DEVICE,
+    v4l2_palette:               8,        
+    vidpipe:                    NULL,
+    filepath:                   NULL,
+    jpegpath:                   DEF_JPEGPATH,
+    mpegpath:                   DEF_MPEGPATH,
+    snappath:                   DEF_SNAPPATH,
+    timepath:                   DEF_TIMEPATH,
+    on_event_start:             NULL,
+    on_event_end:               NULL,
+    mask_file:                  NULL,
+    smart_mask_speed:           0,
+    sql_log_image:              1,
+    sql_log_snapshot:           1,
+    sql_log_mpeg:               0,
+    sql_log_timelapse:          0,
+    sql_query:                  DEF_SQL_QUERY,
+    mysql_db:                   NULL,
+    mysql_host:                 "localhost",
+    mysql_user:                 NULL,
+    mysql_password:             NULL,
+    on_picture_save:            NULL,
+    on_motion_detected:         NULL,
+    on_area_detected:           NULL,
+    on_movie_start:             NULL,
+    on_movie_end:               NULL,
+    on_camera_lost:             NULL,
+    motionvidpipe:              NULL,
+    netcam_url:                 NULL,
+    netcam_userpass:            NULL,
+    netcam_http:                "1.0",    /* Choices: 1.0, 1.1, or keep_alive */
+    netcam_proxy:               NULL,
+    netcam_tolerant_check:      0,
+    pgsql_db:                   NULL,
+    pgsql_host:                 "localhost",
+    pgsql_user:                 NULL,
+    pgsql_password:             NULL,
+    pgsql_port:                 5432,
+    text_changes:               0,
+    text_left:                  NULL,
+    text_right:                 DEF_TIMESTAMP,
+    text_event:                 DEF_EVENTSTAMP,
+    text_double:                0,
+    despeckle:                  NULL,
+    area_detect:                NULL,
+    minimum_motion_frames:      1,
+    pid_file:                   NULL,
 };
 
 
 
-static struct context **copy_bool(struct context **, const char *, int);
-static struct context **copy_int(struct context **, const char *, int);
-static struct context **copy_short(struct context **, const char *, int);
-static struct context **config_thread(struct context **cnt, const char *str, int val);
+static struct context ** copy_bool(struct context **, const char *, int);
+static struct context ** copy_int(struct context **, const char *, int);
+static struct context ** copy_short(struct context **, const char *, int);
+static struct context ** config_thread(struct context **cnt, const char *str, int val);
 
-static const char *print_bool(struct context **, char **, int, unsigned short int);
-static const char *print_int(struct context **, char **, int, unsigned short int);
-static const char *print_short(struct context **, char **, int, unsigned short int);
-static const char *print_string(struct context **, char **, int, unsigned short int);
-static const char *print_thread(struct context **, char **, int, unsigned short int);
+static const char * print_bool(struct context **, char **, int, unsigned short int);
+static const char * print_int(struct context **, char **, int, unsigned short int);
+static const char * print_short(struct context **, char **, int, unsigned short int);
+static const char * print_string(struct context **, char **, int, unsigned short int);
+static const char * print_thread(struct context **, char **, int, unsigned short int);
 
 static void usage(void);
 
@@ -279,7 +277,7 @@ config_param config_params[] = {
     {
     "rotate",
     "# Rotate image this number of degrees. The rotation affects all saved images as\n"
-    "# well as movies. Valid values: 0 (default = no rotation), 90, 180 and 270.",
+    "# well as mpeg movies. Valid values: 0 (default = no rotation), 90, 180 and 270.",
     0,
     CONF_OFFSET(rotate_deg),
     copy_int,
@@ -339,14 +337,14 @@ config_param config_params[] = {
     print_string
     },
     {
-    "netcam_keepalive",
+    "netcam_http",
     "# The setting for keep-alive of network socket, should improve performance on compatible net cameras.\n"
-    "# off:   The historical implementation using HTTP/1.0, closing the socket after each http request.\n"
-    "# force: Use HTTP/1.0 requests with keep alive header to reuse the same connection.\n"
-    "# on:    Use HTTP/1.1 requests that support keep alive as default.\n"
-    "# Default: off",
+    "# 1.0:         The historical implementation using HTTP/1.0, closing the socket after each http request.\n"
+    "# keep_alive:  Use HTTP/1.0 requests with keep alive header to reuse the same connection.\n"
+    "# 1.1:         Use HTTP/1.1 requests that support keep alive as default.\n"
+    "# Default: 1.0",
     0,
-    CONF_OFFSET(netcam_keepalive),
+    CONF_OFFSET(netcam_http),
     copy_string,
     print_string
     },
@@ -482,13 +480,13 @@ config_param config_params[] = {
     print_bool
     },
     {
-    "despeckle_filter",
+    "despeckle",
     "# Despeckle motion image using (e)rode or (d)ilate or (l)abel (Default: not defined)\n"
     "# Recommended value is EedDl. Any combination (and number of) of E, e, d, and D is valid.\n"
     "# (l)abeling must only be used once and the 'l' must be the last letter.\n"
     "# Comment out to disable",
     0,
-    CONF_OFFSET(despeckle_filter),
+    CONF_OFFSET(despeckle),
     copy_string,
     print_string
     },
@@ -546,7 +544,7 @@ config_param config_params[] = {
     "# was detected that will be output at motion detection.\n"
     "# Recommended range: 0 to 5 (default: 0)\n"
     "# Do not use large values! Large values will cause Motion to skip video frames and\n"
-    "# cause unsmooth movies. To smooth movies use larger values of post_capture instead.",
+    "# cause unsmooth mpegs. To smooth mpegs use larger values of post_capture instead.",
     0,
     CONF_OFFSET(pre_capture),
     copy_int,
@@ -561,35 +559,35 @@ config_param config_params[] = {
     print_int
     },
     {
-    "event_gap",
-    "# Event Gap is the seconds of no motion detection that triggers the end of an event\n"
+    "gap",
+    "# Gap is the seconds of no motion detection that triggers the end of an event\n"
     "# An event is defined as a series of motion images taken within a short timeframe.\n"
     "# Recommended value is 60 seconds (Default). The value 0 is allowed and disables\n"
-    "# events causing all Motion to be written to one single movie file and no pre_capture.",
+    "# events causing all Motion to be written to one single mpeg file and no pre_capture.",
     0,
-    CONF_OFFSET(event_gap),
+    CONF_OFFSET(gap),
     copy_int,
     print_int
     },
     {
-    "max_movie_time",
-    "# Maximum length in seconds of a movie\n"
-    "# When value is exceeded a new movie file is created. (Default: 0 = infinite)",
+    "max_mpeg_time",
+    "# Maximum length in seconds of an mpeg movie\n"
+    "# When value is exceeded a new mpeg file is created. (Default: 0 = infinite)",
     0,
-    CONF_OFFSET(max_movie_time),
+    CONF_OFFSET(maxmpegtime),
     copy_int,
     print_int
     },
     {
-    "emulate_motion",
+    "output_all",
     "# Always save images even if there was no motion (default: off)",
     0,
-    CONF_OFFSET(emulate_motion),
+    CONF_OFFSET(output_all),
     copy_bool,
     print_bool
     },
     {
-    "output_pictures",
+    "output_normal",
     "\n############################################################\n"
     "# Image File Output\n"
     "############################################################\n\n"
@@ -600,12 +598,12 @@ config_param config_params[] = {
     "# Picture with motion nearest center of picture is saved when set to 'center'.\n"
     "# Can be used as preview shot for the corresponding movie.",
     0,
-    CONF_OFFSET(output_pictures),
+    CONF_OFFSET(output_normal),
     copy_string,
     print_string
     },
     {
-    "output_debug_pictures",
+    "output_motion",
     "# Output pictures with only the pixels moving object (ghost images) (default: off)",
     0,
     CONF_OFFSET(motion_img),
@@ -621,35 +619,34 @@ config_param config_params[] = {
     print_int
     },
     {
-    "picture_type",    
-    "# Type of output images\n"
-    "# Valid values: jpeg, ppm (default: jpeg)",
+    "ppm",
+    "# Output ppm images instead of jpeg (default: off)",
     0,
-    CONF_OFFSET(picture_type),
-    copy_string,
-    print_string
+    CONF_OFFSET(ppm),
+    copy_bool,
+    print_bool
     },
 #ifdef HAVE_FFMPEG
     {
-    "ffmpeg_output_movies",
+    "ffmpeg_cap_new",
     "\n############################################################\n"
     "# FFMPEG related options\n"
-    "# Film (movie) file output, and deinterlacing of the video input\n"
+    "# Film (mpeg) file output, and deinterlacing of the video input\n"
     "# The options movie_filename and timelapse_filename are also used\n"
     "# by the ffmpeg feature\n"
     "############################################################\n\n"
-    "# Use ffmpeg to encode movies in realtime (default: off)",
+    "# Use ffmpeg to encode mpeg movies in realtime (default: off)",
     0,
-    CONF_OFFSET(ffmpeg_output),
+    CONF_OFFSET(ffmpeg_cap_new),
     copy_bool,
     print_bool
     },
     {
-    "ffmpeg_output_debug_movies",
+    "ffmpeg_cap_motion",
     "# Use ffmpeg to make movies with only the pixels moving\n"
     "# object (ghost images) (default: off)",
     0,
-    CONF_OFFSET(ffmpeg_output_debug),
+    CONF_OFFSET(ffmpeg_cap_motion),
     copy_bool,
     print_bool
     },
@@ -694,7 +691,7 @@ config_param config_params[] = {
     {
     "ffmpeg_video_codec",
     "# Codec to used by ffmpeg for the video compression.\n"
-    "# Timelapse movies are always made in mpeg1 format independent from this option.\n"
+    "# Timelapse mpegs are always made in mpeg1 format independent from this option.\n"
     "# Supported formats are: mpeg1 (ffmpeg-0.4.8 only), mpeg4 (default), and msmpeg4.\n"
     "# mpeg1 - gives you files with extension .mpg\n"
     "# mpeg4 or msmpeg4 - gives you files with extension .avi\n"
@@ -721,29 +718,6 @@ config_param config_params[] = {
     },
 #endif /* HAVE_FFMPEG */
     {
-    "use_extpipe",    
-    "\n############################################################\n"
-    "# External pipe to video encoder\n"    
-    "# Replacement for FFMPEG builtin encoder for ffmpeg_output_movies only.\n"
-    "# The options movie_filename and timelapse_filename are also used\n"
-    "# by the ffmpeg feature\n"
-    "############################################################\n\n"
-    "# Bool to enable or disable extpipe (default: off)",
-    0,
-    CONF_OFFSET(useextpipe),
-    copy_bool,
-    print_bool
-    },
-    {
-    "extpipe",
-    "# External program (full path and opts) to pipe raw video to\n"
-    "# Generally, use '-' for STDIN...",
-    0,
-    CONF_OFFSET(extpipe),
-    copy_string,
-    print_string
-    },
-    {
     "snapshot_interval",
     "\n############################################################\n"
     "# Snapshots (Traditional Periodic Webcam File Output)\n"
@@ -755,7 +729,7 @@ config_param config_params[] = {
     print_int
     },
     {
-    "locate_motion_mode",
+    "locate",
     "\n############################################################\n"
     "# Text Display\n"
     "# %Y = year, %m = month, %d = date,\n"
@@ -769,23 +743,10 @@ config_param config_params[] = {
     "# leading spaces\n"
     "############################################################\n\n"
     "# Locate and draw a box around the moving object.\n"
-    "# Valid values: on, off, preview (default: off)\n"
+    "# Valid values: on, off and preview (default: off)\n"
     "# Set to 'preview' will only draw a box in preview_shot pictures.",
     0,
-    CONF_OFFSET(locate_motion_mode),
-    copy_string,
-    print_string
-    },
-    {
-    "locate_motion_style",
-    "# Set the look and style of the locate box if enabled.\n"
-    "# Valid values: box, redbox, cross, redcross (default: box)\n"
-    "# Set to 'box' will draw the traditional box.\n"
-    "# Set to 'redbox' will draw a red box.\n"
-    "# Set to 'cross' will draw a little cross to mark center.\n"
-    "# Set to 'redcross' will draw a little red cross to mark center.",
-    0,
-    CONF_OFFSET(locate_motion_style),
+    CONF_OFFSET(locate),
     copy_string,
     print_string
     },
@@ -809,7 +770,7 @@ config_param config_params[] = {
     copy_string,
     print_string
     },
-     {
+    {
     "text_changes",
     "# Draw the number of changed pixed on the images (default: off)\n"
     "# Will normally be set to off except when you setup and adjust the motion settings\n"
@@ -844,7 +805,7 @@ config_param config_params[] = {
     "target_dir",
     "\n############################################################\n"
     "# Target Directories and filenames For Images And Films\n"
-    "# For the options snapshot_, picture_, movie_ and timelapse_filename\n"
+    "# For the options snapshot_, jpeg_, mpeg_ and timelapse_filename\n"
     "# you can use conversion specifiers\n"
     "# %Y = year, %m = month, %d = date,\n"
     "# %H = hour, %M = minute, %S = second,\n"
@@ -877,36 +838,36 @@ config_param config_params[] = {
     print_string
     },
     {
-    "picture_filename",
+    "jpeg_filename",
     "# File path for motion triggered images (jpeg or ppm) relative to target_dir\n"
-    "# Default: "DEF_IMAGEPATH"\n"
+    "# Default: "DEF_JPEGPATH"\n"
     "# Default value is equivalent to legacy oldlayout option\n"
     "# For Motion 3.0 compatible mode choose: %Y/%m/%d/%H/%M/%S-%q\n"
     "# File extension .jpg or .ppm is automatically added so do not include this\n"
     "# Set to 'preview' together with best-preview feature enables special naming\n"
     "# convention for preview shots. See motion guide for details",
     0,
-    CONF_OFFSET(imagepath),
+    CONF_OFFSET(jpegpath),
     copy_string,
     print_string
     },
 #ifdef HAVE_FFMPEG
     {
     "movie_filename",
-    "# File path for motion triggered ffmpeg films (movies) relative to target_dir\n"
-    "# Default: "DEF_MOVIEPATH"\n"
+    "# File path for motion triggered ffmpeg films (mpeg) relative to target_dir\n"
+    "# Default: "DEF_MPEGPATH"\n"
     "# Default value is equivalent to legacy oldlayout option\n"
     "# For Motion 3.0 compatible mode choose: %Y/%m/%d/%H%M%S\n"
     "# File extension .mpg or .avi is automatically added so do not include this\n"
     "# This option was previously called ffmpeg_filename",
     0,
-    CONF_OFFSET(moviepath),
+    CONF_OFFSET(mpegpath),
     copy_string,
     print_string
     },
     {
     "timelapse_filename",
-    "# File path for timelapse movies relative to target_dir\n"
+    "# File path for timelapse mpegs relative to target_dir\n"
     "# Default: "DEF_TIMEPATH"\n"
     "# Default value is near equivalent to legacy oldlayout option\n"
     "# For Motion 3.0 compatible mode choose: %Y/%m/%d-timelapse\n"
@@ -918,92 +879,92 @@ config_param config_params[] = {
     },
 #endif /* HAVE_FFMPEG */
     {
-    "stream_port",
+    "webcam_port",
     "\n############################################################\n"
-    "# Live Stream Server\n"
+    "# Live Webcam Server\n"
     "############################################################\n\n"
     "# The mini-http server listens to this port for requests (default: 0 = disabled)",
     0,
-    CONF_OFFSET(stream_port),
+    CONF_OFFSET(webcam_port),
     copy_int,
     print_int
     },
     {
-    "stream_quality",
+    "webcam_quality",
     "# Quality of the jpeg images produced (default: 50)",
     0,
-    CONF_OFFSET(stream_quality),
+    CONF_OFFSET(webcam_quality),
     copy_int,
     print_int
     },
     {
-    "stream_motion",
+    "webcam_motion",
     "# Output frames at 1 fps when no motion is detected and increase to the\n"
-    "# rate given by stream_maxrate when motion is detected (default: off)",
+    "# rate given by webcam_maxrate when motion is detected (default: off)",
     0,
-    CONF_OFFSET(stream_motion),
+    CONF_OFFSET(webcam_motion),
     copy_bool,
     print_bool
     },
     {
-    "stream_maxrate",
-    "# Maximum framerate for streams (default: 1)",
+    "webcam_maxrate",
+    "# Maximum framerate for webcam streams (default: 1)",
     0,
-    CONF_OFFSET(stream_maxrate),
+    CONF_OFFSET(webcam_maxrate),
     copy_int,
     print_int
     },
     {
-    "stream_localhost",
-    "# Restrict stream connections to localhost only (default: on)",
+    "webcam_localhost",
+    "# Restrict webcam connections to localhost only (default: on)",
     0,
-    CONF_OFFSET(stream_localhost),
+    CONF_OFFSET(webcam_localhost),
     copy_bool,
     print_bool
     },
     {
-    "stream_limit",
+    "webcam_limit",
     "# Limits the number of images per connection (default: 0 = unlimited)\n"
-    "# Number can be defined by multiplying actual stream rate by desired number of seconds\n"
-    "# Actual stream rate is the smallest of the numbers framerate and stream_maxrate",
+    "# Number can be defined by multiplying actual webcam rate by desired number of seconds\n"
+    "# Actual webcam rate is the smallest of the numbers framerate and webcam_maxrate",
     0,
-    CONF_OFFSET(stream_limit),
+    CONF_OFFSET(webcam_limit),
     copy_int,
     print_int
     },
     {
-    "webcontrol_port",
+    "control_port",
     "\n############################################################\n"
     "# HTTP Based Control\n"
     "############################################################\n\n"
     "# TCP/IP port for the http server to listen on (default: 0 = disabled)",
     1,
-    CONF_OFFSET(webcontrol_port),
+    CONF_OFFSET(control_port),
     copy_int,
     print_int
     },
     {
-    "webcontrol_localhost",
+    "control_localhost",
     "# Restrict control connections to localhost only (default: on)",
     1,
-    CONF_OFFSET(webcontrol_localhost),
+    CONF_OFFSET(control_localhost),
     copy_bool,
     print_bool
     },
     {
-    "webcontrol_html_output",
+    "control_html_output",
     "# Output for http server, select off to choose raw text plain (default: on)",
     1,
-    CONF_OFFSET(webcontrol_html_output),
+    CONF_OFFSET(control_html_output),
     copy_bool,
     print_bool
     },
     {
-    "webcontrol_authentication",
+    "control_authentication",
     "# Authentication for the http based control. Syntax username:password\n"
     "# Default: not defined (Disabled)",
     1,
-    CONF_OFFSET(webcontrol_authentication),
+    CONF_OFFSET(control_authentication),
     copy_string,
     print_string
     },    
@@ -1012,7 +973,7 @@ config_param config_params[] = {
     "\n############################################################\n"
     "# Tracking (Pan/Tilt)\n"
     "############################################################\n\n"
-    "# Type of tracker (0=none (default), 1=stepper, 2=iomojo, 3=pwc, 4=generic, 5=uvcvideo, 6=servo)\n"
+    "# Type of tracker (0=none (default), 1=stepper, 2=iomojo, 3=pwc, 4=generic, 5=uvcvideo)\n"
     "# The generic type enables the definition of motion center and motion size to\n"
     "# be used with the conversion specifiers for options like on_motion_detected",
     0,
@@ -1045,28 +1006,12 @@ config_param config_params[] = {
     print_short
     },
     {
-    "track_motorx_reverse",
-    "# Set motorx reverse (default: off)",
-    0,
-    TRACK_OFFSET(motorx_reverse),
-    copy_bool,
-    print_bool
-    },
-    {
     "track_motory",
     "# Motor number for y-axis (default: 0)",
     0,
     TRACK_OFFSET(motory),
     copy_short,
     print_short
-    },
-    {
-    "track_motory_reverse",
-    "# Set motory reverse (default: off)",
-    0,
-    TRACK_OFFSET(motory_reverse),
-    copy_bool,
-    print_bool
     },
     {
     "track_maxx",
@@ -1077,42 +1022,10 @@ config_param config_params[] = {
     print_short
     },
     {
-    "track_minx",
-    "# Minimum value on x-axis (default: 0)",
-    0,
-    TRACK_OFFSET(minx),
-    copy_short,
-    print_short
-    },
-    {
     "track_maxy",
     "# Maximum value on y-axis (default: 0)",
     0,
     TRACK_OFFSET(maxy),
-    copy_short,
-    print_short
-    },
-    {
-    "track_miny",
-    "# Minimum value on y-axis (default: 0)",
-    0,
-    TRACK_OFFSET(miny),
-    copy_short,
-    print_short
-    },
-    {
-    "track_homex",
-    "# Center value on x-axis (default: 0)",
-    0,
-    TRACK_OFFSET(homex),
-    copy_short,
-    print_short
-    },
-    {
-    "track_homey",
-    "# Center value on y-axis (default: 0)",
-    0,
-    TRACK_OFFSET(homey),
     copy_short,
     print_short
     },
@@ -1197,7 +1110,7 @@ config_param config_params[] = {
     {
     "on_event_start",
     "# Command to be executed when an event starts. (default: none)\n"
-    "# An event starts at first motion detected after a period of no motion defined by event_gap ",
+    "# An event starts at first motion detected after a period of no motion defined by gap ",
     0,
     CONF_OFFSET(on_event_start),
     copy_string,
@@ -1206,7 +1119,7 @@ config_param config_params[] = {
     {
     "on_event_end",
     "# Command to be executed when an event ends after a period of no motion\n"
-    "# (default: none). The period of no motion is defined by option event_gap.",
+    "# (default: none). The period of no motion is defined by option gap.",
     0,
     CONF_OFFSET(on_event_end),
     copy_string,
@@ -1261,9 +1174,9 @@ config_param config_params[] = {
     {
     "on_camera_lost",
     "# Command to be executed when a camera can't be opened or if it is lost\n"
-    "# NOTE: There is situations when motion don't detect a lost camera!\n"
-    "# It depends on the driver, some drivers dosn't detect a lost camera at all\n"
-    "# Some hangs the motion thread. Some even hangs the PC! (default: none)",
+    "# NOTE: There is situations when motion doesn't detect a lost camera!\n"
+    "# It depends on the driver, some drivers don't detect a lost camera at all\n"
+    "# Some hang the motion thread. Some even hang the PC! (default: none)",
     0,
     CONF_OFFSET(on_camera_lost),
     copy_string,
@@ -1272,7 +1185,7 @@ config_param config_params[] = {
 
 #if defined(HAVE_MYSQL) || defined(HAVE_PGSQL)
     {
-    "sql_log_picture",
+    "sql_log_image",
     "\n############################################################\n"
     "# Common Options For MySQL and PostgreSQL database features.\n"
     "# Options require the MySQL/PostgreSQL options to be active also.\n"
@@ -1292,16 +1205,16 @@ config_param config_params[] = {
     print_bool
     },
     {
-    "sql_log_movie",
-    "# Log to the database when creating motion triggered movie file (default: off)",
+    "sql_log_mpeg",
+    "# Log to the database when creating motion triggered mpeg file (default: off)",
     0,
-    CONF_OFFSET(sql_log_movie),
+    CONF_OFFSET(sql_log_mpeg),
     copy_bool,
     print_bool
     },
     {
     "sql_log_timelapse",
-    "# Log to the database when creating timelapse movie file (default: off)",
+    "# Log to the database when creating timelapse mpeg file (default: off)",
     0,
     CONF_OFFSET(sql_log_timelapse),
     copy_bool,
@@ -1321,59 +1234,91 @@ config_param config_params[] = {
     copy_string,
     print_string
     },
+#endif /* defined(HAVE_MYSQL) || defined(HAVE_PGSQL) */
+
+#ifdef HAVE_MYSQL
     {
-    "database_type",
+    "mysql_db",
     "\n############################################################\n"
-    "# Database Options \n"
+    "# Database Options For MySQL\n"
     "############################################################\n\n"
-    "# database type : mysql, postgresql (default : not defined)",
+    "# Mysql database to log to (default: not defined)",
     0,
-    CONF_OFFSET(database_type),
+    CONF_OFFSET(mysql_db),
     copy_string,
     print_string
     },
     {
-    "database_dbname",    
-    "# database to log to (default: not defined)",
+    "mysql_host",
+    "# The host on which the database is located (default: localhost)",
     0,
-    CONF_OFFSET(database_dbname),
-    copy_string,
-    print_string    
-    },    
-    {
-    "database_host",
-    "# The host on which the database is located (default: not defined)",
-    0,
-    CONF_OFFSET(database_host),
+    CONF_OFFSET(mysql_host),
     copy_string,
     print_string
     },
     {
-    "database_user",
-    "# User account name for database (default: not defined)",
+    "mysql_user",
+    "# User account name for MySQL database (default: not defined)",
     0,
-    CONF_OFFSET(database_user),
+    CONF_OFFSET(mysql_user),
     copy_string,
     print_string
     },
     {
-    "database_password",
-    "# User password for database (default: not defined)",
+    "mysql_password",
+    "# User password for MySQL database (default: not defined)",
     0,
-    CONF_OFFSET(database_password),
+    CONF_OFFSET(mysql_password),
+    copy_string,
+    print_string
+    },
+#endif /* HAVE_MYSQL */
+
+#ifdef HAVE_PGSQL
+    {
+    "pgsql_db",
+    "\n############################################################\n"
+    "# Database Options For PostgreSQL\n"
+    "############################################################\n\n"
+    "# PostgreSQL database to log to (default: not defined)",
+    0,
+    CONF_OFFSET(pgsql_db),
     copy_string,
     print_string
     },
     {
-    "database_port",
-    "# Port on which the database is located (default: not defined)\n"
-    "# mysql 3306 , postgresql 5432 (default: not defined)",
+    "pgsql_host",
+    "# The host on which the database is located (default: localhost)",
     0,
-    CONF_OFFSET(database_port),
+    CONF_OFFSET(pgsql_host),
+    copy_string,
+    print_string
+    },
+    {
+    "pgsql_user",
+    "# User account name for PostgreSQL database (default: not defined)",
+    0,
+    CONF_OFFSET(pgsql_user),
+    copy_string,
+    print_string
+    },
+    {
+    "pgsql_password",
+    "# User password for PostgreSQL database (default: not defined)",
+    0,
+    CONF_OFFSET(pgsql_password),
+    copy_string,
+    print_string
+    },
+    {
+    "pgsql_port",
+    "# Port on which the PostgreSQL database is located (default: 5432)",
+    0,
+    CONF_OFFSET(pgsql_port),
     copy_int,
     print_int
     },
-#endif /* defined(HAVE_MYSQL) || defined(HAVE_PGSQL) */
+#endif /* HAVE_PGSQL */
     {
     "video_pipe",
     "\n############################################################\n"
@@ -1438,18 +1383,17 @@ static void conf_cmdline(struct context *cnt, short int thread)
         case 'd':
             /* no validation - just take what user gives */
             debug_level = (unsigned short int)atoi(optarg);
-             break;
+            break;
         case 'p':
-             if (thread == -1) 
-                 strcpy(cnt->pid_file, optarg);
-             break;    
+            if (thread == -1) 
+                strcpy(cnt->pid_file, optarg);
+            break;    
         case 'h':
         case '?':
         default:
-             usage();
-             exit(1);
+            usage();
+            exit(1);
         }
-
     optind = 1;
 }
 
@@ -1474,7 +1418,7 @@ struct context **conf_cmdparse(struct context **cnt, const char *cmd, const char
         if (!strncasecmp(cmd, config_params[i].param_name , 255 + 50)) { // Why +50?
     
             /* if config_param is string we don't want to check arg1 */        
-            if (strcmp(config_type(&config_params[i]), "string")) {
+            if (strcmp(config_type(&config_params[i]),"string")) {
                 if (config_params[i].conf_value && !arg1)
                     return cnt;
             }
@@ -1498,7 +1442,7 @@ struct context **conf_cmdparse(struct context **cnt, const char *cmd, const char
     }
 
     /* We reached the end of config_params without finding a matching option */
-    motion_log(LOG_ERR, 0, "%s: Unknown config option \"%s\"", __FUNCTION__, cmd);
+    motion_log(LOG_ERR, 0, "Unknown config option \"%s\"", cmd);
 
     return cnt;
 }
@@ -1521,15 +1465,15 @@ static struct context **conf_process(struct context **cnt, FILE *fp)
     char *beg = NULL, *end = NULL;
 
     while (fgets(line, PATH_MAX-1, fp)) {
-        if (!(line[0] == '#' || line[0] == ';' || strlen(line) <  2)) {/* skipcomment */
+        if (!(line[0] == '#' || line[0] == ';' || strlen(line) < 2)) {/* skipcomment */
             
             arg1 = NULL;
 
             /* trim white space and any CR or LF at the end of the line */
             end = line + strlen(line) - 1; /* Point to the last non-null character in the string */
-            while (*end == ' ' || *end == '\t' || *end == '\n' || *end == '\r') 
+            while (*end == ' ' || *end == '\t' || *end == '\n' || *end == '\r')
                 end--;
-            
+
             *(end+1) = '\0';
             
             /* If line is only whitespace we continue to the next line */
@@ -1538,13 +1482,13 @@ static struct context **conf_process(struct context **cnt, FILE *fp)
 
             /* trim leading whitespace from the line and find command */
             beg = line;
-            while (*beg == ' ' || *beg == '\t') 
-                beg++;
             
+            while (*beg == ' ' || *beg == '\t')
+                beg++;
 
             cmd = beg; /* command starts here */
 
-            while (*beg != ' ' && *beg != '\t' && *beg != '=' && *beg != '\0') 
+            while (*beg != ' ' && *beg != '\t' && *beg != '=' && *beg != '\0')
                 beg++;
             
             *beg = '\0'; /* command string terminates here */
@@ -1553,16 +1497,16 @@ static struct context **conf_process(struct context **cnt, FILE *fp)
             beg++;
 
             if (strlen(beg) > 0) {
-                while (*beg == ' ' || *beg == '\t' || *beg == '=' || *beg == '\n' || *beg == '\r') 
+                while (*beg == ' ' || *beg == '\t' || *beg == '=' || *beg == '\n' || *beg == '\r')
                     beg++;
                 
 
                 /* If argument is in "" we will strip them off
                    It is important that we can use "" so that we can use
                    leading spaces in text_left and text_right */
-                if ((beg[0] == '"' && beg[strlen(beg)-1] == '"') ||
-                    (beg[0] == '\'' && beg[strlen(beg)-1] == '\'')) {
-                    beg[strlen(beg)-1] = '\0';
+                if ((beg[0]=='"' && beg[strlen(beg)-1]=='"') ||
+                    (beg[0]=='\'' && beg[strlen(beg)-1]=='\'')) {
+                    beg[strlen(beg)-1]='\0';
                     beg++;
                 }
                 
@@ -1589,11 +1533,9 @@ void conf_print(struct context **cnt)
     FILE *conffile;
 
     for (thread = 0; cnt[thread]; thread++) {
-        motion_log(LOG_INFO, 0, "%s: Writing config file to %s", 
-                   __FUNCTION__, cnt[thread]->conf_filename);
-        
-        conffile = myfopen(cnt[thread]->conf_filename, "w");
-        
+        motion_log(LOG_INFO, 0, "Writing config file to %s",cnt[thread]->conf_filename);
+        conffile=myfopen(cnt[thread]->conf_filename, "w");
+
         if (!conffile)
             continue;
 
@@ -1602,8 +1544,9 @@ void conf_print(struct context **cnt)
         fprintf(conffile, "\n\n");
 
         for (i = 0; config_params[i].param_name; i++) {
-            retval = config_params[i].print(cnt, NULL, i, thread);
+            retval=config_params[i].print(cnt, NULL, i, thread);
             /*If config parameter has a value (not NULL) print it to the config file*/
+
             if (retval) {
                 fprintf(conffile, "%s\n", config_params[i].param_help);
                 /* If the option is a text_* and first char is a space put
@@ -1620,16 +1563,15 @@ void conf_print(struct context **cnt)
                    Else write the disabled option to the config file but with a
                    comment mark in front of the parameter name */
                 if (val) {
-                    fprintf(conffile, "%s\n", config_params[i].param_help);
+                    fprintf(conffile,"%s\n", config_params[i].param_help);
                     fprintf(conffile, "%s\n", val);
 
                     if (strlen(val) == 0)
-                        fprintf(conffile, "; thread /usr/local/etc/thread1.conf\n");
-
+                        fprintf(conffile,"; thread /usr/local/etc/thread1.conf\n");
                     free(val);
                 } else if (thread == 0) {        
-                    fprintf(conffile, "%s\n", config_params[i].param_help);
-                    fprintf(conffile, "; %s value\n\n", config_params[i].param_name);
+                    fprintf(conffile,"%s\n", config_params[i].param_help);
+                    fprintf(conffile,"; %s value\n\n", config_params[i].param_name);
                 }
             }
         }
@@ -1697,7 +1639,6 @@ struct context **conf_load(struct context **cnt)
     cnt[0]->pid_file[0] = 0;
 
     conf_cmdline(cnt[0], -1);
-
     if (cnt[0]->conf_filename[0]) { /* User has supplied filename on commandline*/
         strcpy(filename, cnt[0]->conf_filename);
         fp = fopen (filename, "r");
@@ -1705,13 +1646,11 @@ struct context **conf_load(struct context **cnt)
 
     if (!fp) {      /* Commandline didn't work, try current dir */
         char *path = NULL;
-
         if (cnt[0]->conf_filename[0])
-            motion_log(-1, 1, "%s: Configfile %s not found - trying defaults.", 
-                       __FUNCTION__, filename);
-
+            motion_log(-1, 1, "Configfile %s not found - trying defaults.", filename);
+        
         if ((path = get_current_dir_name()) == NULL) {
-            motion_log(LOG_ERR, 1, "%s: Error get_current_dir_name", __FUNCTION__);
+            motion_log(LOG_ERR, 1, "Error get_current_dir_name");
             exit(-1);
         }
 
@@ -1723,27 +1662,22 @@ struct context **conf_load(struct context **cnt)
     if (!fp) {     /* specified file does not exist... try default file */
         snprintf(filename, PATH_MAX, "%s/.motion/motion.conf", getenv("HOME"));
         fp = fopen(filename, "r");
-
         if (!fp) {
             snprintf(filename, PATH_MAX, "%s/motion.conf", sysconfdir);
             fp = fopen(filename, "r");
-
             if (!fp)        /* there is no config file.... use defaults */
-                motion_log(-1, 1, "%s: could not open configfile %s", 
-                           __FUNCTION__, filename);
+                motion_log(-1, 1, "could not open configfile %s",filename);
         }
     }
 
     /* Now we process the motion.conf config file and close it*/
     if (fp) {
         strcpy(cnt[0]->conf_filename, filename);
-        motion_log(LOG_INFO, 0, "%s: Processing thread 0 - config file %s", 
-                   __FUNCTION__, filename);
+        motion_log(LOG_INFO, 0, "Processing thread 0 - config file %s",filename);
         cnt = conf_process(cnt, fp);
         fclose(fp);
     } else {
-        motion_log(LOG_INFO, 0, "%s: Not config file to process using default values", 
-                   __FUNCTION__);
+        motion_log(LOG_INFO, 0, "Not config file to process using default values");
     }
     
 
@@ -1756,7 +1690,6 @@ struct context **conf_load(struct context **cnt)
      * options
      */
     i = -1;
-
     while (cnt[++i])
         conf_cmdline(cnt[i], i);
 
@@ -1775,7 +1708,7 @@ struct context **conf_load(struct context **cnt)
  * 3. Change the cnt member (char*) pointing to the string in reserved memory
  * This ensures that we can free and malloc the string if it is later changed
  */
-void malloc_strings(struct context *cnt)
+void malloc_strings(struct context * cnt)
 {
     unsigned short int i = 0;
     char **val;
@@ -1831,9 +1764,8 @@ static struct context **copy_bool(struct context **cnt, const char *str, int val
 
     i = -1;
     while (cnt[++i]) {
-        tmp = (char *)cnt[i]+(int)val_ptr;
-
-        if (!strcmp(str, "1") || !strcasecmp(str, "yes") || !strcasecmp(str, "on")) {
+        tmp = (char *)cnt[i] + (int)val_ptr;
+        if (!strcmp(str, "1") || !strcasecmp(str, "yes") || !strcasecmp(str,"on")) {
             *((int *)tmp) = 1;
         } else {
             *((int *)tmp) = 0;
@@ -1842,7 +1774,6 @@ static struct context **copy_bool(struct context **cnt, const char *str, int val
         if (cnt[0]->threadnr)
             return cnt;
     }
-
     return cnt;
 }
 
@@ -1856,13 +1787,11 @@ static struct context **copy_int(struct context **cnt, const char *str, int val_
 
     i = -1;
     while (cnt[++i]) {
-        tmp = (char *)cnt[i]+val_ptr;
+        tmp = (char *)cnt[i] + val_ptr;
         *((int *)tmp) = atoi(str);
-
         if (cnt[0]->threadnr)
             return cnt;
     }
-
     return cnt;
 }
 
@@ -1875,15 +1804,12 @@ static struct context **copy_short(struct context **cnt, const char *str, int va
     int i;
 
     i = -1;
-
     while (cnt[++i]) {
-        tmp = (char *)cnt[i]+val_ptr;
+        tmp = (char *)cnt[i] + val_ptr;
         *((short int *)tmp) = atoi(str);
-
         if (cnt[0]->threadnr)
             return cnt;
     }
-
     return cnt;
 }
 
@@ -1900,7 +1826,6 @@ struct context **copy_string(struct context **cnt, const char *str, int val_ptr)
     int i;
 
     i = -1;
-
     while (cnt[++i]) {
         tmp = (char **)((char *)cnt[i] + val_ptr);
 
@@ -1915,7 +1840,6 @@ struct context **copy_string(struct context **cnt, const char *str, int val_ptr)
         if (cnt[0]->threadnr)
             return cnt;
     }
-
     return cnt;
 }
 
@@ -1959,7 +1883,7 @@ char *mystrcpy(char *to, const char *from)
 char *mystrdup(const char *from)
 {
     char *tmp;
-    size_t stringlength;
+    int stringlength;
 
     if (from == NULL || !strlen(from)) {
         tmp = NULL;
@@ -1977,7 +1901,6 @@ char *mystrdup(const char *from)
         *tmp = '\0';
         tmp -= stringlength;
     }
-
     return tmp;
 }
 
@@ -1996,7 +1919,7 @@ const char *config_type(config_param *configparam)
 }
 
 static const char *print_bool(struct context **cnt, char **str ATTRIBUTE_UNUSED,
-                              int parm, unsigned short int threadnr)
+                               int parm, unsigned short int threadnr)
 {
     int val = config_params[parm].conf_value;
 
@@ -2017,8 +1940,8 @@ static const char *print_bool(struct context **cnt, char **str ATTRIBUTE_UNUSED,
  * the option is not written to the thread config file.
  */
 static const char *print_string(struct context **cnt,
-                                char **str ATTRIBUTE_UNUSED, int parm,
-                                unsigned short int threadnr)
+                                 char **str ATTRIBUTE_UNUSED, int parm,
+                                 unsigned short int threadnr)
 {
     int val = config_params[parm].conf_value;
     const char **cptr0, **cptr1;
@@ -2026,7 +1949,6 @@ static const char *print_string(struct context **cnt,
     /* strcmp does not like NULL so we have to check for this also */
     cptr0 = (const char **)((char *)cnt[0] + val);
     cptr1 = (const char **)((char *)cnt[threadnr] + val);
-
     if ((threadnr) && (*cptr0 != NULL) && (*cptr1 != NULL) && (!strcmp(*cptr0, *cptr1)))
         return NULL;
 
@@ -2034,7 +1956,7 @@ static const char *print_string(struct context **cnt,
 }
 
 static const char *print_int(struct context **cnt, char **str ATTRIBUTE_UNUSED,
-                             int parm, unsigned short int threadnr)
+                              int parm, unsigned short int threadnr)
 {
     static char retval[20];
     int val = config_params[parm].conf_value;
@@ -2050,7 +1972,7 @@ static const char *print_int(struct context **cnt, char **str ATTRIBUTE_UNUSED,
 
 
 static const char *print_short(struct context **cnt, char **str ATTRIBUTE_UNUSED,
-                               int parm, unsigned short int threadnr) 
+                                int parm, unsigned short int threadnr) 
 {
     static char retval[20];
     int val = config_params[parm].conf_value;
@@ -2065,7 +1987,7 @@ static const char *print_short(struct context **cnt, char **str ATTRIBUTE_UNUSED
 }
 
 static const char *print_thread(struct context **cnt, char **str,
-                                int parm ATTRIBUTE_UNUSED, unsigned short int threadnr)
+                                 int parm ATTRIBUTE_UNUSED, unsigned short int threadnr)
 {
     char *retval;
     unsigned short int i = 0;
@@ -2075,12 +1997,10 @@ static const char *print_thread(struct context **cnt, char **str,
 
     retval = mymalloc(1);
     retval[0] = 0;
-
     while (cnt[++i]) {
-        retval = myrealloc(retval, strlen(retval) + strlen(cnt[i]->conf_filename)+10, "print_thread");
+        retval = myrealloc(retval, strlen(retval) + strlen(cnt[i]->conf_filename) + 10, "print_thread");
         sprintf(retval + strlen(retval), "thread %s\n", cnt[i]->conf_filename);
     }
-
     *str = retval;
 
     return NULL;
@@ -2097,7 +2017,7 @@ static const char *print_thread(struct context **cnt, char **str,
  *        copy_int, copy_bool and copy_string.
  */
 static struct context **config_thread(struct context **cnt, const char *str,
-                                      int val ATTRIBUTE_UNUSED)
+                                       int val ATTRIBUTE_UNUSED)
 {
     int i;
     FILE *fp;
@@ -2108,14 +2028,12 @@ static struct context **config_thread(struct context **cnt, const char *str,
     fp = fopen(str, "r");
 
     if (!fp) {
-        motion_log(LOG_ERR, 1, "%s: Thread config file %s not found", 
-                   __FUNCTION__, str);
+        motion_log(LOG_ERR, 1, "Thread config file %s not found",str);
         return cnt;
     }
 
     /* Find the current number of threads defined. */
     i = -1;
-
     while (cnt[++i]);
 
     /* Make space for the threads + the terminating NULL pointer
@@ -2123,7 +2041,7 @@ static struct context **config_thread(struct context **cnt, const char *str,
      * First thread is 0 so the number of threads is i+1
      * plus an extra for the NULL pointer. This gives i+2
      */
-    cnt = myrealloc(cnt, sizeof(struct context *)*(i+2), "config_thread");
+    cnt = myrealloc(cnt, sizeof(struct context *) * (i + 2), "config_thread");
 
     /* Now malloc space for an additional context structure for thread nr. i */
     cnt[i] = mymalloc(sizeof(struct context));
@@ -2140,11 +2058,11 @@ static struct context **config_thread(struct context **cnt, const char *str,
     malloc_strings(cnt[i]);
     
     /* Mark the end if the array of pointers to context structures */
-    cnt[i+1] = NULL;
+    cnt[i + 1] = NULL;
 
     /* process the thread's config file and notify user on console */
     strcpy(cnt[i]->conf_filename, str);
-    motion_log(LOG_INFO, 0, "%s: Processing config file %s", __FUNCTION__, str);
+    motion_log(LOG_INFO, 0, "Processing config file %s", str);
     conf_process(cnt+i, fp);
     
     /* Finally we close the thread config file */

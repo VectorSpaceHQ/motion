@@ -76,15 +76,15 @@ void base64_encode(const char *, char *, int);
 char *strdupdelim(const char *, const char *);
 int http_process_type(const char *, void *);
 
-enum {
+enum { 
     HG_OK, 
     HG_ERROR, 
     HG_EOF
 };
 
-enum header_get_flags{
+enum header_get_flags { 
     HG_NONE = 0,
-    HG_NO_CONTINUATIONS = 0x2
+    HG_NO_CONTINUATIONS = 0x2 
 };
 
 int header_get (netcam_context_ptr, char **, enum header_get_flags);

@@ -71,7 +71,6 @@ int header_get(netcam_context_ptr netcam, char **hdr, enum header_get_flags flag
     int bufsize = 80;
 
     *hdr = (char *)mymalloc(bufsize);
-
     for (i = 0; 1; i++) {
         int res;
         /* #### Use DO_REALLOC?  */
@@ -112,7 +111,9 @@ int header_get(netcam_context_ptr netcam, char **hdr, enum header_get_flags flag
                 (*hdr)[i] = '\0';
                 break;
             }
+
         } else if (res == 0) {
+        
             (*hdr)[i] = '\0';
             return HG_EOF;
         } else {
@@ -128,7 +129,8 @@ int header_get(netcam_context_ptr netcam, char **hdr, enum header_get_flags flag
    the whitespace, and call PROCFUN with the arguments of HEADER's
    contents (after the `:' and space) and ARG.  Otherwise, return 0.  */
 int header_process (const char *header, const char *name,
-                    int (*procfun)(const char *, void *), void *arg)
+        int (*procfun)(const char *, void *),
+        void *arg)
 {
     /* Check whether HEADER matches NAME.  */
     while (*name && (tolower (*name) == tolower (*header)))
@@ -173,7 +175,7 @@ int header_extract_number(const char *header, void *closure)
 /* Strdup HEADER, and place the pointer to CLOSURE.  */
 int header_strdup(const char *header, void *closure)
 {
-    *(char **)closure = mystrdup(header);
+    *(char **)closure = strdup(header);
     return 1;
 }
 
