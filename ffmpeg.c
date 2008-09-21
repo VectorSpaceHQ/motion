@@ -61,7 +61,7 @@
 #define APPEND_PROTO "appfile"
 
 /* Some forward-declarations. */
-int ffmpeg_put_frame(struct ffmpeg *, AVFrame *);
+void ffmpeg_put_frame(struct ffmpeg *, AVFrame *);
 void ffmpeg_cleanups(struct ffmpeg *);
 AVFrame *ffmpeg_prepare_frame(struct ffmpeg *, unsigned char *, 
                               unsigned char *, unsigned char *);
@@ -80,7 +80,6 @@ static int file_open_append(URLContext *h, const char *filename, int flags)
 
     /* Skip past the protocol part of filename. */
     colon = strchr(filename, ':');
-
     if (colon) 
         filename = colon + 1;
     
@@ -148,6 +147,7 @@ static int file_open(URLContext *h, const char *filename, int flags)
     fd = open(filename, access_flags, 0666);
     if (fd < 0)
         return AVERROR(ENOENT);
+
     h->priv_data = (void *)(size_t)fd;
     return 0;
 }
@@ -207,12 +207,11 @@ static int mpeg1_write_trailer(AVFormatContext *s)
 /* ffmpeg_init initializes for libavformat. */
 void ffmpeg_init()
 {
-    motion_log(LOG_INFO, 0, "%s: ffmpeg LIBAVCODEC_BUILD %d LIBAVFORMAT_BUILD %d", 
-               __FUNCTION__, LIBAVCODEC_BUILD, LIBAVFORMAT_BUILD);
+    motion_log(LOG_INFO, 0, "ffmpeg LIBAVCODEC_BUILD %d LIBAVFORMAT_BUILD %d", LIBAVCODEC_BUILD, LIBAVFORMAT_BUILD);
     av_register_all();
 
 #if LIBAVCODEC_BUILD > 4680
-    av_log_set_callback((void *)ffmpeg_avcodec_log);
+    av_log_set_callback( (void *)ffmpeg_avcodec_log );
 #endif
 
     /* Copy the functions to use for the append file protocol from the standard
@@ -251,15 +250,13 @@ static AVOutputFormat *get_oformat(const char *codec, char *filename)
          * result in a muxed output file, which isn't appropriate here.
          */
         of = guess_format("mpeg1video", NULL, NULL);
-
-        /* But we want the trailer to be correctly written. */
-        if (of) 
+        if (of) {
+            /* But we want the trailer to be correctly written. */
             of->write_trailer = mpeg1_write_trailer;
-        
+        }
 #ifdef FFMPEG_NO_NONSTD_MPEG1
     } else if (strcmp(codec, "mpeg1") == 0) {
-        motion_log(LOG_ERR, 0, "%s: *** mpeg1 support for normal videos has been disabled ***", 
-                   __FUNCTION__);
+        motion_log(LOG_ERR, 0, "*** mpeg1 support for normal videos has been disabled ***");
         return NULL;
 #endif
     } else if (strcmp(codec, "mpeg4") == 0) {
@@ -268,11 +265,10 @@ static AVOutputFormat *get_oformat(const char *codec, char *filename)
     } else if (strcmp(codec, "msmpeg4") == 0) {
         ext = ".avi";
         of = guess_format("avi", NULL, NULL);
-
-        /* Manually override the codec id. */
-        if (of) 
+        if (of) {
+            /* Manually override the codec id. */
             of->video_codec = CODEC_ID_MSMPEG4V2;
-        
+        }
     } else if (strcmp(codec, "swf") == 0) {
         ext = ".swf";
         of = guess_format("swf", NULL, NULL);
@@ -282,23 +278,21 @@ static AVOutputFormat *get_oformat(const char *codec, char *filename)
     } else if (strcmp(codec, "ffv1") == 0) {
         ext = ".avi";
         of = guess_format("avi", NULL, NULL);
-
-        /* Use the FFMPEG Lossless Video codec (experimental!).
-         * Requires strict_std_compliance to be <= -2 */
-        if (of) 
+        if (of) {
+            /* Use the FFMPEG Lossless Video codec (experimental!).
+               Requires strict_std_compliance to be <= -2 */
             of->video_codec = CODEC_ID_FLV1;
-        
+        }
     } else if (strcmp(codec, "mov") == 0) {
         ext = ".mov";
         of = guess_format("mov", NULL, NULL);        
     } else {
-        motion_log(LOG_ERR, 0, "%s: ffmpeg_video_codec option value %s is not supported", 
-                   __FUNCTION__, codec);
+        motion_log(LOG_ERR, 0, "ffmpeg_video_codec option value %s is not supported", codec);
         return NULL;
     }
 
     if (!of) {
-        motion_log(LOG_ERR, 0, "%s: Could not guess format for %s", __FUNCTION__, codec);
+        motion_log(LOG_ERR, 0, "Could not guess format for %s", codec);
         return NULL;
     }
 
@@ -337,14 +331,16 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
 
     /* allocation the output media context */
     ffmpeg->oc = av_mallocz(sizeof(AVFormatContext));
+
     if (!ffmpeg->oc) {
-        motion_log(LOG_ERR, 1, "%s: Memory error while allocating output media context", __FUNCTION__);
+        motion_log(LOG_ERR, 1, "Memory error while allocating output media context");
         ffmpeg_cleanups(ffmpeg);
         return NULL;
     }
 
     /* Setup output format */
     ffmpeg->oc->oformat = get_oformat(ffmpeg_video_codec, filename);
+
     if (!ffmpeg->oc->oformat) {
         ffmpeg_cleanups(ffmpeg);
         return NULL;
@@ -354,17 +350,17 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
 
     /* Create a new video stream and initialize the codecs */
     ffmpeg->video_st = NULL;
+
     if (ffmpeg->oc->oformat->video_codec != CODEC_ID_NONE) {
         ffmpeg->video_st = av_new_stream(ffmpeg->oc, 0);
-
         if (!ffmpeg->video_st) {
-            motion_log(LOG_ERR, 1, "%s: av_new_stream - could not alloc stream", __FUNCTION__);
+            motion_log(LOG_ERR, 1, "av_new_stream - could not alloc stream");
             ffmpeg_cleanups(ffmpeg);
             return NULL;
         }
     } else {
         /* We did not get a proper video codec. */
-        motion_log(LOG_ERR, 0, "%s: Failed to obtain a proper video codec", __FUNCTION__);
+        motion_log(LOG_ERR, 0, "Failed to obtain a proper video codec");
         ffmpeg_cleanups(ffmpeg);
         return NULL;
     }
@@ -394,7 +390,7 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
 #endif /* LIBAVCODEC_BUILD >= 4754 */
 
     if (debug_level >= CAMERA_DEBUG)
-        motion_log(LOG_DEBUG, 0, "%s FPS %d", __FUNCTION__, rate);    
+        motion_log(LOG_DEBUG, 0, "%s FPS %d",__FUNCTION__,rate);    
 
     if (vbr)
         c->flags |= CODEC_FLAG_QSCALE;
@@ -405,15 +401,14 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
     
     /* some formats want stream headers to be separate */
     if (!strcmp(ffmpeg->oc->oformat->name, "mp4") || 
-        !strcmp(ffmpeg->oc->oformat->name, "mov") ||
-        !strcmp(ffmpeg->oc->oformat->name, "3gp")) {
+       !strcmp(ffmpeg->oc->oformat->name, "mov") ||
+       !strcmp(ffmpeg->oc->oformat->name, "3gp")) {
         c->flags |= CODEC_FLAG_GLOBAL_HEADER;
     }
 
     /* set the output parameters (must be done even if no parameters). */
     if (av_set_parameters(ffmpeg->oc, NULL) < 0) {
-        motion_log(LOG_ERR, 0, "%s: av_set_parameters error: Invalid output format parameters", 
-                   __FUNCTION__);
+        motion_log(LOG_ERR, 0, "ffmpeg av_set_parameters error: Invalid output format parameters");
         ffmpeg_cleanups(ffmpeg);
         return NULL;
     }
@@ -426,7 +421,7 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
     codec = avcodec_find_encoder(c->codec_id);
 
     if (!codec) {
-        motion_log(LOG_ERR, 1, "%s: Codec not found", __FUNCTION__);
+        motion_log(LOG_ERR, 1, "Codec not found");
         ffmpeg_cleanups(ffmpeg);
         return NULL;
     }
@@ -441,7 +436,7 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
     if (avcodec_open(c, codec) < 0) {
         /* Release the lock. */
         pthread_mutex_unlock(&global_lock);
-        motion_log(LOG_ERR, 1, "%s: avcodec_open - could not open codec", __FUNCTION__);
+        motion_log(LOG_ERR, 1, "avcodec_open - could not open codec");
         ffmpeg_cleanups(ffmpeg);
         return NULL;
     }
@@ -449,21 +444,20 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
     /* Release the lock. */
     pthread_mutex_unlock(&global_lock);
 
-    ffmpeg->video_outbuf = NULL;
 
+    ffmpeg->video_outbuf = NULL;
     if (!(ffmpeg->oc->oformat->flags & AVFMT_RAWPICTURE)) {
         /* allocate output buffer */
         /* XXX: API change will be done */
-        /* ffmpeg->video_outbuf_size = 200000 */
-        ffmpeg->video_outbuf_size = ffmpeg->c->width * 256;
+        /* ffmpeg->video_outbuf_size = 20000; */
+        ffmpeg->video_outbuf_size = ffmpeg->c->width * 256; 
         ffmpeg->video_outbuf = mymalloc(ffmpeg->video_outbuf_size);
     }
 
     /* allocate the encoded raw picture */
     ffmpeg->picture = avcodec_alloc_frame();
-
     if (!ffmpeg->picture) {
-        motion_log(LOG_ERR, 1, "%s: avcodec_alloc_frame - could not alloc frame", __FUNCTION__);
+        motion_log(LOG_ERR, 1, "avcodec_alloc_frame - could not alloc frame");
         ffmpeg_cleanups(ffmpeg);
         return NULL;
     }
@@ -492,6 +486,7 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
             snprintf(file_proto, sizeof(file_proto), APPEND_PROTO ":%s", filename);
         else 
             snprintf(file_proto, sizeof(file_proto), "%s", filename);
+        
 
         if (url_fopen(&ffmpeg->oc->pb, file_proto, URL_WRONLY) < 0) {
             /* path did not exist? */
@@ -504,21 +499,19 @@ struct ffmpeg *ffmpeg_open(char *ffmpeg_video_codec, char *filename,
 
                 /* and retry opening the file (use file_proto) */
                 if (url_fopen(&ffmpeg->oc->pb, file_proto, URL_WRONLY) < 0) {
-                    motion_log(LOG_ERR, 1, "%s: url_fopen - error opening file %s", 
-                               __FUNCTION__, filename);
+                    motion_log(LOG_ERR, 1, "url_fopen - error opening file %s",filename);
                     ffmpeg_cleanups(ffmpeg);
                     return NULL;
                 }
                 /* Permission denied */
             } else if (errno ==  EACCES) {
                 motion_log(LOG_ERR, 1,
-                           "%s: url_fopen - error opening file %s"
-                           " ... check access rights to target directory", 
-                       __FUNCTION__, filename);
+                           "url_fopen - error opening file %s"
+                           " ... check access rights to target directory", filename);
                 ffmpeg_cleanups(ffmpeg);
                 return NULL;
             } else {
-                motion_log(LOG_ERR, 1, "%s: Error opening file %s", __FUNCTION__, filename);
+                motion_log(LOG_ERR, 1, "Error opening file %s", filename);
                 ffmpeg_cleanups(ffmpeg);
                 return NULL;
             }
@@ -608,34 +601,29 @@ void ffmpeg_close(struct ffmpeg *ffmpeg)
 }
 
 /* Puts the image pointed to by ffmpeg->picture. */
-int ffmpeg_put_image(struct ffmpeg *ffmpeg) 
+void ffmpeg_put_image(struct ffmpeg *ffmpeg) 
 {
-    return ffmpeg_put_frame(ffmpeg, ffmpeg->picture);
+    ffmpeg_put_frame(ffmpeg, ffmpeg->picture);
 }
 
 /* Puts an arbitrary picture defined by y, u and v. */
-int ffmpeg_put_other_image(struct ffmpeg *ffmpeg, unsigned char *y,
+void ffmpeg_put_other_image(struct ffmpeg *ffmpeg, unsigned char *y,
                             unsigned char *u, unsigned char *v)
 {
     AVFrame *picture;
-    int ret = 0;
-
     /* allocate the encoded raw picture */
     picture = ffmpeg_prepare_frame(ffmpeg, y, u, v);
 
     if (picture) {
-        ret = ffmpeg_put_frame(ffmpeg, picture);
-        if (!ret)
-            av_free(picture);
+        ffmpeg_put_frame(ffmpeg, picture);
+        av_free(picture);
     }
-
-    return ret;
 }
 
 /* Encodes and writes a video frame using the av_write_frame API. This is
  * a helper function for ffmpeg_put_image and ffmpeg_put_other_image. 
  */
-int ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
+void ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
 {
     int out_size, ret;
 #ifdef FFMPEG_AVWRITEFRAME_NEWAPI
@@ -668,11 +656,9 @@ int ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
             /* XXX: in case of B frames, the pts is not yet valid */
 #ifdef FFMPEG_AVWRITEFRAME_NEWAPI
             pkt.pts = AVSTREAM_CODEC_PTR(ffmpeg->video_st)->coded_frame->pts;
-
-            if (AVSTREAM_CODEC_PTR(ffmpeg->video_st)->coded_frame->key_frame) 
+            if (AVSTREAM_CODEC_PTR(ffmpeg->video_st)->coded_frame->key_frame) {
                 pkt.flags |= PKT_FLAG_KEY;
-            
-
+            }
             pkt.data = ffmpeg->video_outbuf;
             pkt.size = out_size;
             ret = av_write_frame(ffmpeg->oc, &pkt);
@@ -686,12 +672,9 @@ int ffmpeg_put_frame(struct ffmpeg *ffmpeg, AVFrame *pic)
     }
     
     if (ret != 0) {
-        motion_log(LOG_ERR, 1, "%s: Error while writing video frame", __FUNCTION__);
-        ffmpeg_cleanups(ffmpeg);
-        return -1;
+        motion_log(LOG_ERR, 1, "Error while writing video frame");
+        return;
     }
-
-    return ret; 
 }
 
 /* Allocates and prepares a picture frame by setting up the U, Y and V pointers in
@@ -707,15 +690,15 @@ AVFrame *ffmpeg_prepare_frame(struct ffmpeg *ffmpeg, unsigned char *y,
     AVFrame *picture;
 
     picture = avcodec_alloc_frame();
-
     if (!picture) {
-        motion_log(LOG_ERR, 1, "%s: Could not alloc frame", __FUNCTION__);
+        motion_log(LOG_ERR, 1, "Could not alloc frame");
         return NULL;
     }
 
     /* take care of variable bitrate setting */
     if (ffmpeg->vbr) 
         picture->quality = ffmpeg->vbr;
+    
     
     /* setup pointers and line widths */
     picture->data[0] = y;
@@ -747,15 +730,14 @@ void ffmpeg_deinterlace(unsigned char *img, int width, int height)
     int width2 = width / 2;
     
     picture = avcodec_alloc_frame();
-
     if (!picture) {
-        motion_log(LOG_ERR, 1, "%s: Could not alloc frame", __FUNCTION__);
+        motion_log(LOG_ERR, 1, "Could not alloc frame");
         return;
     }
     
     picture->data[0] = img;
-    picture->data[1] = img + width * height;
-    picture->data[2] = picture->data[1] + (width * height) / 4;
+    picture->data[1] = img+width*height;
+    picture->data[2] = picture->data[1]+(width*height)/4;
     picture->linesize[0] = width;
     picture->linesize[1] = width2;
     picture->linesize[2] = width2;
@@ -791,7 +773,7 @@ void ffmpeg_avcodec_log(void *ignoreme ATTRIBUTE_UNUSED, int errno_flag, const c
         vsnprintf(buf, sizeof(buf), fmt, vl);
 
         /* If the debug_level is correct then send the message to the motion logging routine. */
-        motion_log(LOG_ERR, 0, "%s: %s - flag %d", __FUNCTION__, buf, errno_flag);
+        motion_log(LOG_ERR, 0, "ffmpeg_avcodec_log: %s - flag %d", buf, errno_flag);
     }
 }
 

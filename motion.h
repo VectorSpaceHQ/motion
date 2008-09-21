@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <signal.h>
+#include <syslog.h>
 #include <limits.h>
 #include <errno.h>
 #include <sys/time.h>
@@ -46,9 +47,8 @@
 #include <libpq-fe.h>
 #endif
 
-#include "logger.h"
 #include "conf.h"
-#include "stream.h"
+#include "webcam.h"
 #include "webhttpd.h"
 
 /**
@@ -100,6 +100,16 @@
 #define VIDEO_PALETTE_COMPONENT 7       /* start of component entries */
 #endif
 
+
+/* Debug levels FIXME */
+#define CAMERA_WARNINGS         3   /* warnings only */
+#define CAMERA_INFO             5   /* info debug */
+#define CAMERA_VIDEO            6   /* video debug */
+#define CAMERA_DEBUG            7   /* debug but not verbose */
+#define CAMERA_VERBOSE          8   /* verbose level */
+#define CAMERA_ALL              9   /* everything */
+
+
 /* Default picture settings */
 #define DEF_WIDTH              352
 #define DEF_HEIGHT             288
@@ -110,8 +120,8 @@
 #define DEF_NOISELEVEL          32
 
 /* Minimum time between two 'actions' (email, sms, external) */
-#define DEF_EVENT_GAP            60  /* 1 minutes */
-#define DEF_MAXMOVIETIME       3600  /* 60 minutes */
+#define DEF_GAP                 60  /* 1 minutes */
+#define DEF_MAXMPEGTIME       3600  /* 60 minutes */
 
 #define DEF_FFMPEG_BPS      400000
 #define DEF_FFMPEG_VBR           0
@@ -120,69 +130,60 @@
 #define THRESHOLD_TUNE_LENGTH  256
 
 #define MISSING_FRAMES_TIMEOUT  30  /* When failing to get picture frame from camera
-                                       we reuse the previous frame until
-                                       MISSING_FRAMES_TIMEOUT seconds has passed
-                                       and then we show a grey image instead
+                                     * we reuse the previous frame until
+                                     * MISSING_FRAMES_TIMEOUT seconds has passed
+                                     * and then we show a grey image instead
                                      */
 
-#define WATCHDOG_TMO            30   /* 30 sec max motion_loop interval */
-#define WATCHDOG_OFF          -127   /* Turn off watchdog, used when we wants to quit a thread */
+#define WATCHDOG_TMO            30  /* 10 sec max motion_loop interval */
+#define WATCHDOG_OFF          -127  /* Turn off watchdog, used when we wants to quit a thread */
 
 #define CONNECTION_KO "Lost connection"
 #define CONNECTION_OK "Connection OK"
 
-#define DEF_MAXSTREAMS          10   /* Maximum number of stream clients per camera */
-#define DEF_MAXWEBQUEUE         10   /* Maximum number of stream client in queue */
+#define DEF_MAXSTREAMS          10  /* Maximum number of webcam clients per camera */
+#define DEF_MAXWEBQUEUE         10  /* Maximum number of webcam client in queue */
 
-#define DEF_TIMESTAMP      "%Y-%m-%d\\n%T"
-#define DEF_EVENTSTAMP     "%Y%m%d%H%M%S"
+#define DEF_TIMESTAMP           "%Y-%m-%d\\n%T"
+#define DEF_EVENTSTAMP          "%Y%m%d%H%M%S"
 
-#define DEF_SNAPPATH       "%v-%Y%m%d%H%M%S-snapshot"
-#define DEF_IMAGEPATH      "%v-%Y%m%d%H%M%S-%q"
-#define DEF_MOVIEPATH      "%v-%Y%m%d%H%M%S"
-#define DEF_TIMEPATH       "%Y%m%d-timelapse"
+#define DEF_SNAPPATH            "%v-%Y%m%d%H%M%S-snapshot"
+#define DEF_JPEGPATH            "%v-%Y%m%d%H%M%S-%q"
+#define DEF_MPEGPATH            "%v-%Y%m%d%H%M%S"
+#define DEF_TIMEPATH            "%Y%m%d-timelapse"
 
-#define DEF_TIMELAPSE_MODE "daily"
+#define DEF_TIMELAPSE_MODE      "daily"
 
 /* Do not break this line into two or more. Must be ONE line */
 #define DEF_SQL_QUERY "sql_query insert into security(camera, filename, frame, file_type, time_stamp, event_time_stamp) values('%t', '%f', '%q', '%n', '%Y-%m-%d %T', '%C')"
 
-
-/* OUTPUT Image types */
-#define IMAGE_TYPE_JPEG        0
-#define IMAGE_TYPE_PPM         1
-
 /* Filetype defines */
-#define FTYPE_IMAGE            1
-#define FTYPE_IMAGE_SNAPSHOT   2
-#define FTYPE_IMAGE_MOTION     4
-#define FTYPE_MPEG             8
-#define FTYPE_MPEG_MOTION     16
-#define FTYPE_MPEG_TIMELAPSE  32
+#define FTYPE_IMAGE             1
+#define FTYPE_IMAGE_SNAPSHOT    2
+#define FTYPE_IMAGE_MOTION      4
+#define FTYPE_MPEG              8
+#define FTYPE_MPEG_MOTION      16
+#define FTYPE_MPEG_TIMELAPSE   32
 
 #define FTYPE_MPEG_ANY    (FTYPE_MPEG | FTYPE_MPEG_MOTION | FTYPE_MPEG_TIMELAPSE)
 #define FTYPE_IMAGE_ANY   (FTYPE_IMAGE | FTYPE_IMAGE_SNAPSHOT | FTYPE_IMAGE_MOTION)
 
-/* What types of images files do we want to have */
-#define NEWIMG_OFF        0
-#define NEWIMG_ON         1
-#define NEWIMG_FIRST      2
-#define NEWIMG_BEST       4
-#define NEWIMG_CENTER     8
+/* What types of jpeg files do we want to have */
+#define NEWIMG_OFF              0
+#define NEWIMG_ON               1
+#define NEWIMG_FIRST            2
+#define NEWIMG_BEST             4
+#define NEWIMG_CENTER           8
 
-#define LOCATE_OFF        0
-#define LOCATE_ON         1
-#define LOCATE_PREVIEW    2
-#define LOCATE_BOX        1
-#define LOCATE_REDBOX     2
-#define LOCATE_CROSS      4
-#define LOCATE_REDCROSS   8
+#define LOCATE_OFF              0
+#define LOCATE_ON               1
+#define LOCATE_PREVIEW          2
 
-#define LOCATE_NORMAL     1
-#define LOCATE_BOTH       2
+#define LOCATE_NORMAL           0
+#define LOCATE_BOTH             1
 
-#define UPDATE_REF_FRAME  1
-#define RESET_REF_FRAME   2
+#define UPDATE_REF_FRAME        1
+#define RESET_REF_FRAME         2
 
 /* Forward declaration, used in track.h */
 struct images;
@@ -197,27 +198,27 @@ struct images;
  * so we only have to send it out when/if we want.
  */
 /* A image can have detected motion in it, but dosn't trigger an event, if we use minimum_motion_frames */
-#define IMAGE_MOTION     1
-#define IMAGE_TRIGGER    2
-#define IMAGE_SAVE       4
-#define IMAGE_SAVED      8
-#define IMAGE_PRECAP    16
-#define IMAGE_POSTCAP   32
+#define IMAGE_MOTION            1
+#define IMAGE_TRIGGER           2
+#define IMAGE_SAVE              4
+#define IMAGE_SAVED             8
+#define IMAGE_PRECAP           16
+#define IMAGE_POSTCAP          32
 
 struct image_data {
     unsigned char *image;
     int diffs;
-    time_t timestamp;           /* Timestamp when image was captured */
+    time_t timestamp;         /* Timestamp when image was captured */
     struct tm timestamp_tm;
-    int shot;                   /* Sub second timestamp count */
+    int shot;                 /* Sub second timestamp count */
 
     /* movement center to img center distance 
      * Note Dist is calculated distX*distX + distY*distY */
     unsigned long cent_dist;
 
-    unsigned int flags;         /* Se IMAGE_* defines */
+    unsigned int flags;       /* Se IMAGE_* defines */
 
-    struct coord location;      /* coordinates for center and size of last motion detection*/
+    struct coord location;    /* coordinates for center and size of last motion detection*/
 
     int total_labels;
 };
@@ -272,7 +273,6 @@ struct images {
     int width;
     int height;
     int type;
-    int picture_type;                 /* Output picture type IMAGE_JPEG, IMAGE_PPM */        
     int size;
     int motionsize;
     int labelgroup_max;
@@ -302,8 +302,6 @@ struct rotdata {
     own context
  */
 struct context {
-    FILE *extpipe;
-    int extpipe_open;
     char conf_filename[PATH_MAX];
     int threadnr;
     unsigned short int daemon;
@@ -316,8 +314,7 @@ struct context {
     struct image_data *current_image;        /* Pointer to a structure where the image, diffs etc is stored */
     unsigned short int new_img;
 
-    int locate_motion_mode;
-    int locate_motion_style;
+    int locate;
     struct rotdata rotate_data;              /* rotation data is thread-specific */
 
     int noise;
@@ -339,9 +336,9 @@ struct context {
     int event_nr;
     int prev_event;
     int lightswitch_framecounter;
-    char text_event_string[PATH_MAX];        /* The text for conv. spec. %C -
-                                                    we assume PATH_MAX normally 4096 characters is fine */
-    int postcap;                             /* downcounter, frames left to to send post event */
+    char text_event_string[PATH_MAX];       /* The text for conv. spec. %C -
+                                            we assume PATH_MAX normally 4096 characters is fine */
+    int postcap;                            /* downcounter, frames left to to send post event */
 
     short int shots;
     unsigned short int detecting_motion;
@@ -351,13 +348,13 @@ struct context {
     time_t currenttime;
     time_t lasttime;
     time_t eventtime;
-    time_t connectionlosttime;               /* timestamp from connection lost */
+    time_t connectionlosttime;              /* timestamp from connection lost */
 
     int lastrate;
     unsigned short int startup_frames;
     unsigned short int moved;
     unsigned short int pause;
-    int missing_frame_counter;               /* counts failed attempts to fetch picture frame from camera */
+    int missing_frame_counter;              /* counts failed attempts to fetch picture frame from camera */
     unsigned short int lost_connection;    
 
 #if (defined(BSD))
@@ -367,7 +364,7 @@ struct context {
     int pipe;
     int mpipe;
 
-    struct stream stream;
+    struct webcam webcam;
     int stream_count;
     
 #if defined(HAVE_MYSQL) || defined(HAVE_PGSQL)
@@ -382,17 +379,14 @@ struct context {
     PGconn *database_pg;
 #endif
 
-    short int movie_fps;
-    char newfilename[PATH_MAX];
-    short int movie_last_shot;
-
 #ifdef HAVE_FFMPEG
-    struct ffmpeg *ffmpeg_output;
-    struct ffmpeg *ffmpeg_output_debug;
+    struct ffmpeg *ffmpeg_new;
+    struct ffmpeg *ffmpeg_motion;
     struct ffmpeg *ffmpeg_timelapse;
     struct ffmpeg *ffmpeg_smartmask;
-    char timelapsefilename[PATH_MAX];
+    char newfilename[PATH_MAX];
     char motionfilename[PATH_MAX];
+    char timelapsefilename[PATH_MAX];
 #endif
 };
 
@@ -409,4 +403,5 @@ void * myrealloc(void *, size_t, const char *);
 FILE * myfopen(const char *, const char *);
 size_t mystrftime(struct context *, char *, size_t, const char *, const struct tm *, const char *, int);
 int create_path(const char *);
+void motion_log(int, int, const char *, ...);
 #endif /* _INCLUDE_MOTION_H */

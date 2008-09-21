@@ -82,6 +82,7 @@ TEMP_LIBS="-lm ${TEMP_LIBS}"
 TEMP_CFLAGS="${TEMP_CFLAGS} ${CFLAGS}"
 TEMP_LDFLAGS="${TEMP_LDFLAGS} ${LDFLAGS}"
 
+
 if test "${FreeBSD}" != "" && test "${PWCBSD}" = "no"; then
 
 	AC_MSG_CHECKING(bktr headers in /usr/include/dev/bktr)
@@ -284,7 +285,6 @@ if test x$JPEG_SUPPORT != xyes ; then
 	]
   )
 fi
-
 
 
 #
@@ -1080,6 +1080,7 @@ else
 fi
 
 
+AC_SUBST(DOC_DIR)
 AC_SUBST(BIN_PATH)
 
 AC_CONFIG_FILES([
@@ -1097,10 +1098,10 @@ Makefile
 AC_OUTPUT
 
 echo ""
-echo "   **************************"
-echo "      Configure status       "
+echo "   *******************************"
+echo "      Configure status    "
 echo "      ${PACKAGE_NAME} ${PACKAGE_VERSION}"
-echo "   **************************"
+echo "   *******************************"
 echo 
 
 

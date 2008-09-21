@@ -1139,7 +1139,6 @@ int draw_text (unsigned char *image, int startx, int starty, int width, const ch
     }
 
     starty -= line_space * num_nl;
-    
     begin = end = text;
 
     while ((end = strstr(end, NEWLINE))) {
@@ -1168,7 +1167,7 @@ int initialize_chars(void)
         big_table[i].ascii = draw_table[i].ascii;
 
         for(x = 0; x < 14; x++) {
-            for(y = 0; y < 16; y++)
+            for(y = 0; y < 16; y++) 
                 big_table[i].pix[y][x] = draw_table[i].pix[y / 2][x / 2];
             
         }

@@ -14,6 +14,7 @@
 #include "video.h"
 #include "jpegutils.h"
 
+
 typedef unsigned char uint8_t;
 typedef unsigned short int uint16_t;
 typedef unsigned int uint32_t;
@@ -239,8 +240,8 @@ void bayer2rgb24(unsigned char *dst, unsigned char *src, long int width, long in
                 if (i < (width * (height - 1)) && ((i % width) < (width - 1))) {
                     *scanpt++ = (*(rawpt - width - 1) + *(rawpt - width + 1) + 
                                 *(rawpt + width - 1) + *(rawpt + width + 1)) / 4;    /* B */
-                    *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + 
-                                *(rawpt - width) + *(rawpt + width)) / 4;    /* G */
+                    *scanpt++ = (*(rawpt - 1) + *(rawpt + 1) + *(rawpt - width) + 
+                                *(rawpt + width)) / 4;    /* G */
                     *scanpt++ = *rawpt;     /* R */
                 } else {
                     /* bottom line or right column */
@@ -299,24 +300,20 @@ void conv_uyvyto420p(unsigned char *map, unsigned char *cap_map, unsigned int wi
     for (ix = 0; ix < height; ix++) {
         for (jx = 0; jx < width; jx += 2) {
             uint16_t calc;
-
             if ((ix&1) == 0) {
                 calc = *cap_map;
                 calc += *(cap_map + uv_offset);
                 calc /= 2;
                 *pU++ = (uint8_t) calc;
             }
-
             cap_map++;
             *pY++ = *cap_map++;
-
             if ((ix&1) == 0) {
                 calc = *cap_map;
                 calc += *(cap_map + uv_offset);
                 calc /= 2;
                 *pV++ = (uint8_t) calc;
             }
-
             cap_map++;
             *pY++ = *cap_map++;
         }
@@ -363,7 +360,7 @@ void conv_rgb24toyuv420p(unsigned char *map, unsigned char *cap_map, int width, 
     }
 }
 
-int conv_jpeg2yuv420(struct context *cnt, unsigned char *dst, netcam_buff *buff, int width, int height)
+int conv_jpeg2yuv420(struct context *cnt, unsigned char *dst, netcam_buff * buff, int width, int height)
 {
     netcam_context netcam;
 
@@ -387,9 +384,11 @@ int conv_jpeg2yuv420(struct context *cnt, unsigned char *dst, netcam_buff *buff,
 
     if (setjmp(netcam.setjmp_buffer)) 
         return NETCAM_GENERAL_ERROR | NETCAM_JPEG_CONV_ERROR;
+    
 
     return netcam_proc_jpeg(&netcam, dst);
 }
+
 
 
 /*
@@ -408,17 +407,18 @@ int mjpegtoyuv420p(unsigned char *map, unsigned char *cap_map, int width, int he
     unsigned char *y, *u, *v;
     int loop, ret;
 
-    yuv[0] = mymalloc(width * height * sizeof(yuv[0][0]));
-    yuv[1] = mymalloc(width * height / 4 * sizeof(yuv[1][0]));
-    yuv[2] = mymalloc(width * height / 4 * sizeof(yuv[2][0]));
+    yuv[0] = malloc(width * height * sizeof(yuv[0][0]));
+    yuv[1] = malloc(width * height / 4 * sizeof(yuv[1][0]));
+    yuv[2] = malloc(width * height / 4 * sizeof(yuv[2][0]));
 
 
     ret = decode_jpeg_raw(cap_map, size, 0, 420, width, height, yuv[0], yuv[1], yuv[2]);
-
+    
     if (ret == 1) {
         motion_log(LOG_ERR, 0, "%s: Corrupt image ... continue", __FUNCTION__);
         ret = 2;
     }
+
 
     y = map;
     u = y + width * height;
@@ -427,14 +427,14 @@ int mjpegtoyuv420p(unsigned char *map, unsigned char *cap_map, int width, int he
     memset(u, 0, width * height / 4);
     memset(v, 0, width * height / 4);
 
-    for(loop = 0; loop < width * height; loop++) 
-        *map++ = yuv[0][loop];
-    
-    for(loop = 0; loop < width * height / 4; loop++) 
-        *map++ = yuv[1][loop];
-    
-    for(loop = 0; loop < width * height / 4; loop++) 
-        *map++ = yuv[2][loop];
+    for(loop = 0; loop < width * height; loop++)
+        *map++=yuv[0][loop];
+
+    for(loop = 0; loop < width * height / 4; loop++)
+        *map++=yuv[1][loop];
+
+    for(loop = 0; loop < width * height / 4; loop++)
+        *map++=yuv[2][loop];
 
     free(yuv[0]);
     free(yuv[1]);
@@ -462,9 +462,9 @@ int mjpegtoyuv420p(unsigned char *map, unsigned char *cap_map, int width, int he
  * the camera device.
  */
 #define AUTOBRIGHT_HYSTERESIS 10
-#define AUTOBRIGHT_DAMPER 5
-#define AUTOBRIGHT_MAX 255
-#define AUTOBRIGHT_MIN 0
+#define AUTOBRIGHT_DAMPER      5
+#define AUTOBRIGHT_MAX       255
+#define AUTOBRIGHT_MIN         0
 
 int vid_do_autobright(struct context *cnt, struct video_dev *viddev)
 {
@@ -494,7 +494,6 @@ int vid_do_autobright(struct context *cnt, struct video_dev *viddev)
     /* average is above window - turn down brightness - go for the target */
     if (avg > brightness_window_high) {
         step = MIN2((avg - brightness_target) / AUTOBRIGHT_DAMPER + 1, viddev->brightness - AUTOBRIGHT_MIN);
-
         if (viddev->brightness > step + 1 - AUTOBRIGHT_MIN) {
             viddev->brightness -= step;
             make_change = 1;
@@ -502,7 +501,6 @@ int vid_do_autobright(struct context *cnt, struct video_dev *viddev)
     } else if (avg < brightness_window_low) {
         /* average is below window - turn up brightness - go for the target */
         step = MIN2((brightness_target - avg) / AUTOBRIGHT_DAMPER + 1, AUTOBRIGHT_MAX - viddev->brightness);
-        
         if (viddev->brightness < AUTOBRIGHT_MAX - step) {
             viddev->brightness += step;
             make_change = 1;
@@ -564,7 +562,7 @@ void vid_close(struct context *cnt)
 
     /* Cleanup the netcam part */
     if (cnt->netcam) {
-        motion_log(LOG_DEBUG, 0, "%s: calling netcam_cleanup", __FUNCTION__);
+        motion_log(LOG_DEBUG, 0, "vid_close: calling netcam_cleanup");
         netcam_cleanup(cnt->netcam, 0);
         cnt->netcam = NULL;
         return;
@@ -586,12 +584,12 @@ void vid_close(struct context *cnt)
     cnt->video_dev = -1;
 
     if (dev == NULL) {
-        motion_log(LOG_ERR, 0, "%s: Unable to find video device", __FUNCTION__);
+        motion_log(LOG_ERR, 0, "vid_close: Unable to find video device");
         return;
     }
 
     if (--dev->usage_count == 0) {
-        motion_log(LOG_INFO, 0, "%s: Closing video device %s", __FUNCTION__, dev->video_device);
+        motion_log(LOG_INFO, 0, "Closing video device %s", dev->video_device);
 #ifdef MOTION_V4L2
         if (dev->v4l2) {
             v4l2_close(dev);
@@ -606,19 +604,21 @@ void vid_close(struct context *cnt)
 #endif
         dev->fd = -1;
         pthread_mutex_lock(&vid_mutex);
+
         /* Remove from list */
         if (prev == NULL)
             viddevs = dev->next;
         else
             prev->next = dev->next;
+
         pthread_mutex_unlock(&vid_mutex);
 
         pthread_mutexattr_destroy(&dev->attr);
         pthread_mutex_destroy(&dev->mutex);
         free(dev);
     } else {
-        motion_log(LOG_INFO, 0, "%s: Still %d users of video device %s, so we don't close it now", 
-                   __FUNCTION__, dev->usage_count, dev->video_device);
+        motion_log(LOG_INFO, 0, "Still %d users of video device %s, so we don't close it now", 
+                   dev->usage_count, dev->video_device);
         /* There is still at least one thread using this device 
          * If we own it, release it
          */
@@ -672,14 +672,12 @@ static int vid_v4lx_start(struct context *cnt)
      * for this first.
      */
     if (conf->width % 16) {
-        motion_log(LOG_ERR, 0, "%s: config image width (%d) is not modulo 16", 
-                   __FUNCTION__, conf->width);
+        motion_log(LOG_ERR, 0, "config image width (%d) is not modulo 16", conf->width);
         return -1;
     }
 
     if (conf->height % 16) {
-        motion_log(LOG_ERR, 0, "%s: config image height (%d) is not modulo 16",
-                     __FUNCTION__, conf->height);
+        motion_log(LOG_ERR, 0, "config image height (%d) is not modulo 16", conf->height);
         return -1;
     }
 
@@ -709,6 +707,7 @@ static int vid_v4lx_start(struct context *cnt)
         if (!strcmp(conf->video_device, dev->video_device)) {
             dev->usage_count++;
             cnt->imgs.type = dev->v4l_fmt;
+
             switch (cnt->imgs.type) {
             case VIDEO_PALETTE_GREY:
                 cnt->imgs.motionsize = width * height;
@@ -737,8 +736,7 @@ static int vid_v4lx_start(struct context *cnt)
     fd = open(dev->video_device, O_RDWR);
 
     if (fd < 0) {
-        motion_log(LOG_ERR, 1, "%s: Failed to open video device %s", 
-                   __FUNCTION__, conf->video_device);
+        motion_log(LOG_ERR, 1, "Failed to open video device %s", conf->video_device);
         free(dev);
         pthread_mutex_unlock(&vid_mutex);
         return -1;
@@ -778,7 +776,7 @@ static int vid_v4lx_start(struct context *cnt)
         dev->height = height;
 #endif
 
-        if (!v4l_start(dev, width, height, input, norm, frequency, tuner_number)) {
+        if (!v4l_start(cnt, dev, width, height, input, norm, frequency, tuner_number)) {
             close(dev->fd);
             pthread_mutexattr_destroy(&dev->attr);
             pthread_mutex_destroy(&dev->mutex);
@@ -792,9 +790,9 @@ static int vid_v4lx_start(struct context *cnt)
     }
 #endif
     if (dev->v4l2 == 0) {
-        motion_log(-1, 0, "%s: Using V4L1", __FUNCTION__);
+        motion_log(-1, 0, "Using V4L1");
     } else {
-        motion_log(-1, 0, "%s: Using V4L2", __FUNCTION__);
+        motion_log(-1, 0, "Using V4L2");
         /* Update width & height because could be changed in v4l2_start () */
         width = dev->width;
         height = dev->height;
@@ -825,7 +823,7 @@ static int vid_v4lx_start(struct context *cnt)
 
     pthread_mutex_unlock(&vid_mutex);
 
-    return fd;
+return fd;
 }
 #endif                /*WITHOUT_V4L */
 
@@ -867,7 +865,7 @@ int vid_start(struct context *cnt)
     }
 #ifdef WITHOUT_V4L
     else    
-        motion_log(LOG_ERR, 0, "%s: You must setup netcam_url", __FUNCTION__);
+        motion_log(LOG_ERR, 0,"You must setup netcam_url");
 #else
     else
         dev = vid_v4lx_start(cnt);
@@ -944,6 +942,7 @@ int vid_next(struct context *cnt, unsigned char *map)
 #endif
             v4l_set_input(cnt, dev, map, width, height, conf->input, conf->norm,
                           conf->roundrobin_skip, conf->frequency, conf->tuner_number);
+
             ret = v4l_next(dev, map, width, height);
 #ifdef MOTION_V4L2
         }
@@ -955,7 +954,7 @@ int vid_next(struct context *cnt, unsigned char *map)
         }
 
         /* rotate the image as specified */
-        if (cnt->rotate_data.degrees > 0) 
+        if (cnt->rotate_data.degrees > 0)
             rotate_map(cnt, map);
         
     }
