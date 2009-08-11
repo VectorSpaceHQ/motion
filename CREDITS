@@ -275,7 +275,7 @@ Angel Carpintero
    * Added the %t conversion specifier to show the thread number.
      http://www.lavrsen.dk/twiki/bin/view/Motion/ThreadConversionSpecifierPatch
    * Fixed bug related to init of mutex in netcam code.
-   * Netcam_ftp code fixes (Angel Carpintero and AsbjÃ¸rn Pettersen)
+   * Netcam_ftp code fixes (Angel Carpintero and Asbjørn Pettersen)
      http://www.lavrsen.dk/twiki/bin/view/Motion/NetcamWithFtpEnhancements
    * Enhanced ffmpeg detection.
      http://www.lavrsen.dk/twiki/bin/view/Motion/BetterFFmpegDetection
@@ -395,29 +395,21 @@ Angel Carpintero
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x02x25x025134
    * Fixed stepper when is used track_auto on.
    * Added to configure.in --with-pwcbsd to allow compile motion in freebsd with webcam support instead of bktr.
-   * IPV6 for http-control and webcam stream not netcam yet http://www.lavrsen.dk/twiki/bin/view/Motion/IPv6
-     (Jeroen Massar & Angel Carpintero)
    * Fix a security issue in web control interface http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=484572
    * Fix Problem Encoding 1280x1024 resolution videos
      http://www.lavrsen.dk/twiki/bin/view/Motion/SupportQuestion2008x06x11x183727
-   * Add write/read nonblock functions in webhttpd( timeout on read/write).
+   * Remove mjpegtools dependencies and integrate only needed functions from library.
+   * Fix rotate for v4l2 devices using JPEG / MJPEG palettes.
+   * Allow change/setup framerate in FreeBSD using pwcbsd.
    * Add a new parameter netcam_tolerant_check, to be less strict with some buggy network cameras firmwares.
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x06x19x123218
-   * Remove mjpegtools dependencies and integrate only needed functions from library.  
-   * Fix rotate for v4l2 devices using JPEG / MJPEG palettes.
-   * External pipe to allow external video encoders 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/DarkwindHackeronMotionPatching (Bill Payne, Angel Carpintero)
-   * Allow change/setup framerate in FreeBSD using pwcbsd
    * Get rid of ffmpeg-config in configure.in for debian.
    * Fix warning for x86_64 in conf.c using pointers LP64 compliant.
-   * Fix warning for syslog() , Added support for some new bayer palettes introduced in kernel 2.6.27.
-     http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2008x10x15x130110
-     Increased buffer in ffmpeg to allow encoding at 1600x1200
-   * Avoid possible stack smashing in v4l_open_vidpipe().
-   * Allow compile with OpenSuse ffmpeg package (15594svn-20081010)
-     http://www.lavrsen.dk/twiki/bin/view/Motion/SupportQuestion2008x10x25x070400
-   * Avoid segfault detecting strerror_r() version GNU or SUSv3.
    * Fix fd leaks in external pipe. 
+   * Avoid possible stack smashing in v4l_open_vidpipe(). 
+   * Allow compile with OpenSuse ffmpeg package (15594svn-20081010)
+     http://www.lavrsen.dk/twiki/bin/view/Motion/SupportQuestion2008x10x25x070400 
+   * Fix warning for syslog().
    * Fix segfault for new libjpeg v7.
 
  
@@ -441,7 +433,6 @@ Dag Erlandsson
    * Added preview center feature.
      http://www.lavrsen.dk/twiki/bin/view/Motion/PreviewCenter
    * Fixed timestamp for preview pictures.
-   * Insert Blanking frames http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x12x16x132522
      
 Stephen Farrugia
    * Fixing the division by zero problem.
@@ -453,9 +444,6 @@ Miguel Freitas
 Aaron Gage
    * Pointed me to the vid_mmap/int problem when calling SYNC in
      video.c
-
-Giacomo Graziosi
-   * Sqlite3 support http://www.lavrsen.dk/twiki/bin/view/Motion/SQLite3Patch
 
 Christophe Grenier
    * Fixed some file descriptor leaks in webcam.c and netcam.c.
@@ -516,8 +504,7 @@ Andrew Hamilton
    * Added mov , Quicktime file format (Andrew Hamilton).
 
 Gerrit Hannaert
-
-   * Fix v4l2_palette http://www.lavrsen.dk/twiki/bin/view/Motion/UvcvideoMjpegPatch
+    * Fix v4l2_palette http://www.lavrsen.dk/twiki/bin/view/Motion/UvcvideoMjpegPatch
 
 Peter Holik
    * Netcam First Header patch. If an error with jpeg decompression occurred at
@@ -558,8 +545,7 @@ Peter Holik
    * Fix Segfault on reload or quit for vloopback (maybe other v4l1 devices too)
      http://www.lavrsen.dk/foswiki/bin/view/Motion/BugReport2009x06x17x090603
    * Fix warning for __USE_GNU redefined
-     http://www.lavrsen.dk/foswiki/bin/view/Motion/BugReport2009x06x17x122137  
-
+     http://www.lavrsen.dk/foswiki/bin/view/Motion/BugReport2009x06x17x122137
 
 Wesley Hosking
    * For pointing me to the absence of a frame length check using
@@ -569,7 +555,7 @@ Peter Ilin
    * Patch for handling vloopback pipes better when Motion receives
      SIGTERM or SIGHUB
 
-Per JÃ¶nsson
+Per Jönsson
    * Added the rotate feature.
    * Improved the Makefile with automatic check of dependencies and
      nicer output for the user.
@@ -595,7 +581,7 @@ Per JÃ¶nsson
    * Implemented Threadnr in TLS (thread-local storage)patch. It puts the thread
      number into TLS and modifies motion_log() so that we do not have to drag the
      cnt struct around just to be able to print the thread number in the log and
-     on the console. (Per JÃ¶nsson with additional removal of unused cnt by
+     on the console. (Per Jönsson with additional removal of unused cnt by
      Kenneth Lavrsen).
      http://www.lavrsen.dk/twiki/bin/view/Motion/ThreadNrTlsPatch
    * Simplified rotation code based on the fact that images must have dimensions
@@ -854,7 +840,7 @@ Kenneth Lavrsen (Currently project managing Motion)
      http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2005x05x06x174416
    * Man page updated. It is now semi-autogenerated in the Motion TWiki
      http://www.lavrsen.dk/twiki/bin/view/Motion/MotionOptionsAlphabeticalManpage
-   * Added two new convertion specifiers: %o for threshold and %Q for number
+   * Added two new conversion specifiers: %o for threshold and %Q for number
      of labels.
    * Improved the config file description for pre_capture to get people to
      use small values.
@@ -905,7 +891,7 @@ Kenneth Lavrsen (Currently project managing Motion)
    * Implemented Threadnr in TLS (thread-local storage)patch. It puts the thread
      number into TLS and modifies motion_log() so that we do not have to drag the
      cnt struct around just to be able to print the thread number in the log and
-     on the console. (Per JÃ¶nsson with additional removal of unused cnt by
+     on the console. (Per Jönsson with additional removal of unused cnt by
      Kenneth Lavrsen).
      http://www.lavrsen.dk/twiki/bin/view/Motion/ThreadNrTlsPatch
    * Removed old unused code related to read mode (not mmap) from V4L devices.
@@ -1059,10 +1045,6 @@ Bill Maidment
 Philip Marien
    * Fixed a problem when compiling with --without-v4l configuration.
 
-Jeroen Massar
-   * IPV6 for http-control and webcam stream not netcam yet http://www.lavrsen.dk/twiki/bin/view/Motion/IPv6
-     (Jeroen Massar & Angel Carpintero)
-
 Lionnel Maugis
    * ffmpeg code
 
@@ -1102,15 +1084,11 @@ Onakra
 Mikko Paananen
    * Changed netcam open to use pipes and fixed authentication.
 
-Bill Payne,
-   * External pipe to allow external video encoders 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/DarkwindHackeronMotionPatching (Angel Carpintero, Bill Payne)
-
 Bowser Pete
    * Add swf codec to video creation.
 
-AsbjÃ¸rn Pettersen
-   * Netcam_ftp code fixes (Angel Carpintero and AsbjÃ¸rn Pettersen)
+Asbjørn Pettersen
+   * Netcam_ftp code fixes (Angel Carpintero and Asbjørn Pettersen)
      http://www.lavrsen.dk/twiki/bin/view/Motion/NetcamWithFtpEnhancements
 
 Pawel Pierscionek
@@ -1147,7 +1125,7 @@ Christopher Price
       * Added support for netcams without content-length header (streaming only)
       * Remove memmem from netcam_wget.[c|h] (no longer used)
       * Several miscellaneous code cosmetic changes
-   * Netcam Stability Patch version 3.2.1-snap7-post1
+   * Netcam Stabilty Patch version 3.2.1-snap7-post1
       * Added support for non-streaming (image based) netcams without
         content-lengthheader.
    * Contributed code for new function in event.c close_anything_open()
@@ -1332,7 +1310,7 @@ Folkert Van Heusden
      Including features like..
    * Error reporting to syslog.
    * Better memory allocation.
-     low_cpu feature extension to configurable frame rate.
+     low_cpu feature extention to configurable frame rate.
    * First work on Logitech Sphere/Orbit tracking.
    * Implemented original pre-record feature.
      Misc code optimisations
@@ -1346,7 +1324,8 @@ James Van Vleet
 Simon Walls
    * Netcam Keepalive and HTTP/1.1 http://www.lavrsen.dk/twiki/bin/view/Motion/FeatureRequest2007x01x22x231542 
    * Better debug in netcam for "Error reading image header" 
-     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x02x27x092849 (Simon Walls)
+     http://www.lavrsen.dk/twiki/bin/view/Motion/BugReport2008x02x27x092849
+
 
 Sean Watkins
    * Created a centralized logging function that became event()
@@ -1397,13 +1376,7 @@ Joerg Weber
    * Implemented a new reference frame algorithm to improve object recognition and location.
    * Improved smartmask feature: real moving objects don't trigger the mask anymore.
    * Added area_detect feature.
-   * Add draw a RED box around the movement as default.
-   * Split locate_motion into separate 'mode' and 'style' option to allow all
-     possible combinations.
-   * Gapless_event mode.
-   * Limit detection rate to 3fps at framerates above 5fps, to reduce CPU load.
-   * Fixed mask overlay in setup mode is now green instead of white.
-   
+
 Dirk Wesenberg
    * Track pan/tilt support for uvcvideo ( Michal Licko ,Dirk Wesenberg and Angel Carpintero )
      http://www.lavrsen.dk/twiki/bin/view/Motion/LinuxUvcTrackingPatch	

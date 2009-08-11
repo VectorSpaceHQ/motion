@@ -23,7 +23,7 @@ mandir      = @mandir@
 sysconfdir  = @sysconfdir@
 datadir     = @datadir@
 datarootdir = @datarootdir@
-docdir      = $(datadir)/doc/@PACKAGE_NAME@-@PACKAGE_VERSION@ 
+docdir      = $(datadir)/doc/@PACKAGE_NAME@-@PACKAGE_VERSION@
 examplesdir = $(datadir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/examples
 
 ################################################################################
@@ -34,10 +34,10 @@ CFLAGS       = @CFLAGS@ -Wall -DVERSION=\"@PACKAGE_VERSION@\" -Dsysconfdir=\"$(s
 LDFLAGS      = @LDFLAGS@
 LIBS         = @LIBS@ 
 VIDEO_OBJ    = @VIDEO@
-OBJ          = motion.o logger.o conf.o draw.o jpegutils.o vloopback_motion.o $(VIDEO_OBJ) \
-			   netcam.o netcam_ftp.o netcam_jpeg.o netcam_wget.o track.o \
+OBJ          = motion.o conf.o draw.o jpegutils.o $(VIDEO_OBJ) netcam.o \
+			   netcam_ftp.o netcam_jpeg.o netcam_wget.o track.o \
 			   alg.o event.o picture.o rotate.o webhttpd.o \
-			   stream.o @FFMPEG_OBJ@
+			   webcam.o @FFMPEG_OBJ@
 SRC          = $(OBJ:.o=.c)
 DOC          = CHANGELOG COPYING CREDITS INSTALL README motion_guide.html
 EXAMPLES     = *.conf motion.init-Debian motion.init-RH motion.init-FreeBSD.sh
@@ -128,29 +128,6 @@ $(DEPEND_FILE): *.h $(SRC)
 dep depend fastdep: $(DEPEND_FILE)
 
 ################################################################################
-# CURRENT, BUILD current svn trunk.                                            #
-################################################################################
-current: distclean svn autotools all
-
-svn:
-	svn update
-
-autotools:
-	@sed -i 's/.\/commit-version.sh/.\/version.sh/g' configure.in
-	autoconf
-	./configure --with-developer-flags 
-
-build-commit: distclean svn set-version all
-
-set-version:
-	@sed -i 's/.\/version.sh/.\/commit-version.sh/g' configure.in
-	autoconf
-	@sed -i 's/.\/commit-version.sh/.\/version.sh/g' configure.in
-	./configure --with-developer-flags
-
-
-
-################################################################################
 # INSTALL installs all relevant files.                                         #
 ################################################################################
 install:
@@ -208,7 +185,6 @@ clean: pre-build-info
 dist: distclean updateguide
 	@chmod -R 644 *
 	@chmod 755 configure
-	@chmod 755 version.sh
 
 ################################################################################
 # DISTCLEAN removes all files generated during the configure step in addition  #

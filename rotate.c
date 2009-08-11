@@ -65,8 +65,8 @@ typedef unsigned TYPE_32BIT __uint32;
  */
 
 /* Swap bytes in 32 bit value. This is used as a fallback and for constants. */
-#define rot__bswap_constant_32(x)                               \
-    ((((x) & 0xff000000) >> 24) | (((x) & 0x00ff0000) >>  8) |  \
+#define rot__bswap_constant_32(x)                                   \
+    ((((x) & 0xff000000) >> 24) | (((x) & 0x00ff0000) >>  8) |      \
      (((x) & 0x0000ff00) <<  8) | (((x) & 0x000000ff) << 24))
 
 #ifdef __GNUC__
@@ -206,9 +206,9 @@ static inline void rot90ccw(unsigned char *src, register unsigned char *dst,
 
     endp = src + size;
     dst = dst + size - 1;
-    for (base = endp - width; base < endp; base++) {
+    for(base = endp - width; base < endp; base++) {
         src = base;
-        for (j = 0; j < height; j++, src -= width) 
+        for(j = 0; j < height; j++, src -= width) 
             *dst-- = *src;
         
     }
@@ -237,8 +237,8 @@ void rotate_init(struct context *cnt)
      * we have a value that is safe from changes caused by motion-control.
      */
     if ((cnt->conf.rotate_deg % 90) > 0) {
-        motion_log(LOG_ERR, 0, "%s: Config option \"rotate\" not a multiple of 90: %d",
-                   __FUNCTION__, cnt->conf.rotate_deg);
+        motion_log(LOG_ERR, 0, "Config option \"rotate\" not a multiple of 90: %d",
+                   cnt->conf.rotate_deg);
         cnt->conf.rotate_deg = 0;     /* disable rotation */
         cnt->rotate_data.degrees = 0; /* force return below */
     } else {
@@ -270,8 +270,9 @@ void rotate_init(struct context *cnt)
      */
     if (cnt->rotate_data.degrees == 0) 
         return;
+    
 
-    switch (cnt->imgs.type) {
+    switch(cnt->imgs.type) {
     case VIDEO_PALETTE_YUV420P:
         /* For YUV 4:2:0 planar, the memory block used for 90/270 degrees
          * rotation needs to be width x height x 1.5 bytes large. 
@@ -286,8 +287,8 @@ void rotate_init(struct context *cnt)
         break;
     default:
         cnt->rotate_data.degrees = 0;
-        motion_log(LOG_ERR, 0, "%s: Unsupported palette (%d), rotation is disabled",
-                   __FUNCTION__, cnt->imgs.type);
+        motion_log(LOG_ERR, 0, "Unsupported palette (%d), rotation is disabled",
+                   cnt->imgs.type);
         return;
     }
 
@@ -296,6 +297,7 @@ void rotate_init(struct context *cnt)
      */
     if ((cnt->rotate_data.degrees == 90) || (cnt->rotate_data.degrees == 270)) 
         cnt->rotate_data.temp_buf = mymalloc(size);
+    
 }
 
 /** 
@@ -313,6 +315,7 @@ void rotate_deinit(struct context *cnt)
 {
     if (cnt->rotate_data.temp_buf) 
         free(cnt->rotate_data.temp_buf);
+    
 }
 
 /**
@@ -357,6 +360,7 @@ int rotate_map(struct context *cnt, unsigned char *map)
      *  h2   - as w2, but height instead
      */
     wh = width * height;
+    
     if (cnt->imgs.type == VIDEO_PALETTE_YUV420P) {
         size = wh * 3 / 2;
         wh4 = wh / 4;
@@ -370,6 +374,7 @@ int rotate_map(struct context *cnt, unsigned char *map)
     case 90:
         /* first do the Y part */
         rot90cw(map, cnt->rotate_data.temp_buf, wh, width, height);
+
         if (cnt->imgs.type == VIDEO_PALETTE_YUV420P) {
             /* then do U and V */
             rot90cw(map + wh, cnt->rotate_data.temp_buf + wh, wh4, w2, h2);
@@ -386,6 +391,7 @@ int rotate_map(struct context *cnt, unsigned char *map)
          * Y, U and V.
          */
         reverse_inplace_quad(map, wh);
+
         if (cnt->imgs.type == VIDEO_PALETTE_YUV420P) {
             reverse_inplace_quad(map + wh, wh4);
             reverse_inplace_quad(map + wh + wh4, wh4);
@@ -393,9 +399,9 @@ int rotate_map(struct context *cnt, unsigned char *map)
         break;
 
     case 270:
-
         /* first do the Y part */
         rot90ccw(map, cnt->rotate_data.temp_buf, wh, width, height);
+
         if (cnt->imgs.type == VIDEO_PALETTE_YUV420P) {
             /* then do U and V */
             rot90ccw(map + wh, cnt->rotate_data.temp_buf + wh, wh4, w2, h2);

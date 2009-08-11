@@ -1,10 +1,9 @@
-/*
- * video_freebsd.h
+/*    video_freebsd.h
  *
  *    Include file for video_freebsd.c
- *    Copyright 2004 by Angel Carpintero (ack@telefonica.net)
- *    This software is distributed under the GNU public license version 2
- *    See also the file 'COPYING'.
+ *      Copyright 2004 by Angel Carpintero (ack@telefonica.net)
+ *      This software is distributed under the GNU public license version 2
+ *      See also the file 'COPYING'.
  *
  */
 
@@ -23,7 +22,7 @@
 #include <dev/bktr/ioctl_bt848.h>
 #endif
 
-#endif /* !WITHOUT_V4L */
+#endif
 
 /* bktr (video4linux) stuff FIXME more modes not only these */
 
@@ -39,15 +38,15 @@
 */
 
 /* video4linux error codes */
-#define V4L_GENERAL_ERROR  0x01   /* binary 000001 */
-#define V4L_BTTVLOST_ERROR 0x05   /* binary 000101 */
+#define V4L_GENERAL_ERROR    0x01  /* binary 000001 */
+#define V4L_BTTVLOST_ERROR   0x05  /* binary 000101 */
 #define V4L_FATAL_ERROR      -1
 
-#define NORM_DEFAULT    0x00800 // METEOR_FMT_AUTOMODE 
-#define NORM_PAL        0x00200 // METEOR_FMT_PAL 
-#define NORM_NTSC       0x00100 // METEOR_FMT_NTSC 
-#define NORM_SECAM      0x00400 // METEOR_FMT_SECAM
-#define NORM_PAL_NC     0x00200 // METEOR_FMT_PAL /* Greyscale howto ?! FIXME */
+#define NORM_DEFAULT      0x00800  /* METEOR_FMT_AUTOMODE */
+#define NORM_PAL          0x00200  /* METEOR_FMT_PAL      */
+#define NORM_NTSC         0x00100  /* METEOR_FMT_NTSC     */
+#define NORM_SECAM        0x00400  /* METEOR_FMT_SECAM    */
+#define NORM_PAL_NC       0x00200  /* METEOR_FMT_PAL      */
 
 #define NORM_DEFAULT_NEW      BT848_IFORM_F_AUTO 
 #define NORM_PAL_NEW          BT848_IFORM_F_PALBDGHI    
@@ -94,8 +93,8 @@ struct video_dev {
     int fd_tuner;
     const char *video_device;
     const char *tuner_device;
-    unsigned input;
-    unsigned norm;
+    unsigned short input;
+    unsigned short norm;
     int width;
     int height;
     int contrast;

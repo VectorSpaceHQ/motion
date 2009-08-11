@@ -13,6 +13,7 @@
  */
 
 #include "rotate.h"    /* already includes motion.h */
+
 #include <jpeglib.h>
 #include <jerror.h>
 
@@ -133,12 +134,12 @@ static void netcam_memory_src(j_decompress_ptr cinfo, char *data, int length)
 {
     netcam_src_ptr src;
 
-    if (cinfo->src == NULL) 
+    if (cinfo->src == NULL) {
         cinfo->src = (struct jpeg_source_mgr *)
                      (*cinfo->mem->alloc_small)
                      ((j_common_ptr) cinfo, JPOOL_PERMANENT,
                       sizeof (netcam_source_mgr));
-    
+    }
 
     src = (netcam_src_ptr)cinfo->src;
     src->data = data;
@@ -179,8 +180,8 @@ static void netcam_error_exit(j_common_ptr cinfo)
     jpeg_destroy (cinfo);
 
     if (debug_level > CAMERA_VERBOSE) 
-        motion_log(LOG_ERR, 0, "%s: netcam->jpeg_error %d", __FUNCTION__, 
-                   netcam->jpeg_error);
+        motion_log(LOG_ERR, 0, "%s: netcam->jpeg_error %d", 
+                   __FUNCTION__, netcam->jpeg_error);
         
     /* jump back to wherever we started */
     longjmp(netcam->setjmp_buffer, 1);
@@ -287,20 +288,20 @@ static int netcam_init_jpeg(netcam_context_ptr netcam, j_decompress_ptr cinfo)
         
         do {
             retcode = pthread_cond_timedwait(&netcam->pic_ready,
-                                             &netcam->mutex, &waittime);
+                      &netcam->mutex, &waittime);
         } while (retcode == EINTR);
         
         if (retcode) {    /* we assume a non-zero reply is ETIMEOUT */
             pthread_mutex_unlock(&netcam->mutex);
             
             if (debug_level > CAMERA_WARNINGS)
-                motion_log(0, 0, "%s: no new pic, no signal rcvd", __FUNCTION__);
+                motion_log(-1, 0, "%s: no new pic, no signal rcvd", __FUNCTION__);
                 
             return NETCAM_GENERAL_ERROR | NETCAM_NOTHING_NEW_ERROR;
         }
         
         if (debug_level > CAMERA_VERBOSE)
-            motion_log(0, 0, "%s: ***new pic delay successful***", __FUNCTION__);
+            motion_log(-1, 0, "%s: ***new pic delay successful***", __FUNCTION__);
     }
     
     netcam->imgcnt_last = netcam->imgcnt;
@@ -344,8 +345,8 @@ static int netcam_init_jpeg(netcam_context_ptr netcam, j_decompress_ptr cinfo)
 }
 
 static int netcam_image_conv(netcam_context_ptr netcam,
-                               struct jpeg_decompress_struct *cinfo,
-                               unsigned char *image)
+                             struct jpeg_decompress_struct *cinfo,
+                             unsigned char *image)
 {
     JSAMPARRAY      line;           /* array of decomp data lines */
     unsigned char  *wline;          /* will point to line[0] */
@@ -377,7 +378,7 @@ static int netcam_image_conv(netcam_context_ptr netcam,
 
     /* Allocate space for one line */
     line = (cinfo->mem->alloc_sarray)((j_common_ptr) cinfo, JPOOL_IMAGE,
-                                       cinfo->output_width * cinfo->output_components, 1);
+            cinfo->output_width * cinfo->output_components, 1);
 
     wline = line[0];
     y = 0;
@@ -392,9 +393,7 @@ static int netcam_image_conv(netcam_context_ptr netcam,
                 vpic[(i / 3) / 2] = wline[i + 2];
             }
         }
-
         pic += linesize / 3;
-
         if (y++ & 1) {
             upic += width / 2;
             vpic += width / 2;
@@ -404,13 +403,14 @@ static int netcam_image_conv(netcam_context_ptr netcam,
     jpeg_finish_decompress (cinfo);
     jpeg_destroy_decompress (cinfo);
 
+    /* rotate as specified */
     if (netcam->cnt->rotate_data.degrees > 0) 
-        /* rotate as specified */
         rotate_map(netcam->cnt, image);
+    
 
     if (debug_level > CAMERA_VERBOSE)
-        motion_log(LOG_INFO, 0, "%s: jpeg_error %d", __FUNCTION__, 
-                   netcam->jpeg_error);
+        motion_log(LOG_INFO, 0, "%s: jpeg_error %d", 
+                   __FUNCTION__, netcam->jpeg_error);
  
     return netcam->jpeg_error;
 }
@@ -447,7 +447,7 @@ int netcam_proc_jpeg(netcam_context_ptr netcam, unsigned char *image)
     if (debug_level > CAMERA_INFO) 
         motion_log(LOG_INFO, 0, "%s: processing jpeg image - content length "
                    "%d", __FUNCTION__, netcam->latest->content_length);
-    
+        
     ret = netcam_init_jpeg(netcam, &cinfo);
     
     if (ret != 0) {
@@ -465,11 +465,12 @@ int netcam_proc_jpeg(netcam_context_ptr netcam, unsigned char *image)
         if ((cinfo.output_width != netcam->width) ||
             (cinfo.output_height != netcam->height)) {
             retval = NETCAM_RESTART_ERROR;
-            motion_log(LOG_ERR, 0, "%s: Camera width/height mismatch "
+            motion_log(LOG_ERR, 0,
+                       "%s: Camera width/height mismatch "
                        "with JPEG image - expected %dx%d, JPEG %dx%d",
                        " retval %d", __FUNCTION__, netcam->width, netcam->height,
                        cinfo.output_width, cinfo.output_height, retval);
-                   return retval;        
+            return retval;        
         }
     }
 

@@ -1,6 +1,6 @@
 # Process this file with autoconf to produce a configure script
 
-AC_INIT(motion, esyscmd(['./version.sh']))
+AC_INIT(motion, "3.2.11.1")
 AC_CONFIG_SRCDIR([motion.c])
 AC_CONFIG_HEADERS(config.h)
 
@@ -81,6 +81,7 @@ AC_PROG_CC
 TEMP_LIBS="-lm ${TEMP_LIBS}"
 TEMP_CFLAGS="${TEMP_CFLAGS} ${CFLAGS}"
 TEMP_LDFLAGS="${TEMP_LDFLAGS} ${LDFLAGS}"
+
 
 if test "${FreeBSD}" != "" && test "${PWCBSD}" = "no"; then
 
@@ -272,7 +273,10 @@ fi
 #
 if test x$JPEG_SUPPORT != xyes ; then
   # Checks for libraries
-  LDFLAGS=$TEMP_LDFLAGS
+  LDFLAGS="$TEMP_LDFLAGS"
+
+  AC_MSG_CHECKING(for libjpeg)
+  echo
 
   AC_CHECK_LIB(jpeg, jpeg_set_defaults, [
 		TEMP_LIBS="$TEMP_LIBS -ljpeg"
@@ -374,35 +378,32 @@ fi
 #
 
 if test "${FFMPEG_OK}" = "found"; then
-    AC_MSG_CHECKING(for ffmpeg headers in ${FFMPEG_DIR})
+	AC_MSG_CHECKING(for ffmpeg headers in ${FFMPEG_DIR})
 	
-    if test -f ${FFMPEG_DIR}/include/avformat.h; then
-        AC_MSG_RESULT(found ${FFMPEG_DIR}/include/avformat.h)
-        FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include"
-    elif test -f ${FFMPEG_DIR}/avformat.h; then
-        AC_MSG_RESULT(found ${FFMPEG_DIR}/avformat.h)
-        FFMPEG_CFLAGS="-I${FFMPEG_DIR}"
-    elif test -f ${FFMPEG_DIR}/include/ffmpeg/avformat.h; then
-        AC_MSG_RESULT(found ${FFMPEG_DIR}/include/ffmpeg/avformat.h)
-        FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include/ffmpeg"
-    elif test -f ${FFMPEG_DIR}/include/libavformat/avformat.h; then
-        AC_MSG_RESULT(found ${FFMPEG_DIR}/include/libavformat/avformat.h)
-        FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include -DFFMPEG_NEW_INCLUDES"
-    elif test -f ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h; then
-        AC_MSG_RESULT(found ${FFMPEG_DIR}/include/ffmpeg/libavformat/avformat.h)
-        FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include/ffmpeg -DFFMPEG_NEW_INCLUDES" 
-    else
-        AC_MSG_RESULT(not found)
-        FFMPEG_OK="no_found"
-        echo "**********************************************"
-        echo "*       avformat.h not found:                *"
-        echo "*    ALL FFMPEG FEATURES DISABLED            *"
-        echo "*                                            *"
-        echo "* Please read the Motion Guide for help:     *"
-        echo "* http://motion.sourceforge.net              *"
-        echo "**********************************************"
-        echo ""
-    fi
+	if test -f ${FFMPEG_DIR}/include/avformat.h; then
+		AC_MSG_RESULT(found ${FFMPEG_DIR}/include/avformat.h)
+		FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include"
+	elif test -f ${FFMPEG_DIR}/avformat.h; then
+		AC_MSG_RESULT(found ${FFMPEG_DIR}/avformat.h)
+		FFMPEG_CFLAGS="-I${FFMPEG_DIR}"
+	elif test -f ${FFMPEG_DIR}/include/ffmpeg/avformat.h; then
+		AC_MSG_RESULT(found ${FFMPEG_DIR}/include/ffmpeg/avformat.h)
+		FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include/ffmpeg"
+	elif test -f ${FFMPEG_DIR}/include/libavformat/avformat.h; then
+		AC_MSG_RESULT(found ${FFMPEG_DIR}/include/libavformat/avformat.h)
+		FFMPEG_CFLAGS="-I${FFMPEG_DIR}/include -DFFMPEG_NEW_INCLUDES"
+	else
+		AC_MSG_RESULT(not found)
+		FFMPEG_OK="no_found"
+		echo "**********************************************"
+		echo "*       avformat.h not found:                *"
+		echo "*    ALL FFMPEG FEATURES DISABLED            *"
+		echo "*                                            *"
+		echo "* Please read the Motion Guide for help:     *"
+		echo "* http://motion.sourceforge.net              *"
+		echo "**********************************************"
+		echo ""
+	fi
 
 #
 # If ffmpeg libs and headers have been found 
@@ -442,38 +443,6 @@ if test "${FFMPEG_OK}" = "found"; then
 	fi
 fi	
 fi
-
-
-#
-# Check SQLITE3
-#
-
-SQLITE3_SUPPORT="no"
-AC_ARG_WITH(sqlite3,
-    [  --without-sqlite3       Disable sqlite3 support in motion.
-    ],
-    SQLITE3="$withval"
-    # if not given argument, assume standard
-)
-
-if test "${SQLITE3}" = "no"; then
-    AC_MSG_CHECKING(for sqlite3)
-    AC_MSG_RESULT(skipping)
-else
-    saved_CFLAGS=$CFLAGS
-    saved_LIBS=$LIBS
-
-    AC_CHECK_LIB(sqlite3, sqlite3_open,
-    [
-    TEMP_LIBS="$TEMP_LIBS -lsqlite3"
-    SQLITE3_SUPPORT="yes"
-    AC_DEFINE([HAVE_SQLITE3],1,[Define to 1 if you have SQLITE3 support])
-    ]
-    )
-
-    CFLAGS=$saved_CFLAGS
-    LIBS=$saved_LIBS
-fi    
 
 
 #
@@ -774,6 +743,7 @@ AC_CHECK_FUNCS(get_current_dir_name)
 # Check if v4l2 is available
 SUPPORTED_V4L2=false
 SUPPORTED_V4L2_old=false
+
 
 if test "${V4L}" = "no"; then
 	AC_MSG_CHECKING(for V42L support)
@@ -1113,6 +1083,7 @@ else
 fi
 
 
+AC_SUBST(DOC_DIR)
 AC_SUBST(BIN_PATH)
 
 AC_CONFIG_FILES([
@@ -1130,10 +1101,10 @@ Makefile
 AC_OUTPUT
 
 echo ""
-echo "   **************************"
-echo "      Configure status       "
+echo "   *******************************"
+echo "      Configure status    "
 echo "      ${PACKAGE_NAME} ${PACKAGE_VERSION}"
-echo "   **************************"
+echo "   *******************************"
 echo 
 
 
@@ -1198,12 +1169,6 @@ else
 	echo "FFmpeg Support:      No"
 fi
 
-if test "${SQLITE3_SUPPORT}" = "yes"; then
-	echo "SQLite3 Support:     Yes"
-else
-	echo "SQLite3 Support:     No"
-fi
-
 if test "${MYSQL_SUPPORT}" = "yes"; then
 	echo "MYSQL Support:       Yes"
 else
@@ -1217,11 +1182,9 @@ else
 fi
 echo 
 
-
 echo "CFLAGS: $CFLAGS"
 echo "LIBS: $LIBS"
 echo "LDFLAGS: $LDFLAGS"
-
 
 echo
 echo  "Install prefix:       $prefix"
