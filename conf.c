@@ -62,6 +62,7 @@ struct config conf_template = {
     input:                      IN_DEFAULT,
     norm:                       0,
     frame_limit:                DEF_MAXFRAMERATE,
+    discard_frames:             0,
     quiet:                      1,
     ppm:                        0,
     noise:                      DEF_NOISELEVEL,
@@ -308,6 +309,16 @@ config_param config_params[] = {
     copy_int,
     print_int
     },
+    { 
+ 	"discard_frames",
+ 	"# This many frames are discarded for each frame that is read from the camera.\n"
+ 	"# This is for camera devices that get upset if you don't read all the frames\n"
+ 	"# they provide, but that provide too many frames.  Default 0 (use all frames).",
+    0,
+ 	CONF_OFFSET(discard_frames),
+ 	copy_int,
+ 	print_int
+ 	},
     {
     "minimum_frame_time",
     "# Minimum time in seconds between capturing picture frames from the camera.\n"
@@ -627,6 +638,19 @@ config_param config_params[] = {
     print_bool
     },
 #ifdef HAVE_FFMPEG
+  	{
+ 	"ffmpeg_device",
+ 	"\n############################################################\n"
+ 	"# Treat device as ffmpeg compliant video stream\n"
+ 	"############################################################\n\n"
+ 	"# Setting this flag treats the device specified previously\n"
+ 	"# as an ffmpeg compliant video stream. This could be a mpeg1,\n"
+ 	"# mpeg2, mpeg4, divx, xvid, or other compliant video stream.\n",
+    0,
+ 	CONF_OFFSET(ffmpeg_device),
+ 	copy_bool,
+ 	print_bool
+ 	},
     {
     "ffmpeg_cap_new",
     "\n############################################################\n"

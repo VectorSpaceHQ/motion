@@ -15,6 +15,32 @@
 #include <linux/videodev.h>
 #include <sys/mman.h>
 #include "pwc-ioctl.h"
+
+#ifdef HAVE_FFMPEG
+#include <errno.h>
+
+#ifdef FFMPEG_NEW_INCLUDES
+#include <libavformat/avformat.h>
+#else
+#include <avformat.h>
+#endif
+
+#ifndef AVERROR /* 0.4.8 & 0.4.9-pre1 */
+
+#if EINVAL > 0
+#define AVERROR(e) (-(e)) 
+#define AVUNERROR(e) (-(e)) 
+#else
+/* Some platforms have E* and errno already negated. */
+#define AVERROR(e) (e)
+#define AVUNERROR(e) (e)
+#endif
+
+#endif /* AVERROR */
+
+#endif /* HAVE_FFMPEG */
+
+
 #endif
 
 /* video4linux stuff */
@@ -70,7 +96,21 @@ struct video_dev {
     int v4l_maxbuffer;
     int v4l_bufsize;
 #endif
+#ifdef HAVE_FFMPEG
+	AVFormatContext * fcx;
+	AVCodecContext * ccx;
+	AVCodec * codec;
+	AVFormatParameters params;
+	unsigned char *ffmpeg_buffers[2];
+	int ffmpeg_fmt;
+	int ffmpeg_video_index;
+	int ffmpeg_curbuffer;
+	int ffmpeg_maxbuffer;
+	int ffmpeg_bufsize;
+#endif
 };
+
+
 
 /* video functions, video_common.c */
 int vid_start(struct context *);

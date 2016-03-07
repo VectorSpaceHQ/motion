@@ -36,6 +36,7 @@ struct config {
     int input;
     int norm;
     int frame_limit;
+    int discard_frames;
     int quiet;
     int ppm;
     int noise;
@@ -52,6 +53,7 @@ struct config {
     int pre_capture;
     int post_capture;
     int switchfilter;
+    int ffmpeg_device;
     int ffmpeg_cap_new;
     int ffmpeg_cap_motion;
     int ffmpeg_bps;

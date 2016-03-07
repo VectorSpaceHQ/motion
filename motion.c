@@ -1109,11 +1109,16 @@ static void *motion_loop(void *arg)
              * <0 = fatal error - leave the thread by breaking out of the main loop
              * >0 = non fatal error - copy last image or show grey image with message
              */
-            if (cnt->video_dev >= 0)
+            if (cnt->video_dev >= 0) {
                 vid_return_code = vid_next(cnt, cnt->current_image->image);
-            else
+                /* Discard frames */
+                for (j = 0; j < cnt->conf.discard_frames; j++)
+                    vid_return_code = vid_next(cnt, cnt->current_image->image);
+            } else {
                 vid_return_code = 1; /* Non fatal error */
+            }    
 
+             
             // VALID PICTURE
             if (vid_return_code == 0) {
                 cnt->lost_connection = 0;

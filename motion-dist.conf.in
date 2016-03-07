@@ -76,6 +76,11 @@ height 240
 # Valid range: 2-100. Default: 100 (almost no limit).
 framerate 2
 
+# This many frames are discarded for each frame that is read from the camera.
+# This is for camera devices that get upset if you don't read all the frames
+# they provide, but that provide too many frames.  Default 0 (use all frames).
+discard_frames 0
+
 # Minimum time in seconds between capturing picture frames from the camera.
 # Default: 0 = disabled - the capture rate is given by the camera framerate.
 # This option is used when you want to capture images at a rate lower than 2 per second.
@@ -286,6 +291,11 @@ ffmpeg_video_codec mpeg4
 # (default: off)
 ffmpeg_deinterlace off
 
+# Use ffmpeg to decode the data from the camera.  Necessary if your
+# data source delivers data in a format that ffmpeg understands (eg
+# mpeg2 as delivered by ivtv cards).
+# (default: off)
+ffmpeg_device off
 
 ############################################################
 # Snapshots (Traditional Periodic Webcam File Output)

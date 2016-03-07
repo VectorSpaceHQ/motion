@@ -563,7 +563,7 @@ void vid_close(struct context *cnt)
 
     /* Cleanup the netcam part */
     if (cnt->netcam) {
-        motion_log(LOG_DEBUG, 0, "vid_close: calling netcam_cleanup");
+        motion_log(LOG_DEBUG, 0, "%s: calling netcam_cleanup", __FUNCTION__);
         netcam_cleanup(cnt->netcam, 0);
         cnt->netcam = NULL;
         return;
@@ -585,12 +585,13 @@ void vid_close(struct context *cnt)
     cnt->video_dev = -1;
 
     if (dev == NULL) {
-        motion_log(LOG_ERR, 0, "vid_close: Unable to find video device");
+        motion_log(LOG_ERR, 0, "%s: Unable to find video device", __FUNCTION__);
         return;
     }
 
     if (--dev->usage_count == 0) {
-        motion_log(LOG_INFO, 0, "Closing video device %s", dev->video_device);
+        motion_log(LOG_INFO, 0, "%s: Closing video device %s", 
+                   __FUNCTION__, dev->video_device);
 #ifdef MOTION_V4L2
         if (dev->v4l2) {
             v4l2_close(dev);
@@ -617,8 +618,8 @@ void vid_close(struct context *cnt)
         pthread_mutex_destroy(&dev->mutex);
         free(dev);
     } else {
-        motion_log(LOG_INFO, 0, "Still %d users of video device %s, so we don't close it now", 
-                   dev->usage_count, dev->video_device);
+        motion_log(LOG_INFO, 0, "%s: Still %d users of video device %s, so we don't close it now", 
+                   __FUNCTION__, dev->usage_count, dev->video_device);
         /* There is still at least one thread using this device 
          * If we own it, release it
          */
@@ -631,8 +632,196 @@ void vid_close(struct context *cnt)
 #endif /* WITHOUT_V4L */
 }
 
-#ifndef WITHOUT_V4L
 
+#ifdef HAVE_FFMPEG
+static unsigned char *ffmpeg_start(struct video_dev *viddev, int input, int norm)
+{
+	int dev=viddev->fd;
+	int err=0;
+	unsigned int i=0, width=0, height=0;
+	viddev->fcx = NULL;
+	viddev->ccx = NULL;
+	viddev->codec = NULL;
+	viddev->ffmpeg_video_index = -1;
+	struct video_channel vid_chnl;
+
+	if (input != IN_DEFAULT) {
+		memset(&vid_chnl, 0, sizeof(struct video_channel));
+		vid_chnl.channel = input;
+		if (ioctl (dev, VIDIOCGCHAN, &vid_chnl) == -1) {
+			motion_log(LOG_ERR, 1, "%s: ioctl (VIDIOCGCHAN)", __FUNCTION__);
+		} else {
+			vid_chnl.channel = input;
+			vid_chnl.norm    = norm;
+			if (ioctl (dev, VIDIOCSCHAN, &vid_chnl) == -1) {
+				motion_log(LOG_ERR, 1, "%s: ioctl (VIDIOCSCHAN)", __FUNCTION__);
+				return (NULL);
+			}
+		}
+	}
+	// Open the input file.
+	motion_log(LOG_DEBUG, 0, "%s: Openning ffmpeg video stream device: %s", 
+               __FUNCTION__, viddev->video_device);
+	err = av_open_input_file(&viddev->fcx, viddev->video_device, NULL, 0, &viddev->params);
+	if (err < 0) {
+		motion_log(LOG_ERR, 1, "%s: Fatal: Can't open video device (%s) using ffmpeg", 
+                   __FUNCTION__, viddev->video_device);
+		motion_log(LOG_ERR, 1, "%s: Motion Exits", __FUNCTION__);
+		exit(-1);
+	}
+
+	// Find the stream info.
+	err = av_find_stream_info(viddev->fcx);
+	if (err < 0) {
+ 		motion_log(LOG_ERR, 0, "%s: Fatal: Could not locate ffmpeg stream info.", 
+                   __FUNCTION__);
+ 		motion_log(LOG_ERR, 1, "%s: Motion Exits", __FUNCTION__);
+ 		exit(-1);
+ 	}
+
+		// Find the first video stream.
+ 	motion_log(LOG_DEBUG, 0, "Found %d ffmpeg streams.", viddev->fcx->nb_streams);
+ 	for (i=0; i < viddev->fcx->nb_streams; i++) {
+		viddev->ccx=viddev->fcx->streams[i]->codec;
+		if( viddev->ccx->codec_type == CODEC_TYPE_VIDEO ) 
+			break;
+ 	}
+ 	viddev->ffmpeg_video_index = i;
+ 	motion_log(LOG_DEBUG, 0, "%s: Obtained ffmpeg video_index (%d).", 
+               __FUNCTION__, viddev->ffmpeg_video_index);
+    
+	// Open stream.
+ 	if (viddev->ffmpeg_video_index >= 0) {
+		viddev->codec = avcodec_find_decoder(viddev->ccx->codec_id);
+		if (viddev->codec)
+ 			err = avcodec_open(viddev->ccx, viddev->codec);
+		if (err < 0) {
+ 			motion_log(LOG_ERR, 1, "%s: Fatal: Can't open ffmpeg codec", __FUNCTION__);
+ 			motion_log(LOG_ERR, 1, "%s: Motion Exits", __FUNCTION__);
+     			av_close_input_file(viddev->fcx);
+ 			exit(-1); 
+ 		} else {
+ 			motion_log(LOG_DEBUG, 0, "%s: Found ffmpeg video stream codec: %s", 
+                       __FUNCTION__, viddev->codec->name);
+ 		}
+ 	} else {
+ 		motion_log(LOG_ERR, 1, "%s: Fatal: ffmpeg video stream not found", __FUNCTION__);
+ 		motion_log(LOG_ERR, 1, "%s: Motion Exits", __FUNCTION__);
+     		av_close_input_file(viddev->fcx);
+ 		exit(-1);
+ 	}
+ 	width = viddev->ccx->width;
+ 	height = viddev->ccx->height;
+ 	motion_log(LOG_DEBUG, 0, "%s: Size of image: %d x %d x 3/2 = %d.", __FUNCTION__,
+               width, height, (width * height * 3) / 2);
+ 	viddev->ffmpeg_fmt = VIDEO_PALETTE_YUV420P;
+	viddev->ffmpeg_bufsize = (width * height * 3) / 2;
+  	viddev->ffmpeg_maxbuffer = 1;
+  	viddev->ffmpeg_curbuffer = 0;
+  	viddev->ffmpeg_buffers[0] = mymalloc((width * height * 3) / 2);
+  	viddev->ffmpeg_buffers[1] = mymalloc((width * height * 3) / 2);
+
+	return viddev->ffmpeg_buffers[0];
+}
+
+static int ffmpeg_next(struct video_dev *viddev, unsigned char *map)
+{
+	int len1 = 0, got_picture = 0;
+	unsigned char *cap_map;
+	AVPicture av_pict;
+	AVPacket av_pkt;
+	AVFrame *av_frame = avcodec_alloc_frame();
+
+	int curbuf = 0, err = 0;
+	
+	viddev->ffmpeg_curbuffer++;
+	if (viddev->ffmpeg_curbuffer > viddev->ffmpeg_maxbuffer)
+		viddev->ffmpeg_curbuffer = 0;
+	curbuf = viddev->ffmpeg_curbuffer;
+	cap_map = viddev->ffmpeg_buffers[curbuf];
+	
+	while (!got_picture) {
+		if (!viddev->fcx) {
+			motion_log(LOG_ERR, 0, "%s: NULL pointer for AVFrameContext viddev->fcx.", 
+                       __FUNCTION__);
+			motion_log(LOG_ERR, 0, "%s: Motion Exits", __FUNCTION__);
+			exit(-1);
+		}
+		err = av_read_frame(viddev->fcx, &av_pkt);
+		switch(err) {
+		case AVERROR_UNKNOWN:
+			motion_log(LOG_ERR, 1, "%s: Unknown error or Invalid data reading AVFrame", 
+                       __FUNCTION__);
+			motion_log(LOG_ERR, 0, "%s: Motion Exits", __FUNCTION__);
+			exit(-1);
+			break;
+		case AVERROR_IO:
+			motion_log(LOG_ERR, 1, "IO error reading AVFrame");
+			motion_log(LOG_ERR, 0, "Motion Exits");
+			exit(-1);
+			break;
+		case AVERROR_NUMEXPECTED:
+			motion_log(LOG_ERR, 1, "Number syntax expected in file name while reading AVFrame");
+			motion_log(LOG_ERR, 0, "Motion Exits");
+			exit(-1);
+			break;
+		case AVERROR_NOMEM:
+			motion_log(LOG_ERR, 1, "Out of memory while reading AVFrame");
+			motion_log(LOG_ERR, 0, "Motion Exits");
+			exit(-1);
+			break;
+		case AVERROR_NOFMT:
+			motion_log(LOG_ERR, 1, "Unkown format while reading AVFrame");
+			motion_log(LOG_ERR, 0, "Motion Exits");
+			exit(-1);
+			break;
+		case AVERROR_NOTSUPP:
+			motion_log(LOG_ERR, 1, "Operation not supported while reading AVFrame");
+			motion_log(LOG_ERR, 0, "Motion Exits");
+			exit(-1);
+			break;
+		default:
+			break;
+		}
+
+		if (av_pkt.stream_index == viddev->ffmpeg_video_index) {
+			if (!viddev->ccx) {
+				motion_log(LOG_ERR, 0, "NULL pointer for AVCodecContext viddev->ccx.");
+				motion_log(LOG_ERR, 0, "Motion Exits");
+				exit(-1);
+			}
+			len1 = avcodec_decode_video(viddev->ccx, av_frame, &got_picture, av_pkt.data, av_pkt.size);
+		}
+	}
+
+	if (got_picture) {
+		avpicture_alloc(&av_pict, PIX_FMT_YUV420P, viddev->ccx->width, viddev->ccx->height);
+		img_convert(&av_pict, PIX_FMT_YUV420P, (AVPicture*) av_frame, viddev->ccx->pix_fmt, 
+                    viddev->ccx->width, viddev->ccx->height);
+		memset(map, 0, (viddev->ccx->width * viddev->ccx->height * 3) / 2);
+		memcpy(map, av_pict.data[0], (viddev->ccx->width * viddev->ccx->height * 3) / 2);
+	} else {
+		motion_log(LOG_WARNING, 0, "%s: Fatal: Unable to decode video packets into frame.", 
+                   __FUNCTION__);
+		exit(-1);
+	}
+
+    av_free_packet(&av_pkt);
+	
+    // Clean up
+    avpicture_free(&av_pict);
+    av_free(av_frame);
+	// FIXME: This should be closed before exiting motion
+    // av_close_input_file(av_fcx);
+
+	return 0;
+}
+#endif
+
+
+
+
+#ifndef WITHOUT_V4L
 /**
  * vid_v4lx_start
  *
@@ -706,6 +895,11 @@ static int vid_v4lx_start(struct context *cnt)
     while (dev) {
         if (!strcmp(conf->video_device, dev->video_device)) {
             dev->usage_count++;
+#ifdef HAVE_FFMPEG
+            if (conf->ffmpeg_device) 
+                  cnt->imgs.type = dev->ffmpeg_fmt;
+            else    
+#endif
             cnt->imgs.type = dev->v4l_fmt;
 
             switch (cnt->imgs.type) {
@@ -763,44 +957,71 @@ static int vid_v4lx_start(struct context *cnt)
     dev->owner = -1;
     dev->v4l_fmt = VIDEO_PALETTE_YUV420P;
     dev->fps = 0;
+
+#ifdef HAVE_FFMPEG
+    if (conf->ffmpeg_device) {
+
+        dev->ffmpeg_fmt = VIDEO_PALETTE_YUV420P;
+    
+	    if (!ffmpeg_start(dev, input, norm)) {
+	        motion_log(LOG_DEBUG, 0, "%s: Failed in ffmpeg_start.", __FUNCTION__);
+		    pthread_mutex_unlock(&vid_mutex);
+ 		    return -1;
+ 	    }
+
+	    cnt->imgs.type = dev->ffmpeg_fmt;
+	    width = dev->ccx->width;
+	    height = dev->ccx->height;
+	    cnt->imgs.width = width;
+	    cnt->imgs.height = height;
+    } 
+#endif /* HAVE_FFMPEG */
+
+    if (!conf->ffmpeg_device) {
+
 #ifdef MOTION_V4L2
-    /* First lets try V4L2 and if it's not supported V4L1 */
+        /* First lets try V4L2 and if it's not supported V4L1 */
 
-    dev->v4l2 = 1;
+        dev->v4l2 = 1;
 
-    if (!v4l2_start(cnt, dev, width, height, input, norm, frequency, tuner_number)) {
-        /* restore width & height before test with v4l
-         * because could be changed in v4l2_start ()
-         */
-        dev->width = width;
-        dev->height = height;
+        if (!v4l2_start(cnt, dev, width, height, input, norm, 
+                        frequency, tuner_number)) {
+            /* restore width & height before test with v4l
+             * because could be changed in v4l2_start ()
+             */
+            dev->width = width;
+            dev->height = height;
 #endif
 
-        if (!v4l_start(cnt, dev, width, height, input, norm, frequency, tuner_number)) {
-            close(dev->fd);
-            pthread_mutexattr_destroy(&dev->attr);
-            pthread_mutex_destroy(&dev->mutex);
-            free(dev);
+            if (!v4l_start(cnt, dev, width, height, input, norm, 
+                           frequency, tuner_number)) {
+                close(dev->fd);
+                pthread_mutexattr_destroy(&dev->attr);
+                pthread_mutex_destroy(&dev->mutex);
+                free(dev);
 
-            pthread_mutex_unlock(&vid_mutex);
-            return -1;
+                pthread_mutex_unlock(&vid_mutex);
+                return -1;
+            }
+#ifdef MOTION_V4L2
+            dev->v4l2 = 0;
         }
-#ifdef MOTION_V4L2
-        dev->v4l2 = 0;
-    }
 #endif
-    if (dev->v4l2 == 0) {
-        motion_log(-1, 0, "Using V4L1");
-    } else {
-        motion_log(-1, 0, "Using V4L2");
-        /* Update width & height because could be changed in v4l2_start () */
-        width = dev->width;
-        height = dev->height;
-        cnt->imgs.width = width;
-        cnt->imgs.height = height;
-    }
+        if (dev->v4l2 == 0) {
+             motion_log(-1, 0, "Using V4L1");
+        } else {
+            motion_log(-1, 0, "Using V4L2");
+            /* Update width & height because could be changed in v4l2_start () */
+            width = dev->width;
+            height = dev->height;
+            cnt->imgs.width = width;
+            cnt->imgs.height = height;
+        }
 
-    cnt->imgs.type = dev->v4l_fmt;
+        cnt->imgs.type = dev->v4l_fmt;
+
+    } /* conf->ffmpeg_device */
+
 
     switch (cnt->imgs.type) {
     case VIDEO_PALETTE_GREY:
@@ -823,16 +1044,15 @@ static int vid_v4lx_start(struct context *cnt)
 
     pthread_mutex_unlock(&vid_mutex);
 
-return fd;
+    return fd;
 }
 #endif                /*WITHOUT_V4L */
-
 
 
 /**
  * vid_start
  *
- * vid_start setup the capture device. This will be either a V4L device or a netcam.
+ * vid_start setup the capture device. This will be either a V4L device, a netcam or an mpeg stream.
  * The function does the following:
  * - If the camera is a netcam - netcam_start is called and function returns
  * - Width and height are checked for valid value (multiple of 16)
@@ -863,9 +1083,10 @@ int vid_start(struct context *cnt)
             cnt->netcam = NULL;
         }
     }
+
 #ifdef WITHOUT_V4L
     else    
-        motion_log(LOG_ERR, 0,"You must setup netcam_url");
+        motion_log(LOG_ERR, 0,"%s: You must setup netcam_url", __FUNCTION__);
 #else
     else
         dev = vid_v4lx_start(cnt);
@@ -905,6 +1126,7 @@ int vid_next(struct context *cnt, unsigned char *map)
 
         return netcam_next(cnt, map);
     }
+
 #ifndef WITHOUT_V4L
     /* We start a new block so we can make declarations without breaking
      * gcc 2.95 or older
@@ -934,6 +1156,12 @@ int vid_next(struct context *cnt, unsigned char *map)
             dev->owner = cnt->threadnr;
             dev->frames = conf->roundrobin_frames;
         }
+#ifdef HAVE_FFMPEG
+	    if(conf->ffmpeg_device) 
+            ret = ffmpeg_next(dev, map);
+#endif
+
+
 #ifdef MOTION_V4L2
         if (dev->v4l2) {
             v4l2_set_input(cnt, dev, map, width, height, conf);
@@ -958,6 +1186,6 @@ int vid_next(struct context *cnt, unsigned char *map)
             rotate_map(cnt, map);
         
     }
-#endif                /*WITHOUT_V4L */
+#endif  /*WITHOUT_V4L */
     return ret;
 }
